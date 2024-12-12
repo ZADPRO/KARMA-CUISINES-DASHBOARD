@@ -5,7 +5,7 @@ export default function Products() {
     <div>
       <div className="primaryNav">
         <p>Products</p>
-        <p className="">Profile last updated 11:43 | Jul 28 2024</p>
+        <p className="">Logged in as: Admin</p>
       </div>
     </div>
   );

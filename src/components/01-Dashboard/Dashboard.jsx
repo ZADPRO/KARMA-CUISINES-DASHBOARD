@@ -5,7 +5,7 @@ export default function Dashboard() {
     <div>
       <div className="primaryNav">
         <p>Dashboard</p>
-        <p className="">Profile last updated 11:43 | Jul 28 2024</p>
+        <p className="">Logged in as: Admin</p>
       </div>
     </div>
   );

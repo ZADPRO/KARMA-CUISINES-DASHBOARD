@@ -10,7 +10,7 @@ import {
   BadgeSwissFranc,
   Beef,
   Files,
-  LayoutDashboard,
+  LayoutGrid,
   LogOut,
   Menu,
   MessagesSquare,
@@ -25,7 +25,7 @@ const routes = [
   {
     path: "/",
     name: "Dashboard",
-    icon: <LayoutDashboard />,
+    icon: <LayoutGrid />,
   },
   {
     path: "/products",
