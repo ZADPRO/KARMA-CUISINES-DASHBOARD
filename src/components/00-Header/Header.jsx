@@ -8,6 +8,7 @@ import { NavLink } from "react-router-dom";
 import "./Header.css";
 import {
   BadgeSwissFranc,
+  Beef,
   Files,
   LayoutDashboard,
   LogOut,
@@ -25,6 +26,11 @@ const routes = [
     path: "/",
     name: "Dashboard",
     icon: <LayoutDashboard />,
+  },
+  {
+    path: "/products",
+    name: "Products",
+    icon: <Beef />,
   },
   {
     path: "/orders",
