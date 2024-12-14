@@ -130,9 +130,7 @@ export default function AddVendorStepper() {
         </StepperPanel>
         <StepperPanel header="Restro Details">
           <div className="flex flex-column h-12rem">
-            <div className="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-              
-            </div>
+            <div className="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium"></div>
           </div>
           <div className="flex pt-4 justify-content-between">
             <Button
