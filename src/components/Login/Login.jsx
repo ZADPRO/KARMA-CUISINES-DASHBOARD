@@ -11,13 +11,13 @@ export default function Login() {
   const [checked, setChecked] = useState(false);
 
   const containerClassName = classNames(
-    "surface-ground flex align-items-center justify-content-center mt-5 mb-5 overflow-hidden"
+    "surface-ground flex align-items-center justify-content-center overflow-hidden"
   );
 
   return (
     <div>
       <div className={containerClassName}>
-        <div className="flex flex-column align-items-center justify-content-center">
+        <div className="flex flex-column h-screen align-items-center justify-content-center">
           <div
             style={{
               borderRadius: "56px",

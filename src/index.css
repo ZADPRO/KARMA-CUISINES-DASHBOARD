@@ -5,3 +5,16 @@ body {
 a {
   text-decoration: none;
 }
+
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 4px 1rem;
+}
+
+.primaryNav p {
+  font-weight: bold;
+  font-size: 17px;
+}
+
+.p-datatable-header {
+  padding: 0px 1rem;
+}
