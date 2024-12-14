@@ -7,7 +7,7 @@ a {
 }
 
 .p-datatable .p-datatable-tbody > tr > td {
-  padding: 4px 1rem;
+  padding: 10px 1rem;
 }
 
 .primaryNav p {
@@ -18,3 +18,16 @@ a {
 .p-datatable-header {
   padding: 0px 1rem;
 }
+
+.p-stepper .p-stepper-header:has(~ .p-highlight) .p-stepper-separator {
+  background-color: #00052e;
+}
+
+.p-stepper .p-stepper-header.p-highlight .p-stepper-number {
+  background-color: #00052e;
+}
+
+/* .p-button {
+  background-color: #00052e;
+  border: #00052e;
+} */

@@ -13,6 +13,8 @@ import { Tag } from "primereact/tag";
 import { Sidebar } from "primereact/sidebar";
 import { Paginator } from "primereact/paginator";
 
+import AddVendorStepper from "../../Pages/AddVendorStepper/AddVendorStepper";
+
 export default function Vendors() {
   let emptyProduct = {
     id: null,
@@ -120,28 +122,6 @@ export default function Vendors() {
 
   const statusBodyTemplate = (rowData) => {
     return <Tag value={rowData.status} severity={getSeverity(rowData)}></Tag>;
-  };
-
-  const actionBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <Button
-          icon="pi pi-pencil"
-          rounded
-          outlined
-          severity="secondary"
-          className="mr-2"
-          onClick={() => setVisibleRight(true)}
-        />
-        <Button
-          icon="pi pi-trash"
-          rounded
-          outlined
-          severity="danger"
-          onClick={() => confirmDeleteProduct(rowData)}
-        />
-      </React.Fragment>
-    );
   };
 
   const getSeverity = (product) => {
@@ -307,56 +287,51 @@ export default function Vendors() {
               header="Vendor ID"
               sortable
               frozen
-              style={{ minWidth: "10rem", background: "white" }}
+              style={{ inlineSize: "10rem", background: "white" }}
             ></Column>
             <Column
               field="code"
               header="Code"
               sortable
-              style={{ minWidth: "12rem" }}
+              style={{ inlineSize: "12rem" }}
             ></Column>
             <Column
               field="name"
               header="Name"
               sortable
-              style={{ minWidth: "16rem" }}
+              style={{ inlineSize: "16rem" }}
             ></Column>
             <Column
               field="cuisine"
               header="Category"
               sortable
-              style={{ minWidth: "12rem" }}
+              style={{ inlineSize: "12rem" }}
             ></Column>
             <Column
               field="contactNo"
               header="Contact No"
               sortable
-              style={{ minWidth: "12rem" }}
+              style={{ inlineSize: "12rem" }}
             ></Column>
             <Column
               field="email"
               header="Email ID"
               sortable
-              style={{ minWidth: "10rem" }}
+              style={{ inlineSize: "10rem" }}
             ></Column>
             <Column
               field="status"
               header="Status"
               body={statusBodyTemplate}
               sortable
-              style={{ minWidth: "12rem" }}
-            ></Column>
-            <Column
-              body={actionBodyTemplate}
-              exportable={false}
-              style={{ minWidth: "12rem" }}
+              style={{ inlineSize: "12rem" }}
             ></Column>
           </DataTable>
         </div>
 
         <Dialog
           visible={deleteProductDialog}
-          style={{ width: "32rem" }}
+          style={{ inlineSize: "32rem" }}
           breakpoints={{ "960px": "75vw", "641px": "90vw" }}
           header="Confirm"
           modal
@@ -379,16 +354,10 @@ export default function Vendors() {
         <Sidebar
           visible={visibleRight}
           position="right"
-          style={{ width: "1000px" }}
+          style={{ inlineSize: "1000px" }}
           onHide={() => setVisibleRight(false)}
         >
-          <h2>Right Sidebar</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
-          </p>
+          <AddVendorStepper />
         </Sidebar>
       </div>
     </div>

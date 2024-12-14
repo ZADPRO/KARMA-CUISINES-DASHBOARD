@@ -10,6 +10,8 @@ import "primeflex/primeflex.css";
 import "primereact/resources/primereact.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 
+import "./primeCustom.css";
+
 // import "primereact/resources/themes/bootstrap4-light-blue/theme.css";
 // import "primereact/resources/themes/bootstrap4-light-purple/theme.css";
 // import "primereact/resources/themes/bootstrap4-dark-blue/theme.css";
