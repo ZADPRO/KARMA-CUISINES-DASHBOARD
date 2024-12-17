@@ -19,6 +19,10 @@ import {
   Facebook,
   Instagram,
   Twitter,
+  Landmark,
+  Banknote,
+  CreditCard,
+  BadgeSwissFranc,
 } from "lucide-react";
 
 export default function AddVendorStepper() {
@@ -129,8 +133,55 @@ export default function AddVendorStepper() {
           </div>
         </StepperPanel>
         <StepperPanel header="Restro Details">
-          <div className="flex flex-column h-12rem">
-            <div className="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium"></div>
+          <div className="border-2 px-5 py-5 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+            <div className="uploadFiles w-full">
+              <div className="fileUpload mt-3 flex-col">
+                <div className="flex align-items-center gap-3">
+                  <InputSwitch
+                    checked={checked}
+                    onChange={(e) => setChecked(e.value)}
+                  />
+                  <span className="">Upload FSSAI License Number</span>
+                </div>
+                <FileUploadTemplate enabled={checked} />
+              </div>
+              <div className="fileUpload mt-3 flex-col">
+                <div className="flex align-items-center gap-3">
+                  <InputSwitch
+                    checked={checked}
+                    onChange={(e) => setChecked(e.value)}
+                  />
+                  <span className="">
+                    Upload GSTIN (Goods and Services Tax Identification Number)
+                  </span>
+                </div>
+                <FileUploadTemplate enabled={checked} />
+              </div>
+              <div className="fileUpload mt-3 flex-col">
+                <div className="flex align-items-center gap-3">
+                  <InputSwitch
+                    checked={checked}
+                    onChange={(e) => setChecked(e.value)}
+                  />
+                  <span className="">
+                    Upload Alcohol License Number (if applicable)
+                  </span>
+                </div>
+                <FileUploadTemplate enabled={checked} />
+              </div>
+              <div className="fileUpload mt-3 flex-col">
+                <div className="flex align-items-center gap-3">
+                  <InputSwitch
+                    checked={checked}
+                    onChange={(e) => setChecked(e.value)}
+                  />
+                  <span className="">
+                    Upload Health Inspection Certificate Details
+                  </span>
+                </div>
+                <FileUploadTemplate enabled={checked} />
+              </div>
+            </div>
           </div>
           <div className="flex pt-4 justify-content-between">
             <Button
@@ -149,9 +200,58 @@ export default function AddVendorStepper() {
           </div>
         </StepperPanel>
         <StepperPanel header="Financial Info">
-          <div className="flex flex-column h-12rem">
-            <div className="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-              Content II
+          <div className="border-2 px-5 py-5 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+            <div className="inputForms w-full">
+              <span className="">Bank Account Details </span>
+              <div className="p-inputgroup flex-1 mt-3">
+                <span className="p-inputgroup-addon">
+                  <Landmark size={20} />
+                </span>
+                <InputText placeholder="Bank Name " />
+              </div>{" "}
+              <div className="flex gap-3 mt-3 mb-3">
+                <div className="p-inputgroup flex-1">
+                  <span className="p-inputgroup-addon">
+                    <Banknote size={20} />{" "}
+                  </span>
+                  <InputText placeholder="Account Number " />
+                </div>
+                <div className="p-inputgroup flex-1">
+                  <span className="p-inputgroup-addon">
+                    <CreditCard size={20} />
+                  </span>
+                  <InputText placeholder="IFSC Code " />
+                </div>
+              </div>
+              <span className="">Payment Accepted </span>
+              <div className="flex align-items-center gap-3 mt-3">
+                <InputSwitch
+                  checked={checked}
+                  onChange={(e) => setChecked(e.value)}
+                />
+                <span className="">UPI</span>
+              </div>
+              <div className="flex align-items-center gap-3 mt-3">
+                <InputSwitch
+                  checked={checked}
+                  onChange={(e) => setChecked(e.value)}
+                />
+                <span className="">Cards</span>
+              </div>
+              <div className="flex align-items-center gap-3 mt-3 mb-3">
+                <InputSwitch
+                  checked={checked}
+                  onChange={(e) => setChecked(e.value)}
+                />
+                <span className="">Cash</span>
+              </div>
+              <span className="">Money Transfer Details </span>
+              <div className="p-inputgroup flex-1 mt-3">
+                <span className="p-inputgroup-addon">
+                  <BadgeSwissFranc size={20} />
+                </span>
+                <InputText placeholder="Payout Frequency (Weekly or Monthly) " />
+              </div>{" "}
             </div>
           </div>
           <div className="flex pt-4 justify-content-between">
@@ -162,33 +262,11 @@ export default function AddVendorStepper() {
               onClick={() => stepperRef.current.prevCallback()}
             />
             <Button
-              label="Next"
+              label="Submit"
               icon="pi pi-arrow-right"
               iconPos="right"
               severity="success"
-              onClick={() => stepperRef.current.nextCallback()}
-            />
-          </div>
-        </StepperPanel>
-        <StepperPanel header="Menu & Pricing">
-          <div className="flex flex-column h-12rem">
-            <div className="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-              Content III
-            </div>
-          </div>
-          <div className="flex pt-4 justify-content-between">
-            <Button
-              label="Back"
-              severity="secondary"
-              icon="pi pi-arrow-left"
-              onClick={() => stepperRef.current.prevCallback()}
-            />
-            <Button
-              label="Success"
-              icon="pi pi-arrow-right"
-              iconPos="right"
-              severity="success"
-              onClick={() => stepperRef.current.nextCallback()}
+              // onClick={() => stepperRef.current.nextCallback()}
             />
           </div>
         </StepperPanel>
