@@ -231,7 +231,7 @@ export default function AddVendorStepper() {
                 />
                 <span className="">UPI</span>
               </div>
-              <div className="flex align-items-center gap-3 mt-3">
+              <div className="flex align-itemss-center gap-3 mt-3">
                 <InputSwitch
                   checked={checked}
                   onChange={(e) => setChecked(e.value)}

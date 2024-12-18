@@ -10,3 +10,65 @@
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
   z-index: 10;
 }
+
+.dashboardContents {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+.dashboardContents .card {
+  display: flex;
+  border: 1px solid rgba(0, 0, 0, 0.093);
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.componentHeader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  padding: 5px;
+  justify-content: space-between;
+}
+
+.componentHeader .componentTitle {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.componentHeader .quickAcces .p-link i {
+  font-size: 1.3rem;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 50%;
+  margin-left: 10px;
+}
+
+.componentHeader .quickAcces {
+  display: flex;
+}
+.dashboardContents .card i {
+}
+
+.dashboardAnalytics .card {
+  border: 1px solid rgba(0, 0, 0, 0.093);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 7px;
+  margin: 8px;
+}
