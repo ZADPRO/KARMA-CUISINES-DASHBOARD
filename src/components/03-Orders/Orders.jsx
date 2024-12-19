@@ -9,8 +9,10 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import { Tag } from "primereact/tag";
 import { Sidebar } from "primereact/sidebar";
+import { Calendar } from "primereact/calendar";
+import { Tag } from "primereact/tag";
+import OrderSideBar from "../../Pages/OrdersSideBar/OrderSideBar";
 
 export default function Orders() {
   let emptyProduct = {
@@ -24,7 +26,6 @@ export default function Orders() {
     rating: 0,
     inventoryStatus: "INSTOCK",
   };
-
   const [products, setProducts] = useState(null);
   const [deleteProductDialog, setDeleteProductDialog] = useState(false);
   const [product, setProduct] = useState(emptyProduct);
@@ -32,7 +33,8 @@ export default function Orders() {
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
-  const [visibleRight, setVisibleRight] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [viewData, setViewData] = useState(false);
 
   const [selectedCities, setSelectedCities] = useState(null);
   const cities = [
@@ -46,40 +48,70 @@ export default function Orders() {
   useEffect(() => {
     const restaurantData = [
       {
-        id: "1000",
-        code: "VND001",
-        name: "KingsKurry",
-        cuisine: "Indian, Mughlai",
-        contactNo: "9876543210",
-        email: "info@kingskurry.com",
-        status: "OPEN",
-      },
-      {
         id: "1001",
-        code: "VND002",
-        name: "Ban Thai",
-        cuisine: "Thai, Asian",
-        contactNo: "9876543211",
-        email: "info@banthai.com",
-        status: "OPEN",
+        code: "US001",
+        name: "User 1",
+        vendor: "Kings Kurry",
+        product: "Dish 1",
+        date: "19-12-2024",
+        time: "08:37 AM",
+        contactNo: "9876543210",
+        status: "DELIVERED",
       },
       {
         id: "1002",
-        code: "VND003",
-        name: "Sushi Haven",
-        cuisine: "Japanese, Sushi",
-        contactNo: "9876543212",
-        email: "info@sushihaven.com",
-        status: "CLOSED",
+        code: "US002",
+        name: "User 2",
+        vendor: "Fajita Friends",
+        product: "Dish 2",
+        date: "19-12-2024",
+        time: "08:37 AM",
+        contactNo: "9876543210",
+        status: "RETURNED",
       },
       {
         id: "1003",
-        code: "VND004",
-        name: "Fajita Friends",
-        cuisine: "Mexican, Tex-Mex",
-        contactNo: "9876543213",
-        email: "info@fajitafriends.com",
-        status: "OPEN",
+        code: "US003",
+        name: "User 3",
+        vendor: "Kings Kurry",
+        product: "Dish 3",
+        date: "19-12-2024",
+        time: "08:37 AM",
+        contactNo: "9876543210",
+        status: "RETURNED",
+      },
+      {
+        id: "1004",
+        code: "US004",
+        name: "User 4",
+        vendor: "Fajita Friends",
+        product: "Dish 4",
+        date: "19-12-2024",
+        time: "08:37 AM",
+        contactNo: "9876543210",
+        status: "YET TO DELIVER",
+      },
+      {
+        id: "1005",
+        code: "US005",
+        name: "User 5",
+        vendor: "Ban Thai",
+        product: "Dish 5",
+        date: "19-12-2024",
+        time: "08:37 AM",
+        contactNo: "9876543210",
+        status: "DELIVERED",
+      },
+      {
+        id: "1006",
+        code: "US006",
+        name: "User 6",
+        vendor: "Ban Thai",
+        product: "Dish 6",
+        date: "19-12-2024",
+        time: "08:37 AM",
+        contactNo: "9876543210",
+        status: "DELIVERED",
       },
     ];
 
@@ -88,11 +120,6 @@ export default function Orders() {
 
   const hideDeleteProductDialog = () => {
     setDeleteProductDialog(false);
-  };
-
-  const confirmDeleteProduct = (product) => {
-    setProduct(product);
-    setDeleteProductDialog(true);
   };
 
   const deleteProduct = () => {
@@ -113,36 +140,15 @@ export default function Orders() {
     return <Tag value={rowData.status} severity={getSeverity(rowData)}></Tag>;
   };
 
-  const actionBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <Button
-          icon="pi pi-pencil"
-          rounded
-          outlined
-          className="mr-2"
-          onClick={() => setVisibleRight(true)}
-        />
-        <Button
-          icon="pi pi-trash"
-          rounded
-          outlined
-          severity="danger"
-          onClick={() => confirmDeleteProduct(rowData)}
-        />
-      </React.Fragment>
-    );
-  };
-
   const getSeverity = (product) => {
     switch (product.status) {
-      case "OPEN":
+      case "DELIVERED":
         return "success";
 
-      case "CLOSED":
+      case "YET TO DELIVER":
         return "warning";
 
-      case "OUTOFSTOCK":
+      case "RETURNED":
         return "danger";
 
       default:
@@ -150,17 +156,29 @@ export default function Orders() {
     }
   };
 
+  const exportCSV = () => {
+    dt.current.exportCSV();
+  };
+
   const header = (
     <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-      <h4 className="m-0">Manage Vendors</h4>
-      <IconField iconPosition="left">
-        <InputIcon className="pi pi-search" />
-        <InputText
-          type="search"
-          onInput={(e) => setGlobalFilter(e.target.value)}
-          placeholder="Search..."
+      <h4 className="m-0"></h4>
+      <div className="rightDiv flex gap-2 p-3">
+        <IconField iconPosition="left">
+          <InputIcon className="pi pi-search" />
+          <InputText
+            type="search"
+            onInput={(e) => setGlobalFilter(e.target.value)}
+            placeholder="Search..."
+          />
+        </IconField>
+        <Button
+          label="Export"
+          icon="pi pi-upload"
+          className="p-button-success"
+          onClick={exportCSV}
         />
-      </IconField>
+      </div>
     </div>
   );
 
@@ -181,6 +199,11 @@ export default function Orders() {
     </React.Fragment>
   );
 
+  const handleVendorClick = (vendor) => {
+    setViewData(true);
+    console.log(vendor);
+  };
+
   return (
     <div>
       <div className="primaryNav">
@@ -190,51 +213,43 @@ export default function Orders() {
       <div className="">
         <Toast ref={toast} />
         <div className="card ml-3 mr-3">
-          <div className="filterTabs flex flex-wrap justify-content-evenly mb-3">
-            <FloatLabel className="w-full md:w-20rem mt-5">
-              <MultiSelect
-                value={selectedCities}
-                onChange={(e) => setSelectedCities(e.value)}
-                options={cities}
-                optionLabel="name"
-                maxSelectedLabels={3}
-                className="w-full"
-              />
-              <label htmlFor="ms-cities">Restaurant Filter</label>
-            </FloatLabel>
-            <FloatLabel className="w-full md:w-20rem mt-5">
-              <MultiSelect
-                value={selectedCities}
-                onChange={(e) => setSelectedCities(e.value)}
-                options={cities}
-                optionLabel="name"
-                maxSelectedLabels={3}
-                className="w-full"
-              />
-              <label htmlFor="ms-cities">Restaurant Filter</label>
-            </FloatLabel>
-            <FloatLabel className="w-full md:w-20rem mt-5">
-              <MultiSelect
-                value={selectedCities}
-                onChange={(e) => setSelectedCities(e.value)}
-                options={cities}
-                optionLabel="name"
-                maxSelectedLabels={3}
-                className="w-full"
-              />
-              <label htmlFor="ms-cities">Restaurant Filter</label>
-            </FloatLabel>
-            <FloatLabel className="w-full md:w-20rem mt-5">
-              <MultiSelect
-                value={selectedCities}
-                onChange={(e) => setSelectedCities(e.value)}
-                options={cities}
-                optionLabel="name"
-                maxSelectedLabels={3}
-                className="w-full"
-              />
-              <label htmlFor="ms-cities">Restaurant Filter</label>
-            </FloatLabel>
+          <div className="filterTabs flex flex-wrap align-items-center justify-content-between gap-4 mb-3">
+            <div className="dataFilterContainer flex flex-wrap gap-5 ">
+              <FloatLabel className="w-full md:w-20rem mt-5">
+                <MultiSelect
+                  value={selectedCities}
+                  onChange={(e) => setSelectedCities(e.value)}
+                  options={cities}
+                  optionLabel="name"
+                  maxSelectedLabels={3}
+                  className="w-full"
+                />
+                <label htmlFor="ms-cities">Restaurant Filter</label>
+              </FloatLabel>
+
+              <FloatLabel className="w-full md:w-20rem mt-5">
+                <Calendar
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.value)}
+                  dateFormat="dd/mm/yy"
+                  showIcon
+                  className="w-full"
+                />
+                <label htmlFor="calendar-date">Date Filter</label>
+              </FloatLabel>
+
+              <FloatLabel className="w-full md:w-20rem mt-5">
+                <MultiSelect
+                  value={selectedCities}
+                  onChange={(e) => setSelectedCities(e.value)}
+                  options={cities}
+                  optionLabel="name"
+                  maxSelectedLabels={3}
+                  className="w-full"
+                />
+                <label htmlFor="ms-cities">Restaurant Filter</label>
+              </FloatLabel>
+            </div>
           </div>
           <DataTable
             ref={dt}
@@ -252,62 +267,83 @@ export default function Orders() {
             globalFilter={globalFilter}
             header={header}
           >
-            <Column selectionMode="multiple" frozen></Column>
+            <Column
+              selectionMode="multiple"
+              frozen
+              style={{ background: "white" }}
+            ></Column>
             <Column
               field="id"
-              header="Vendor ID"
+              header="Order ID"
               sortable
               frozen
-              style={{ minWidth: "10rem" }}
+              body={(rowData) => (
+                <span
+                  style={{
+                    color: "blue",
+                  }}
+                  onClick={() => handleVendorClick(rowData)}
+                >
+                  {rowData.id}
+                </span>
+              )}
+              style={{ inlineSize: "16rem", background: "white" }}
             ></Column>
             <Column
               field="code"
-              header="Code"
+              header="User ID"
               sortable
-              style={{ minWidth: "12rem" }}
+              style={{ inlineSize: "16rem" }}
             ></Column>
             <Column
               field="name"
               header="Name"
               sortable
-              style={{ minWidth: "16rem" }}
+              style={{ inlineSize: "16rem" }}
             ></Column>
             <Column
-              field="cuisine"
-              header="Category"
+              field="vendor"
+              header="Vendor Name"
               sortable
-              style={{ minWidth: "12rem" }}
+              style={{ inlineSize: "20rem" }}
+            ></Column>
+            <Column
+              field="product"
+              header="Product"
+              sortable
+              style={{ inlineSize: "12rem" }}
+            ></Column>
+            <Column
+              field="date"
+              header="Date"
+              sortable
+              style={{ inlineSize: "15rem" }}
+            ></Column>
+            <Column
+              field="time"
+              header="Time"
+              sortable
+              style={{ inlineSize: "15rem" }}
             ></Column>
             <Column
               field="contactNo"
               header="Contact No"
               sortable
-              style={{ minWidth: "12rem" }}
-            ></Column>
-            <Column
-              field="email"
-              header="Email ID"
-              sortable
-              style={{ minWidth: "10rem" }}
+              style={{ inlineSize: "18rem" }}
             ></Column>
             <Column
               field="status"
               header="Status"
               body={statusBodyTemplate}
               sortable
-              style={{ minWidth: "12rem" }}
-            ></Column>
-            <Column
-              body={actionBodyTemplate}
-              exportable={false}
-              style={{ minWidth: "12rem" }}
+              style={{ inlineSize: "30rem" }}
             ></Column>
           </DataTable>
         </div>
 
         <Dialog
           visible={deleteProductDialog}
-          style={{ width: "32rem" }}
+          style={{ inlineSize: "32rem" }}
           breakpoints={{ "960px": "75vw", "641px": "90vw" }}
           header="Confirm"
           modal
@@ -328,18 +364,12 @@ export default function Orders() {
         </Dialog>
 
         <Sidebar
-          visible={visibleRight}
+          visible={viewData}
           position="right"
-          style={{ width: "1000px" }}
-          onHide={() => setVisibleRight(false)}
+          onHide={() => setViewData(false)}
+          style={{ inlineSize: "1000px" }}
         >
-          <h2>Right Sidebar</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
-          </p>
+          <OrderSideBar />
         </Sidebar>
       </div>
     </div>

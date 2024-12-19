@@ -144,7 +144,7 @@ export default function Vendors() {
   const header = (
     <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
       <div className="flex align-items-center gap-4">
-        <h4 className="m-0">Vendors</h4>
+        <h4 className="m-0"></h4>
       </div>
       <div className="leftDiv flex gap-2 align-items-center">
         <Paginator
@@ -209,7 +209,7 @@ export default function Vendors() {
         <div className="card ml-3 mr-3">
           <div className="filterTabs flex flex-wrap align-items-center justify-content-between gap-4 mb-3">
             <div className="dataFilterContainer flex flex-wrap gap-5 ">
-              <FloatLabel className="w-full md:w-20rem mt-3">
+              <FloatLabel className="w-full md:w-20rem mt-5">
                 <MultiSelect
                   value={selectedCities}
                   onChange={(e) => setSelectedCities(e.value)}
@@ -220,7 +220,7 @@ export default function Vendors() {
                 />
                 <label htmlFor="ms-cities">Restaurant Filter</label>
               </FloatLabel>
-              <FloatLabel className="w-full md:w-20rem mt-3">
+              <FloatLabel className="w-full md:w-20rem mt-5">
                 <MultiSelect
                   value={selectedCities}
                   onChange={(e) => setSelectedCities(e.value)}
@@ -231,7 +231,7 @@ export default function Vendors() {
                 />
                 <label htmlFor="ms-cities">Restaurant Filter</label>
               </FloatLabel>
-              <FloatLabel className="w-full md:w-20rem mt-3">
+              <FloatLabel className="w-full md:w-20rem mt-5">
                 <MultiSelect
                   value={selectedCities}
                   onChange={(e) => setSelectedCities(e.value)}
@@ -243,7 +243,7 @@ export default function Vendors() {
                 <label htmlFor="ms-cities">Restaurant Filter</label>
               </FloatLabel>
             </div>
-            <div className="buttons mt-3">
+            <div className="buttons mt-5">
               <Button
                 icon="pi pi-pencil"
                 rounded

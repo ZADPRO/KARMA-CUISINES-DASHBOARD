@@ -1,7 +1,5 @@
 import "./Dashboard.css";
 
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
 import { Chart } from "primereact/chart";
@@ -12,28 +10,6 @@ import DashboardProducts from "../../Pages/DashboardProducts/DashboardProducts";
 export default function Dashboard() {
   const [chartData, setChartData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
-
-  const lineData = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
-    datasets: [
-      {
-        label: "Previous Month",
-        data: [65, 59, 80, 81, 56, 55, 40],
-        fill: false,
-        backgroundColor: "#2f4860",
-        borderColor: "#2f4860",
-        tension: 0.4,
-      },
-      {
-        label: "Current Month",
-        data: [28, 48, 40, 19, 86, 27, 90],
-        fill: false,
-        backgroundColor: "#00bb7e",
-        borderColor: "#00bb7e",
-        tension: 0.4,
-      },
-    ],
-  };
 
   const cardData = [
     {
@@ -135,45 +111,8 @@ export default function Dashboard() {
     setChartOptions(options);
   }, []);
 
-  const [products, setProducts] = useState([]);
-
   const menu1 = useRef(null);
   const menu2 = useRef(null);
-
-  const lineOptions = {
-    plugins: {
-      legend: {
-        labels: {
-          color: "#495057",
-        },
-      },
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: "#495057",
-        },
-        grid: {
-          color: "#ebedef",
-        },
-      },
-      y: {
-        ticks: {
-          color: "#495057",
-        },
-        grid: {
-          color: "#ebedef",
-        },
-      },
-    },
-  };
-
-  const formatCurrency = (value) => {
-    return value?.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
-  };
 
   return (
     <div>
@@ -198,7 +137,7 @@ export default function Dashboard() {
         </div>
 
         <div
-          className="dashboardCont"
+          className="dashboardCont flex flex-wrap"
           style={{ display: "flex", justifyContent: "space-around" }}
         >
           {/* RECENT SALES & BEST SELLING PRODUCTS */}
