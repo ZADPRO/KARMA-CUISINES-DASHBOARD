@@ -38,7 +38,6 @@ export default function Vendors() {
   const dt = useRef(null);
   const [addNew, setAddNew] = useState(false);
   const [viewData, setViewData] = useState(false);
-  const [selectedVendor, setSelectedVendor] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -145,26 +144,7 @@ export default function Vendors() {
   const header = (
     <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
       <div className="flex align-items-center gap-4">
-        <h4 className="m-0">Manage Vendors</h4>
-        <div className="buttons">
-          <Button
-            icon="pi pi-pencil"
-            rounded
-            outlined
-            severity="secondary"
-            className="mr-2"
-            disabled
-            onClick={() => setAddNew(true)}
-          />
-          <Button
-            icon="pi pi-trash"
-            rounded
-            outlined
-            disabled
-            severity="danger"
-            onClick={() => confirmDeleteProduct(true)}
-          />
-        </div>
+        <h4 className="m-0">Vendors</h4>
       </div>
       <div className="leftDiv flex gap-2 align-items-center">
         <Paginator
@@ -174,8 +154,8 @@ export default function Vendors() {
           rowsPerPageOptions={[5, 10, 25]}
           onPageChange={onPageChange}
           totalRecords={products?.length || 0}
-          template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
+          // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+          // currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
         />
         <IconField iconPosition="left">
           <InputIcon className="pi pi-search" />
@@ -227,40 +207,61 @@ export default function Vendors() {
       <div className="">
         <Toast ref={toast} />
         <div className="card ml-3 mr-3">
-          <div className="filterTabs flex flex-wrap justify-content-start gap-4 mb-3">
-            <FloatLabel className="w-full md:w-20rem mt-5">
-              <MultiSelect
-                value={selectedCities}
-                onChange={(e) => setSelectedCities(e.value)}
-                options={cities}
-                optionLabel="name"
-                maxSelectedLabels={3}
-                className="w-full"
+          <div className="filterTabs flex flex-wrap align-items-center justify-content-between gap-4 mb-3">
+            <div className="dataFilterContainer flex flex-wrap gap-5 ">
+              <FloatLabel className="w-full md:w-20rem mt-3">
+                <MultiSelect
+                  value={selectedCities}
+                  onChange={(e) => setSelectedCities(e.value)}
+                  options={cities}
+                  optionLabel="name"
+                  maxSelectedLabels={3}
+                  className="w-full"
+                />
+                <label htmlFor="ms-cities">Restaurant Filter</label>
+              </FloatLabel>
+              <FloatLabel className="w-full md:w-20rem mt-3">
+                <MultiSelect
+                  value={selectedCities}
+                  onChange={(e) => setSelectedCities(e.value)}
+                  options={cities}
+                  optionLabel="name"
+                  maxSelectedLabels={3}
+                  className="w-full"
+                />
+                <label htmlFor="ms-cities">Restaurant Filter</label>
+              </FloatLabel>
+              <FloatLabel className="w-full md:w-20rem mt-3">
+                <MultiSelect
+                  value={selectedCities}
+                  onChange={(e) => setSelectedCities(e.value)}
+                  options={cities}
+                  optionLabel="name"
+                  maxSelectedLabels={3}
+                  className="w-full"
+                />
+                <label htmlFor="ms-cities">Restaurant Filter</label>
+              </FloatLabel>
+            </div>
+            <div className="buttons mt-3">
+              <Button
+                icon="pi pi-pencil"
+                rounded
+                outlined
+                severity="secondary"
+                className="mr-2"
+                disabled
+                onClick={() => setAddNew(true)}
               />
-              <label htmlFor="ms-cities">Restaurant Filter</label>
-            </FloatLabel>
-            <FloatLabel className="w-full md:w-20rem mt-5">
-              <MultiSelect
-                value={selectedCities}
-                onChange={(e) => setSelectedCities(e.value)}
-                options={cities}
-                optionLabel="name"
-                maxSelectedLabels={3}
-                className="w-full"
+              <Button
+                icon="pi pi-trash"
+                rounded
+                outlined
+                disabled
+                severity="danger"
+                onClick={() => confirmDeleteProduct(true)}
               />
-              <label htmlFor="ms-cities">Restaurant Filter</label>
-            </FloatLabel>
-            <FloatLabel className="w-full md:w-20rem mt-5">
-              <MultiSelect
-                value={selectedCities}
-                onChange={(e) => setSelectedCities(e.value)}
-                options={cities}
-                optionLabel="name"
-                maxSelectedLabels={3}
-                className="w-full"
-              />
-              <label htmlFor="ms-cities">Restaurant Filter</label>
-            </FloatLabel>
+            </div>
           </div>
           <DataTable
             ref={dt}

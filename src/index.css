@@ -26,16 +26,3 @@ a {
 .p-stepper .p-stepper-header.p-highlight .p-stepper-number {
   background-color: #00052e;
 }
-
-/* .p-button {
-  background-color: #00052e;
-  border: #00052e;
-} */
-
-.routes {
-  min-block-size: 85vh;
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  justify-content: space-between;
-}

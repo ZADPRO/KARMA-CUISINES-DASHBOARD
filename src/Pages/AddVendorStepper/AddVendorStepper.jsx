@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { InputSwitch } from "primereact/inputswitch";
+import { Toast } from "primereact/toast";
 
 import FileUploadTemplate from "../FileUpload/FileUploadTemplate";
 
@@ -26,6 +27,8 @@ import {
 } from "lucide-react";
 
 export default function AddVendorStepper() {
+  const toastRef = useRef(null);
+
   const stepperRef = useRef(null);
   const [uploadLogoEnabled, setUploadLogoEnabled] = useState(false);
   const [socialLinksEnabled, setSocialLinksEnabled] = useState(false);
@@ -65,6 +68,8 @@ export default function AddVendorStepper() {
 
   return (
     <div>
+      <Toast ref={toastRef} />
+
       <Stepper ref={stepperRef} style={{ flexBasis: "50rem" }}>
         <StepperPanel header="Basic Info">
           <div className="border-2 px-5 py-5 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
@@ -363,7 +368,14 @@ export default function AddVendorStepper() {
               icon="pi pi-arrow-right"
               iconPos="right"
               severity="success"
-              // onClick={() => stepperRef.current.nextCallback()}
+              onClick={() => {
+                toastRef.current.show({
+                  severity: "success",
+                  summary: "Success",
+                  detail: "Form submitted successfully!",
+                  life: 3000,
+                });
+              }}
             />
           </div>
         </StepperPanel>
