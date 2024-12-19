@@ -5,10 +5,14 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
 import { Chart } from "primereact/chart";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BaggageClaim, Coins, TriangleAlert, Undo2 } from "lucide-react";
+import DashboardProducts from "../../Pages/DashboardProducts/DashboardProducts";
 
 export default function Dashboard() {
+  const [chartData, setChartData] = useState({});
+  const [chartOptions, setChartOptions] = useState({});
+
   const lineData = {
     labels: ["January", "February", "March", "April", "May", "June", "July"],
     datasets: [
@@ -61,6 +65,75 @@ export default function Dashboard() {
       icon: <TriangleAlert size={40} />,
     },
   ];
+
+  useEffect(() => {
+    const documentStyle = getComputedStyle(document.documentElement);
+    const textColor = documentStyle.getPropertyValue("--text-color");
+    const textColorSecondary = documentStyle.getPropertyValue(
+      "--text-color-secondary"
+    );
+    const surfaceBorder = documentStyle.getPropertyValue("--surface-border");
+    const data = {
+      labels: ["January", "February", "March", "April", "May", "June", "July"],
+      datasets: [
+        {
+          type: "line",
+          label: "Dataset 1",
+          borderColor: documentStyle.getPropertyValue("--blue-500"),
+          borderWidth: 2,
+          fill: false,
+          tension: 0.4,
+          data: [50, 25, 12, 48, 56, 76, 42],
+        },
+        {
+          type: "bar",
+          label: "Dataset 2",
+          backgroundColor: documentStyle.getPropertyValue("--green-500"),
+          data: [21, 84, 24, 75, 37, 65, 34],
+          borderColor: "white",
+          borderWidth: 2,
+        },
+        {
+          type: "bar",
+          label: "Dataset 3",
+          backgroundColor: documentStyle.getPropertyValue("--orange-500"),
+          data: [41, 52, 24, 74, 23, 21, 32],
+        },
+      ],
+    };
+    const options = {
+      maintainAspectRatio: false,
+      aspectRatio: 0.6,
+      plugins: {
+        legend: {
+          labels: {
+            color: textColor,
+          },
+        },
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: textColorSecondary,
+          },
+          grid: {
+            color: surfaceBorder,
+          },
+        },
+        y: {
+          ticks: {
+            color: textColorSecondary,
+          },
+          grid: {
+            color: surfaceBorder,
+          },
+        },
+      },
+    };
+
+    setChartData(data);
+    setChartOptions(options);
+  }, []);
 
   const [products, setProducts] = useState([]);
 
@@ -130,49 +203,7 @@ export default function Dashboard() {
         >
           {/* RECENT SALES & BEST SELLING PRODUCTS */}
           <div className="col-12 xl:col-6 dashboardAnalytics">
-            <div className="card">
-              <h5>Recent Sales</h5>
-              <DataTable
-                value={products}
-                rows={5}
-                paginator
-                responsiveLayout="scroll"
-              >
-                <Column
-                  header="Image"
-                  body={(data) => (
-                    <img
-                      className="shadow-2"
-                      src={`/demo/images/product/${data.image}`}
-                      alt={data.image}
-                      width="50"
-                    />
-                  )}
-                />
-                <Column
-                  field="name"
-                  header="Name"
-                  sortable
-                  style={{ inlineSize: "35%" }}
-                />
-                <Column
-                  field="price"
-                  header="Price"
-                  sortable
-                  style={{ inlineSize: "35%" }}
-                  body={(data) => formatCurrency(data.price)}
-                />
-                <Column
-                  header="View"
-                  style={{ inlineSize: "15%" }}
-                  body={() => (
-                    <>
-                      <Button icon="pi pi-search" text />
-                    </>
-                  )}
-                />
-              </DataTable>
-            </div>
+            <DashboardProducts />
             <div className="card mt-4">
               <div className="flex justify-content-between align-items-center mb-5">
                 <h5>Best Selling Products</h5>
@@ -286,7 +317,7 @@ export default function Dashboard() {
           <div className="col-12 xl:col-6 dashboardAnalytics">
             <div className="card">
               <h5>Sales Overview</h5>
-              <Chart type="line" data={lineData} options={lineOptions} />
+              <Chart type="line" data={chartData} options={chartOptions} />{" "}
             </div>
 
             <div className="card mt-4">

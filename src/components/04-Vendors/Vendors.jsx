@@ -14,6 +14,7 @@ import { Sidebar } from "primereact/sidebar";
 import { Paginator } from "primereact/paginator";
 
 import AddVendorStepper from "../../Pages/AddVendorStepper/AddVendorStepper";
+import PreviewVendorStepper from "../../Pages/PreviewVendorStepper/PreviewVendorStepper";
 
 export default function Vendors() {
   let emptyProduct = {
@@ -35,8 +36,9 @@ export default function Vendors() {
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
-  const [visibleRight, setVisibleRight] = useState(false);
-
+  const [addNew, setAddNew] = useState(false);
+  const [viewData, setViewData] = useState(false);
+  const [selectedVendor, setSelectedVendor] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -152,7 +154,7 @@ export default function Vendors() {
             severity="secondary"
             className="mr-2"
             disabled
-            onClick={() => setVisibleRight(true)}
+            onClick={() => setAddNew(true)}
           />
           <Button
             icon="pi pi-trash"
@@ -188,7 +190,7 @@ export default function Vendors() {
           rounded
           className="mr-2"
           style={{ background: "#00052e" }}
-          onClick={() => setVisibleRight(true)}
+          onClick={() => setAddNew(true)}
         />
       </div>
     </div>
@@ -211,6 +213,11 @@ export default function Vendors() {
     </React.Fragment>
   );
 
+  const handleVendorClick = (vendor) => {
+    setViewData(true);
+    console.log(vendor);
+  };
+
   return (
     <div>
       <div className="primaryNav">
@@ -220,18 +227,7 @@ export default function Vendors() {
       <div className="">
         <Toast ref={toast} />
         <div className="card ml-3 mr-3">
-          <div className="filterTabs flex flex-wrap justify-content-evenly mb-3">
-            <FloatLabel className="w-full md:w-20rem mt-5">
-              <MultiSelect
-                value={selectedCities}
-                onChange={(e) => setSelectedCities(e.value)}
-                options={cities}
-                optionLabel="name"
-                maxSelectedLabels={3}
-                className="w-full"
-              />
-              <label htmlFor="ms-cities">Restaurant Filter</label>
-            </FloatLabel>
+          <div className="filterTabs flex flex-wrap justify-content-start gap-4 mb-3">
             <FloatLabel className="w-full md:w-20rem mt-5">
               <MultiSelect
                 value={selectedCities}
@@ -287,6 +283,16 @@ export default function Vendors() {
               header="Vendor ID"
               sortable
               frozen
+              body={(rowData) => (
+                <span
+                  style={{
+                    color: "blue",
+                  }}
+                  onClick={() => handleVendorClick(rowData)}
+                >
+                  {rowData.id}
+                </span>
+              )}
               style={{ inlineSize: "10rem", background: "white" }}
             ></Column>
             <Column
@@ -352,12 +358,21 @@ export default function Vendors() {
         </Dialog>
 
         <Sidebar
-          visible={visibleRight}
+          visible={addNew}
           position="right"
           style={{ inlineSize: "1000px" }}
-          onHide={() => setVisibleRight(false)}
+          onHide={() => setAddNew(false)}
         >
           <AddVendorStepper />
+        </Sidebar>
+
+        <Sidebar
+          visible={viewData}
+          position="right"
+          onHide={() => setViewData(false)}
+          style={{ inlineSize: "1000px" }}
+        >
+          <PreviewVendorStepper />
         </Sidebar>
       </div>
     </div>

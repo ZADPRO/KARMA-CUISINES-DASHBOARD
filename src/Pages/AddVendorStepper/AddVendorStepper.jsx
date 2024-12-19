@@ -27,7 +27,41 @@ import {
 
 export default function AddVendorStepper() {
   const stepperRef = useRef(null);
-  const [checked, setChecked] = useState(false);
+  const [uploadLogoEnabled, setUploadLogoEnabled] = useState(false);
+  const [socialLinksEnabled, setSocialLinksEnabled] = useState(false);
+
+  const [isCommercialRegisterEnabled, setCommercialRegisterEnabled] =
+    useState(false);
+  const [isVatEnabled, setVatEnabled] = useState(false);
+  const [isAlcoholLicenseEnabled, setAlcoholLicenseEnabled] = useState(false);
+  const [isFoodSafetyEnabled, setFoodSafetyEnabled] = useState(false);
+  const [isLiabilityInsuranceEnabled, setLiabilityInsuranceEnabled] =
+    useState(false);
+
+  const [acceptInternationalCard, setAcceptInternationalCard] = useState(false);
+  const [acceptTwint, setAcceptTwint] = useState(false);
+  const [acceptPostFinance, setAcceptPostFinance] = useState(false);
+  const [acceptApplePay, setAcceptApplePay] = useState(false);
+
+  const [formData, setFormData] = useState({
+    restaurantName: "",
+    contactPersonName: "",
+    contactPersonDesignation: "",
+    contactPersonNumber: "",
+    contactPersonEmail: "",
+    restaurantAddress: "",
+    websiteURL: "",
+    facebook: "",
+    instagram: "",
+    twitter: "",
+  });
+
+  const handleInputChange = (e, field) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: e.target.value,
+    }));
+  };
 
   return (
     <div>
@@ -39,20 +73,34 @@ export default function AddVendorStepper() {
                 <span className="p-inputgroup-addon">
                   <Utensils size={20} />
                 </span>
-                <InputText placeholder="Restaurant Name" />
+                <InputText
+                  placeholder="Restaurant Name"
+                  value={formData.restaurantName}
+                  onChange={(e) => handleInputChange(e, "restaurantName")}
+                />
               </div>{" "}
               <div className="flex gap-3 mt-3">
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
                     <User size={20} />{" "}
                   </span>
-                  <InputText placeholder="Contact Person Name " />
+                  <InputText
+                    placeholder="Contact Person Name"
+                    value={formData.contactPersonName}
+                    onChange={(e) => handleInputChange(e, "contactPersonName")}
+                  />{" "}
                 </div>
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
                     <BriefcaseBusiness size={20} />
                   </span>
-                  <InputText placeholder="Contact Person Designation " />
+                  <InputText
+                    placeholder="Contact Person Designation"
+                    value={formData.contactPersonDesignation}
+                    onChange={(e) =>
+                      handleInputChange(e, "contactPersonDesignation")
+                    }
+                  />{" "}
                 </div>
               </div>
               <div className="flex gap-3 mt-3">
@@ -60,42 +108,60 @@ export default function AddVendorStepper() {
                   <span className="p-inputgroup-addon">
                     <Contact size={20} />{" "}
                   </span>
-                  <InputText placeholder="Contact Person Number" />
+                  <InputText
+                    placeholder="Contact Person Number"
+                    value={formData.contactPersonNumber}
+                    onChange={(e) =>
+                      handleInputChange(e, "contactPersonNumber")
+                    }
+                  />{" "}
                 </div>
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
                     <Phone size={20} />
                   </span>
-                  <InputText placeholder="Contact Person Email" />
+                  <InputText
+                    placeholder="Contact Person Email"
+                    value={formData.contactPersonEmail}
+                    onChange={(e) => handleInputChange(e, "contactPersonEmail")}
+                  />{" "}
                 </div>
               </div>
               <div className="p-inputgroup flex-1 mt-3">
                 <span className="p-inputgroup-addon">
                   <MapPinHouse size={20} />{" "}
                 </span>
-                <InputText placeholder="Restaurant Address" />
+                <InputText
+                  placeholder="Restaurant Address"
+                  value={formData.restaurantAddress}
+                  onChange={(e) => handleInputChange(e, "restaurantAddress")}
+                />{" "}
               </div>{" "}
               <div className="p-inputgroup flex-1 mt-3">
                 <span className="p-inputgroup-addon">
                   <Link size={20} />
                 </span>
-                <InputText placeholder="Website URL" />
+                <InputText
+                  placeholder="Website URL"
+                  value={formData.websiteURL}
+                  onChange={(e) => handleInputChange(e, "websiteURL")}
+                />{" "}
               </div>{" "}
               <div className="fileUpload mt-3 flex-col">
                 <div className="flex align-items-center gap-3">
                   <InputSwitch
-                    checked={checked}
-                    onChange={(e) => setChecked(e.value)}
+                    checked={uploadLogoEnabled}
+                    onChange={(e) => setUploadLogoEnabled(e.value)}
                   />
                   <span className="">Upload Logo</span>
                 </div>
-                <FileUploadTemplate enabled={checked} />
+                <FileUploadTemplate enabled={uploadLogoEnabled} />
               </div>
               <div className="fileUpload mt-3 flex-col">
                 <div className="flex align-items-center gap-3">
                   <InputSwitch
-                    checked={checked}
-                    onChange={(e) => setChecked(e.value)}
+                    checked={socialLinksEnabled}
+                    onChange={(e) => setSocialLinksEnabled(e.value)}
                   />
                   <span className="">Social Media Links</span>
                 </div>
@@ -104,19 +170,34 @@ export default function AddVendorStepper() {
                     <span className="p-inputgroup-addon">
                       <Facebook size={20} />{" "}
                     </span>
-                    <InputText placeholder="Facebook" />
+                    <InputText
+                      placeholder="Facebook"
+                      value={formData.facebook}
+                      onChange={(e) => handleInputChange(e, "facebook")}
+                      disabled={!socialLinksEnabled}
+                    />{" "}
                   </div>
                   <div className="p-inputgroup flex-1">
                     <span className="p-inputgroup-addon">
                       <Instagram size={20} />{" "}
                     </span>
-                    <InputText placeholder="Instagram" />
+                    <InputText
+                      placeholder="Instagram"
+                      value={formData.instagram}
+                      onChange={(e) => handleInputChange(e, "instagram")}
+                      disabled={!socialLinksEnabled}
+                    />{" "}
                   </div>
                   <div className="p-inputgroup flex-1">
                     <span className="p-inputgroup-addon">
                       <Twitter size={20} />{" "}
                     </span>
-                    <InputText placeholder="Twitter" />
+                    <InputText
+                      placeholder="Twitter"
+                      value={formData.twitter}
+                      onChange={(e) => handleInputChange(e, "twitter")}
+                      disabled={!socialLinksEnabled}
+                    />{" "}
                   </div>
                 </div>
               </div>
@@ -136,50 +217,59 @@ export default function AddVendorStepper() {
           <div className="border-2 px-5 py-5 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
             <div className="uploadFiles w-full">
               <div className="fileUpload mt-3 flex-col">
-                <div className="flex align-items-center gap-3">
-                  <InputSwitch
-                    checked={checked}
-                    onChange={(e) => setChecked(e.value)}
-                  />
-                  <span className="">Upload FSSAI License Number</span>
+                <div className="fileUpload flex-col">
+                  <div className="flex align-items-center gap-3">
+                    <InputSwitch
+                      checked={isVatEnabled}
+                      required
+                      onChange={(e) => setVatEnabled(e.value)}
+                    />
+                    <span>Upload VAT Registration Certificate</span>
+                  </div>
+                  <FileUploadTemplate enabled={isVatEnabled} />
                 </div>
-                <FileUploadTemplate enabled={checked} />
+
+                <div className="flex align-items-center mt-3 gap-3">
+                  <InputSwitch
+                    checked={isCommercialRegisterEnabled}
+                    onChange={(e) => setCommercialRegisterEnabled(e.value)}
+                  />
+                  <span>Upload Commercial Register Extract</span>
+                </div>
+                <FileUploadTemplate enabled={isCommercialRegisterEnabled} />
               </div>
+
               <div className="fileUpload mt-3 flex-col">
                 <div className="flex align-items-center gap-3">
                   <InputSwitch
-                    checked={checked}
-                    onChange={(e) => setChecked(e.value)}
+                    checked={isAlcoholLicenseEnabled}
+                    onChange={(e) => setAlcoholLicenseEnabled(e.value)}
                   />
-                  <span className="">
-                    Upload GSTIN (Goods and Services Tax Identification Number)
-                  </span>
+                  <span>Upload Alcohol License (if applicable)</span>
                 </div>
-                <FileUploadTemplate enabled={checked} />
+                <FileUploadTemplate enabled={isAlcoholLicenseEnabled} />
               </div>
+
               <div className="fileUpload mt-3 flex-col">
                 <div className="flex align-items-center gap-3">
                   <InputSwitch
-                    checked={checked}
-                    onChange={(e) => setChecked(e.value)}
+                    checked={isFoodSafetyEnabled}
+                    onChange={(e) => setFoodSafetyEnabled(e.value)}
                   />
-                  <span className="">
-                    Upload Alcohol License Number (if applicable)
-                  </span>
+                  <span>Upload Food Safety and Hygiene Certificate</span>
                 </div>
-                <FileUploadTemplate enabled={checked} />
+                <FileUploadTemplate enabled={isFoodSafetyEnabled} />
               </div>
+
               <div className="fileUpload mt-3 flex-col">
                 <div className="flex align-items-center gap-3">
                   <InputSwitch
-                    checked={checked}
-                    onChange={(e) => setChecked(e.value)}
+                    checked={isLiabilityInsuranceEnabled}
+                    onChange={(e) => setLiabilityInsuranceEnabled(e.value)}
                   />
-                  <span className="">
-                    Upload Health Inspection Certificate Details
-                  </span>
+                  <span>Upload Liability Insurance Certificate</span>
                 </div>
-                <FileUploadTemplate enabled={checked} />
+                <FileUploadTemplate enabled={isLiabilityInsuranceEnabled} />
               </div>
             </div>
           </div>
@@ -202,56 +292,63 @@ export default function AddVendorStepper() {
         <StepperPanel header="Financial Info">
           <div className="border-2 px-5 py-5 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
             <div className="inputForms w-full">
-              <span className="">Bank Account Details </span>
+              <span>Bank Account Details</span>
               <div className="p-inputgroup flex-1 mt-3">
                 <span className="p-inputgroup-addon">
                   <Landmark size={20} />
                 </span>
-                <InputText placeholder="Bank Name " />
-              </div>{" "}
+                <InputText placeholder="Bank Name" />
+              </div>
               <div className="flex gap-3 mt-3 mb-3">
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
-                    <Banknote size={20} />{" "}
+                    <Banknote size={20} />
                   </span>
-                  <InputText placeholder="Account Number " />
+                  <InputText placeholder="Account Number" />
                 </div>
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
                     <CreditCard size={20} />
                   </span>
-                  <InputText placeholder="IFSC Code " />
+                  <InputText placeholder="IBAN Code" />
                 </div>
               </div>
-              <span className="">Payment Accepted </span>
+              <span>Payment Accepted</span>
               <div className="flex align-items-center gap-3 mt-3">
                 <InputSwitch
-                  checked={checked}
-                  onChange={(e) => setChecked(e.value)}
+                  checked={acceptInternationalCard}
+                  onChange={(e) => setAcceptInternationalCard(e.value)}
                 />
-                <span className="">UPI</span>
+                <span>Regular International Card</span>
               </div>
-              <div className="flex align-itemss-center gap-3 mt-3">
+              <div className="flex align-items-center gap-3 mt-3">
                 <InputSwitch
-                  checked={checked}
-                  onChange={(e) => setChecked(e.value)}
+                  checked={acceptTwint}
+                  onChange={(e) => setAcceptTwint(e.value)}
                 />
-                <span className="">Cards</span>
+                <span>Twint</span>
+              </div>
+              <div className="flex align-items-center gap-3 mt-3">
+                <InputSwitch
+                  checked={acceptPostFinance}
+                  onChange={(e) => setAcceptPostFinance(e.value)}
+                />
+                <span>PostFinance</span>
               </div>
               <div className="flex align-items-center gap-3 mt-3 mb-3">
                 <InputSwitch
-                  checked={checked}
-                  onChange={(e) => setChecked(e.value)}
+                  checked={acceptApplePay}
+                  onChange={(e) => setAcceptApplePay(e.value)}
                 />
-                <span className="">Cash</span>
+                <span>Apple Pay</span>
               </div>
-              <span className="">Money Transfer Details </span>
+              <span>Money Transfer Details</span>
               <div className="p-inputgroup flex-1 mt-3">
                 <span className="p-inputgroup-addon">
                   <BadgeSwissFranc size={20} />
                 </span>
-                <InputText placeholder="Payout Frequency (Weekly or Monthly) " />
-              </div>{" "}
+                <InputText placeholder="Payout Frequency (Weekly or Monthly)" />
+              </div>
             </div>
           </div>
           <div className="flex pt-4 justify-content-between">
