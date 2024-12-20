@@ -367,7 +367,7 @@ export default function Orders() {
           visible={viewData}
           position="right"
           onHide={() => setViewData(false)}
-          style={{ inlineSize: "1000px" }}
+          style={{ inlineSize: "800px" }}
         >
           <OrderSideBar />
         </Sidebar>

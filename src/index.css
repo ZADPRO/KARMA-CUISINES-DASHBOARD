@@ -6,6 +6,10 @@ a {
   text-decoration: none;
 }
 
+p {
+  margin: 5px;
+}
+
 .p-datatable .p-datatable-tbody > tr > td {
   padding: 10px 1rem;
 }
@@ -13,6 +17,7 @@ a {
 .primaryNav p {
   font-weight: bold;
   font-size: 17px;
+  padding: 1rem 10px;
 }
 
 .p-datatable-header {
@@ -29,4 +34,8 @@ a {
 
 .p-datepicker-trigger.p-button.p-component.p-button-icon-only {
   background-color: #00052e;
+}
+
+.p-fieldset .p-fieldset-content {
+  padding: 0.25rem !important;
 }
