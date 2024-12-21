@@ -294,44 +294,44 @@ export default function Vendors() {
                   {rowData.id}
                 </span>
               )}
-              style={{ inlineSize: "10rem", background: "white" }}
+              style={{ minWidth: "10rem", background: "white" }}
             ></Column>
             <Column
               field="code"
               header="Code"
               sortable
-              style={{ inlineSize: "12rem" }}
+              style={{ minWidth: "12rem" }}
             ></Column>
             <Column
               field="name"
               header="Name"
               sortable
-              style={{ inlineSize: "16rem" }}
+              style={{ minWidth: "13rem" }}
             ></Column>
             <Column
               field="cuisine"
               header="Category"
               sortable
-              style={{ inlineSize: "12rem" }}
+              style={{ minWidth: "12rem" }}
             ></Column>
             <Column
               field="contactNo"
               header="Contact No"
               sortable
-              style={{ inlineSize: "12rem" }}
+              style={{ minWidth: "12rem" }}
             ></Column>
             <Column
               field="email"
               header="Email ID"
               sortable
-              style={{ inlineSize: "10rem" }}
+              style={{ minWidth: "10rem" }}
             ></Column>
             <Column
               field="status"
               header="Status"
               body={statusBodyTemplate}
               sortable
-              style={{ inlineSize: "12rem" }}
+              style={{ minWidth: "12rem" }}
             ></Column>
           </DataTable>
         </div>

@@ -1,6 +1,8 @@
 import { Fieldset } from "primereact/fieldset";
 
 import userSvg from "../../assets/images/userIcon.svg";
+import productSvg from "../../assets/images/deliveryIcon.svg";
+import transactionSvg from "../../assets/images/transaction.svg";
 import { Tag } from "primereact/tag";
 
 export default function OrderSideBar() {
@@ -41,7 +43,7 @@ export default function OrderSideBar() {
         style={{ marginTop: "20px" }}
       >
         <div className="flex w-full align-items-center justify-center">
-          <img src={userSvg} alt="" width={100} />
+          <img src={productSvg} alt="" width={100} />
           <div className="orderDetails w-full ml-3">
             <div className="userDetails w-full flex justify-content-between">
               <p>
@@ -81,7 +83,7 @@ export default function OrderSideBar() {
         style={{ marginTop: "20px" }}
       >
         <div className="flex w-full align-items-center justify-center">
-          <img src={userSvg} alt="" width={100} />
+          <img src={transactionSvg} alt="" width={100} />
           <div className="orderDetails w-full ml-3">
             <div className="orderDetails mt-2">
               <p>

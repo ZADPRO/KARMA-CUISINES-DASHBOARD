@@ -67,7 +67,7 @@ export default function Orders() {
         date: "19-12-2024",
         time: "08:37 AM",
         contactNo: "9876543210",
-        status: "RETURNED",
+        status: "CANCELLED",
       },
       {
         id: "1003",
@@ -78,7 +78,7 @@ export default function Orders() {
         date: "19-12-2024",
         time: "08:37 AM",
         contactNo: "9876543210",
-        status: "RETURNED",
+        status: "CANCELLED",
       },
       {
         id: "1004",
@@ -148,7 +148,7 @@ export default function Orders() {
       case "YET TO DELIVER":
         return "warning";
 
-      case "RETURNED":
+      case "CANCELLED":
         return "danger";
 
       default:
@@ -287,56 +287,56 @@ export default function Orders() {
                   {rowData.id}
                 </span>
               )}
-              style={{ inlineSize: "16rem", background: "white" }}
+              style={{ minWidth: "8rem", background: "white" }}
             ></Column>
             <Column
               field="code"
               header="User ID"
               sortable
-              style={{ inlineSize: "16rem" }}
+              style={{ minWidth: "8rem" }}
             ></Column>
             <Column
               field="name"
               header="Name"
               sortable
-              style={{ inlineSize: "16rem" }}
+              style={{ minWidth: "11rem" }}
             ></Column>
             <Column
               field="vendor"
               header="Vendor Name"
               sortable
-              style={{ inlineSize: "20rem" }}
+              style={{ minWidth: "12rem" }}
             ></Column>
             <Column
               field="product"
               header="Product"
               sortable
-              style={{ inlineSize: "12rem" }}
+              style={{ minWidth: "9rem" }}
             ></Column>
             <Column
               field="date"
               header="Date"
               sortable
-              style={{ inlineSize: "15rem" }}
+              style={{ minWidth: "9rem" }}
             ></Column>
             <Column
               field="time"
               header="Time"
               sortable
-              style={{ inlineSize: "15rem" }}
+              style={{ minWidth: "9rem" }}
             ></Column>
             <Column
               field="contactNo"
               header="Contact No"
               sortable
-              style={{ inlineSize: "18rem" }}
+              style={{ minWidth: "10rem" }}
             ></Column>
             <Column
               field="status"
               header="Status"
               body={statusBodyTemplate}
               sortable
-              style={{ inlineSize: "30rem" }}
+              style={{ minWidth: "10rem" }}
             ></Column>
           </DataTable>
         </div>
