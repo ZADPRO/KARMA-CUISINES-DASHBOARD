@@ -169,6 +169,7 @@ export default function Users() {
                   onChange={(e) => setTypeOfUsers(e.value)}
                   options={usersList}
                   optionLabel="name"
+                  disabled
                   maxSelectedLabels={3}
                   className="w-full"
                 />

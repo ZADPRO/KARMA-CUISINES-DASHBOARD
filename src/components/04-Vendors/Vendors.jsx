@@ -46,21 +46,19 @@ export default function Vendors() {
     setRowsPerPage(event.rows);
   };
 
-  const [selectedCities, setSelectedCities] = useState(null);
-  const cities = [
-    { name: "Restaurant 1", code: "NY" },
-    { name: "Restaurant 2", code: "RM" },
-    { name: "Restaurant 3", code: "LDN" },
-    { name: "Restaurant 4", code: "IST" },
-    { name: "Restaurant 5", code: "PRS" },
+  const [restaurantVendors, setRestaurantVendor] = useState(null);
+  const restaurants = [
+    { name: "Kings Kurry" },
+    { name: "Fajita Friends" },
+    { name: "Ban Thai" },
+    { name: "Sushi Haven" },
   ];
 
   useEffect(() => {
     const restaurantData = [
       {
         id: "1000",
-        code: "VND001",
-        name: "KingsKurry",
+        name: "Kings Kurry",
         cuisine: "Indian, Mughlai",
         contactNo: "9876543210",
         email: "info@kingskurry.com",
@@ -68,7 +66,6 @@ export default function Vendors() {
       },
       {
         id: "1001",
-        code: "VND002",
         name: "Ban Thai",
         cuisine: "Thai, Asian",
         contactNo: "9876543211",
@@ -77,7 +74,6 @@ export default function Vendors() {
       },
       {
         id: "1002",
-        code: "VND003",
         name: "Sushi Haven",
         cuisine: "Japanese, Sushi",
         contactNo: "9876543212",
@@ -86,7 +82,6 @@ export default function Vendors() {
       },
       {
         id: "1003",
-        code: "VND004",
         name: "Fajita Friends",
         cuisine: "Mexican, Tex-Mex",
         contactNo: "9876543213",
@@ -106,6 +101,19 @@ export default function Vendors() {
     setProduct(product);
     setDeleteProductDialog(true);
   };
+
+  const [filteredProducts, setFilteredProducts] = useState(null);
+
+  useEffect(() => {
+    let updatedProducts = products;
+    if (restaurantVendors && restaurantVendors.length) {
+      updatedProducts = updatedProducts.filter((product) =>
+        restaurantVendors.some((vendor) => vendor.name === product.name)
+      );
+    }
+
+    setFilteredProducts(updatedProducts);
+  }, [restaurantVendors, products]);
 
   const deleteProduct = () => {
     let _products = products.filter((val) => val.id !== product.id);
@@ -211,31 +219,9 @@ export default function Vendors() {
             <div className="dataFilterContainer flex flex-wrap gap-5 ">
               <FloatLabel className="w-full md:w-20rem mt-5">
                 <MultiSelect
-                  value={selectedCities}
-                  onChange={(e) => setSelectedCities(e.value)}
-                  options={cities}
-                  optionLabel="name"
-                  maxSelectedLabels={3}
-                  className="w-full"
-                />
-                <label htmlFor="ms-cities">Restaurant Filter</label>
-              </FloatLabel>
-              <FloatLabel className="w-full md:w-20rem mt-5">
-                <MultiSelect
-                  value={selectedCities}
-                  onChange={(e) => setSelectedCities(e.value)}
-                  options={cities}
-                  optionLabel="name"
-                  maxSelectedLabels={3}
-                  className="w-full"
-                />
-                <label htmlFor="ms-cities">Restaurant Filter</label>
-              </FloatLabel>
-              <FloatLabel className="w-full md:w-20rem mt-5">
-                <MultiSelect
-                  value={selectedCities}
-                  onChange={(e) => setSelectedCities(e.value)}
-                  options={cities}
+                  value={restaurantVendors}
+                  onChange={(e) => setRestaurantVendor(e.value)}
+                  options={restaurants}
                   optionLabel="name"
                   maxSelectedLabels={3}
                   className="w-full"
@@ -265,7 +251,7 @@ export default function Vendors() {
           </div>
           <DataTable
             ref={dt}
-            value={products}
+            value={filteredProducts || products}
             selection={selectedProducts}
             onSelectionChange={(e) => setSelectedProducts(e.value)}
             dataKey="id"
@@ -295,12 +281,6 @@ export default function Vendors() {
                 </span>
               )}
               style={{ minWidth: "10rem", background: "white" }}
-            ></Column>
-            <Column
-              field="code"
-              header="Code"
-              sortable
-              style={{ minWidth: "12rem" }}
             ></Column>
             <Column
               field="name"

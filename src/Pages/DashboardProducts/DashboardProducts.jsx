@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Button } from "primereact/button";
 import { DataView, DataViewLayoutOptions } from "primereact/dataview";
 import { Rating } from "primereact/rating";
 import { Tag } from "primereact/tag";
@@ -121,14 +120,6 @@ export default function DashboardProducts() {
                 ></Tag>
               </div>
             </div>
-            {/* <div className="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
-              <span className="text-2xl font-semibold">${product.price}</span>
-              <Button
-                icon="pi pi-shopping-cart"
-                className="p-button-rounded"
-                disabled={product.inventoryStatus === "OUTOFSTOCK"}
-              ></Button>
-            </div> */}
           </div>
         </div>
       </div>
