@@ -36,13 +36,19 @@ export default function Orders() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [viewData, setViewData] = useState(false);
 
-  const [selectedCities, setSelectedCities] = useState(null);
-  const cities = [
-    { name: "Restaurant 1", code: "NY" },
-    { name: "Restaurant 2", code: "RM" },
-    { name: "Restaurant 3", code: "LDN" },
-    { name: "Restaurant 4", code: "IST" },
-    { name: "Restaurant 5", code: "PRS" },
+  const [restaurantVendors, setRestaurantVendor] = useState(null);
+  const [orderStatus, setOrderStatus] = useState(null);
+  const restaurants = [
+    { name: "Kings Kurry" },
+    { name: "Fajita Friends" },
+    { name: "Ban Thai" },
+    { name: "Sushi Haven" },
+  ];
+
+  const status = [
+    { name: "DELIVERED" },
+    { name: "YET TO DELIVER" },
+    { name: "CANCELLED" },
   ];
 
   useEffect(() => {
@@ -53,7 +59,7 @@ export default function Orders() {
         name: "User 1",
         vendor: "Kings Kurry",
         product: "Dish 1",
-        date: "19-12-2024",
+        date: "19/12/2024",
         time: "08:37 AM",
         contactNo: "9876543210",
         status: "DELIVERED",
@@ -64,7 +70,7 @@ export default function Orders() {
         name: "User 2",
         vendor: "Fajita Friends",
         product: "Dish 2",
-        date: "19-12-2024",
+        date: "19/12/2024",
         time: "08:37 AM",
         contactNo: "9876543210",
         status: "CANCELLED",
@@ -75,7 +81,7 @@ export default function Orders() {
         name: "User 3",
         vendor: "Kings Kurry",
         product: "Dish 3",
-        date: "19-12-2024",
+        date: "19/12/2024",
         time: "08:37 AM",
         contactNo: "9876543210",
         status: "CANCELLED",
@@ -86,7 +92,7 @@ export default function Orders() {
         name: "User 4",
         vendor: "Fajita Friends",
         product: "Dish 4",
-        date: "19-12-2024",
+        date: "04/12/2024",
         time: "08:37 AM",
         contactNo: "9876543210",
         status: "YET TO DELIVER",
@@ -97,7 +103,7 @@ export default function Orders() {
         name: "User 5",
         vendor: "Ban Thai",
         product: "Dish 5",
-        date: "19-12-2024",
+        date: "19/12/2024",
         time: "08:37 AM",
         contactNo: "9876543210",
         status: "DELIVERED",
@@ -108,7 +114,7 @@ export default function Orders() {
         name: "User 6",
         vendor: "Ban Thai",
         product: "Dish 6",
-        date: "19-12-2024",
+        date: "19/12/2024",
         time: "08:37 AM",
         contactNo: "9876543210",
         status: "DELIVERED",
@@ -121,6 +127,29 @@ export default function Orders() {
   const hideDeleteProductDialog = () => {
     setDeleteProductDialog(false);
   };
+
+  const [filteredProducts, setFilteredProducts] = useState(null);
+
+  useEffect(() => {
+    let updatedProducts = products;
+    if (selectedDate) {
+      const formattedDate = selectedDate.toLocaleDateString("en-GB");
+      updatedProducts = updatedProducts.filter(
+        (product) => product.date === formattedDate
+      );
+    }
+    if (restaurantVendors && restaurantVendors.length) {
+      updatedProducts = updatedProducts.filter((product) =>
+        restaurantVendors.some((vendor) => vendor.name === product.vendor)
+      );
+    }
+    if (orderStatus && orderStatus.length) {
+      updatedProducts = updatedProducts.filter((product) =>
+        orderStatus.some((status) => status.name === product.status)
+      );
+    }
+    setFilteredProducts(updatedProducts);
+  }, [selectedDate, restaurantVendors, orderStatus, products]);
 
   const deleteProduct = () => {
     let _products = products.filter((val) => val.id !== product.id);
@@ -217,14 +246,14 @@ export default function Orders() {
             <div className="dataFilterContainer flex flex-wrap gap-5 ">
               <FloatLabel className="w-full md:w-20rem mt-5">
                 <MultiSelect
-                  value={selectedCities}
-                  onChange={(e) => setSelectedCities(e.value)}
-                  options={cities}
+                  value={restaurantVendors}
+                  onChange={(e) => setRestaurantVendor(e.value)}
+                  options={restaurants}
                   optionLabel="name"
                   maxSelectedLabels={3}
                   className="w-full"
                 />
-                <label htmlFor="ms-cities">Restaurant Filter</label>
+                <label htmlFor="ms-restaurants">Restaurant Filter</label>
               </FloatLabel>
 
               <FloatLabel className="w-full md:w-20rem mt-5">
@@ -240,20 +269,20 @@ export default function Orders() {
 
               <FloatLabel className="w-full md:w-20rem mt-5">
                 <MultiSelect
-                  value={selectedCities}
-                  onChange={(e) => setSelectedCities(e.value)}
-                  options={cities}
+                  value={orderStatus}
+                  onChange={(e) => setOrderStatus(e.value)}
+                  options={status}
                   optionLabel="name"
                   maxSelectedLabels={3}
                   className="w-full"
                 />
-                <label htmlFor="ms-cities">Restaurant Filter</label>
+                <label htmlFor="ms-restaurants">Order</label>
               </FloatLabel>
             </div>
           </div>
           <DataTable
             ref={dt}
-            value={products}
+            value={filteredProducts || products}
             selection={selectedProducts}
             onSelectionChange={(e) => setSelectedProducts(e.value)}
             dataKey="id"

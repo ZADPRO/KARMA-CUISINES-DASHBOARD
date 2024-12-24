@@ -2,6 +2,7 @@ import { Button } from "primereact/button";
 import { InputSwitch } from "primereact/inputswitch";
 import { Sidebar } from "primereact/sidebar";
 import templateImg from "../../assets/products/template.jpg";
+import AddProductSideBar from "../../Pages/AddProductSideBar/AddProductSideBar";
 import { useState } from "react";
 
 const productsData = [
@@ -123,6 +124,7 @@ export default function Products() {
                       !checked || !product.visible ? "grayscale" : ""
                     }`}
                     alt={`Product ${product.id}`}
+                    style={{ borderRadius: "5px" }}
                   />
                 </div>
                 <div className="flex justify-content-between align-items-center mb-3">
@@ -175,7 +177,9 @@ export default function Products() {
         position="right"
         style={{ inlineSize: "1000px" }}
         onHide={() => setAddNew(false)}
-      ></Sidebar>
+      >
+        <AddProductSideBar />
+      </Sidebar>
     </div>
   );
 }
