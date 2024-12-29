@@ -105,7 +105,7 @@ export default function Header({ children }) {
       <div className="main_container">
         <motion.div
           animate={{
-            width: isOpen ? "250px" : "60px",
+            minWidth: isOpen ? "250px" : "60px",
             transition: {
               duration: 0.2,
               type: "spring",
@@ -159,7 +159,7 @@ export default function Header({ children }) {
             ))}
           </section>
         </motion.div>
-        <main style={{ width: isOpen ? "85vw" : "95vw" }}>{children}</main>
+        <main style={{ minWidth: isOpen ? "85vw" : "95vw" }}>{children}</main>
       </div>
     </div>
   );
