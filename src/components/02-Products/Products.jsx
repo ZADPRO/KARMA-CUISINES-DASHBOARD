@@ -3,6 +3,7 @@ import { InputSwitch } from "primereact/inputswitch";
 import { Sidebar } from "primereact/sidebar";
 import templateImg from "../../assets/products/template.jpg";
 import AddProductSideBar from "../../Pages/AddProductSideBar/AddProductSideBar";
+import ModifySequenceSideBar from "../../Pages/ModifySequenceSideBar/ModifySequenceSideBar";
 import { useState } from "react";
 
 const productsData = [
@@ -65,6 +66,7 @@ const productsData = [
 export default function Products() {
   const [checked, setChecked] = useState(true);
   const [addNew, setAddNew] = useState(false);
+  const [sequence, setSequence] = useState(false);
   const [products, setProducts] = useState(
     productsData.map((product) => ({ ...product, visible: true }))
   );
@@ -91,13 +93,22 @@ export default function Products() {
           />
           <p>Show Products</p>
         </div>
-        <Button
-          icon="pi pi-plus"
-          rounded
-          className="mr-2"
-          style={{ background: "#00052e" }}
-          onClick={() => setAddNew(true)}
-        />
+        <div className="flex gap-5">
+          <Button
+            label="View Sequence"
+            raised
+            severity="success"
+            onClick={() => setSequence(true)}
+          />
+          <Button
+            icon="pi pi-plus"
+            rounded
+            raised
+            className="mr-2"
+            style={{ background: "#00052e" }}
+            onClick={() => setAddNew(true)}
+          />
+        </div>
       </div>
       <div className="grid m-0">
         {products.map((product) => (
@@ -179,6 +190,14 @@ export default function Products() {
         onHide={() => setAddNew(false)}
       >
         <AddProductSideBar />
+      </Sidebar>
+      <Sidebar
+        visible={sequence}
+        position="right"
+        style={{ inlineSize: "1000px" }}
+        onHide={() => setSequence(false)}
+      >
+        <ModifySequenceSideBar />
       </Sidebar>
     </div>
   );
