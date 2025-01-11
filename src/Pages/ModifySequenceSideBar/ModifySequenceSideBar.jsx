@@ -97,7 +97,7 @@ export default function ModifySequenceSideBar() {
         reorderableColumns
         scrollable
         reorderableRows
-        showGridlines 
+        showGridlines
         onRowReorder={(e) => setProducts(e.value)}
       >
         <Column rowReorder style={{ width: "3rem" }} />
