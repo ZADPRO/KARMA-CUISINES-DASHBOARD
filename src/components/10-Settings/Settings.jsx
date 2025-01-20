@@ -1,13 +1,16 @@
 import { DataView } from "primereact/dataview";
-import offersIcon from "../../assets/images/offersIcon.svg";
+import offersIcon from "../../assets/settings/offerIcon.svg";
+import category from "../../assets/settings/food.svg";
+import restroDoc from "../../assets/settings/restroDoc.svg";
+import paymentMethods from "../../assets/settings/payment.svg";
+import money from "../../assets/settings/moneyTransfer.svg";
 
 const cardsData = [
   { id: 1, title: "Offers", icon: offersIcon },
-  { id: 2, title: "Offers", icon: offersIcon },
-  { id: 3, title: "Offers", icon: offersIcon },
-  { id: 4, title: "Offers", icon: offersIcon },
-  { id: 5, title: "Offers", icon: offersIcon },
-  { id: 6, title: "Offers", icon: offersIcon },
+  { id: 2, title: "Food Category", icon: category },
+  { id: 3, title: "Restro Documents", icon: restroDoc },
+  { id: 4, title: "Payment Methods", icon: paymentMethods },
+  { id: 5, title: "Money Transfer", icon: money },
 ];
 
 export default function Settings() {

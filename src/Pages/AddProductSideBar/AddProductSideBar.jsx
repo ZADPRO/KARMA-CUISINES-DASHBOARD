@@ -13,18 +13,40 @@ export default function AddProductSideBar() {
 
   const [formData, setFormData] = useState({
     restaurantName: "",
-    contactPersonName: "",
-    contactPersonDesignation: "",
-    contactPersonNumber: "",
-    contactPersonEmail: "",
-    restaurantAddress: "",
-    websiteURL: "",
-    facebook: "",
-    instagram: "",
-    twitter: "",
+    productName: "",
+    productPrice: "",
+    description: "",
   });
 
   const [uploadLogoEnabled, setUploadLogoEnabled] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedRating, setSelectedRating] = useState(null);
+  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [dates, setDates] = useState(null);
+
+  const categories = [
+    { name: "Fast Food", code: "FF" },
+    { name: "Fine Dining", code: "FD" },
+    { name: "Cafe", code: "CA" },
+    { name: "Bakery", code: "BK" },
+    { name: "Seafood", code: "SF" },
+  ];
+
+  const ratings = [
+    { name: "1 Star", code: "1" },
+    { name: "2 Stars", code: "2" },
+    { name: "3 Stars", code: "3" },
+    { name: "4 Stars", code: "4" },
+    { name: "5 Stars", code: "5" },
+  ];
+
+  const offers = [
+    { name: "Buy 1 Get 1 Free", code: "BOGO" },
+    { name: "Flat 50% Off", code: "50OFF" },
+    { name: "Free Dessert", code: "FDESSERT" },
+    { name: "20% Cashback", code: "CASH20" },
+    { name: "No Delivery Charge", code: "NODEL" },
+  ];
 
   const handleInputChange = (e, field) => {
     setFormData((prev) => ({
@@ -33,16 +55,28 @@ export default function AddProductSideBar() {
     }));
   };
 
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [dates, setDates] = useState(null);
+  const handleSubmit = () => {
+    const payload = {
+      restaurantName: formData.restaurantName,
+      productName: formData.productName,
+      productPrice: formData.productPrice,
+      category: selectedCategory ? selectedCategory.name : null,
+      description: formData.description,
+      rating: selectedRating ? selectedRating.name : null,
+      offerAppliedStatus: uploadLogoEnabled,
+      offer: selectedOffer ? selectedOffer.name : null,
+      range: dates,
+    };
 
-  const cities = [
-    { name: "Offer 1", code: "NY" },
-    { name: "Offer 2", code: "RM" },
-    { name: "Offer 3", code: "LDN" },
-    { name: "Offer 4", code: "IST" },
-    { name: "Offer 5", code: "PRS" },
-  ];
+    console.log("Payload:", payload);
+
+    toastRef.current.show({
+      severity: "success",
+      summary: "Success",
+      detail: "Form submitted successfully!",
+      life: 3000,
+    });
+  };
 
   return (
     <div>
@@ -61,7 +95,7 @@ export default function AddProductSideBar() {
                 value={formData.restaurantName}
                 onChange={(e) => handleInputChange(e, "restaurantName")}
               />
-            </div>{" "}
+            </div>
             <div className="flex gap-3 mt-3">
               <div className="p-inputgroup flex-1">
                 <span className="p-inputgroup-addon">
@@ -69,9 +103,9 @@ export default function AddProductSideBar() {
                 </span>
                 <InputText
                   placeholder="Product Name"
-                  value={formData.contactPersonName}
-                  onChange={(e) => handleInputChange(e, "contactPersonName")}
-                />{" "}
+                  value={formData.productName}
+                  onChange={(e) => handleInputChange(e, "productName")}
+                />
               </div>
               <div className="p-inputgroup flex-1">
                 <span className="p-inputgroup-addon">
@@ -79,11 +113,9 @@ export default function AddProductSideBar() {
                 </span>
                 <InputText
                   placeholder="Product Price"
-                  value={formData.contactPersonDesignation}
-                  onChange={(e) =>
-                    handleInputChange(e, "contactPersonDesignation")
-                  }
-                />{" "}
+                  value={formData.productPrice}
+                  onChange={(e) => handleInputChange(e, "productPrice")}
+                />
               </div>
             </div>
             <div className="flex gap-3 mt-3">
@@ -92,9 +124,9 @@ export default function AddProductSideBar() {
                   <Beef size={20} />
                 </span>
                 <Dropdown
-                  value={selectedCity}
-                  onChange={(e) => setSelectedCity(e.value)}
-                  options={cities}
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.value)}
+                  options={categories}
                   optionLabel="name"
                   placeholder="Category"
                   className="w-full md:w-14rem"
@@ -106,20 +138,18 @@ export default function AddProductSideBar() {
                 </span>
                 <InputText
                   placeholder="Description"
-                  value={formData.contactPersonDesignation}
-                  onChange={(e) =>
-                    handleInputChange(e, "contactPersonDesignation")
-                  }
-                />{" "}
+                  value={formData.description}
+                  onChange={(e) => handleInputChange(e, "description")}
+                />
               </div>
               <div className="p-inputgroup flex-1">
                 <span className="p-inputgroup-addon">
                   <Euro size={20} />
                 </span>
                 <Dropdown
-                  value={selectedCity}
-                  onChange={(e) => setSelectedCity(e.value)}
-                  options={cities}
+                  value={selectedRating}
+                  onChange={(e) => setSelectedRating(e.value)}
+                  options={ratings}
                   optionLabel="name"
                   placeholder="Rating"
                   className="w-full md:w-14rem"
@@ -153,9 +183,9 @@ export default function AddProductSideBar() {
                       <Percent size={20} />
                     </span>
                     <Dropdown
-                      value={selectedCity}
-                      onChange={(e) => setSelectedCity(e.value)}
-                      options={cities}
+                      value={selectedOffer}
+                      onChange={(e) => setSelectedOffer(e.value)}
+                      options={offers}
                       optionLabel="name"
                       placeholder="Select Offer"
                       className="w-full md:w-14rem"
@@ -185,14 +215,7 @@ export default function AddProductSideBar() {
             icon="pi pi-arrow-right"
             iconPos="right"
             severity="success"
-            onClick={() => {
-              toastRef.current.show({
-                severity: "success",
-                summary: "Success",
-                detail: "Form submitted successfully!",
-                life: 3000,
-              });
-            }}
+            onClick={handleSubmit}
           />
         </div>
       </div>
