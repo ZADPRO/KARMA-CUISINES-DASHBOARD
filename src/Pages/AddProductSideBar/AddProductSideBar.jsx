@@ -1,8 +1,12 @@
-import { BriefcaseBusiness, User, Utensils } from "lucide-react";
+import { Beef, CalendarRange, Euro, Percent, Utensils } from "lucide-react";
 import { Button } from "primereact/button";
+import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
+import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
+import { Calendar } from "primereact/calendar";
 import { useRef, useState } from "react";
+import FileUploadTemplate from "../FileUpload/FileUploadTemplate";
 
 export default function AddProductSideBar() {
   const toastRef = useRef(null);
@@ -20,12 +24,25 @@ export default function AddProductSideBar() {
     twitter: "",
   });
 
+  const [uploadLogoEnabled, setUploadLogoEnabled] = useState(false);
+
   const handleInputChange = (e, field) => {
     setFormData((prev) => ({
       ...prev,
       [field]: e.target.value,
     }));
   };
+
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [dates, setDates] = useState(null);
+
+  const cities = [
+    { name: "Offer 1", code: "NY" },
+    { name: "Offer 2", code: "RM" },
+    { name: "Offer 3", code: "LDN" },
+    { name: "Offer 4", code: "IST" },
+    { name: "Offer 5", code: "PRS" },
+  ];
 
   return (
     <div>
@@ -48,25 +65,116 @@ export default function AddProductSideBar() {
             <div className="flex gap-3 mt-3">
               <div className="p-inputgroup flex-1">
                 <span className="p-inputgroup-addon">
-                  <User size={20} />{" "}
+                  <Beef size={20} />
                 </span>
                 <InputText
-                  placeholder="Contact Person Name"
+                  placeholder="Product Name"
                   value={formData.contactPersonName}
                   onChange={(e) => handleInputChange(e, "contactPersonName")}
                 />{" "}
               </div>
               <div className="p-inputgroup flex-1">
                 <span className="p-inputgroup-addon">
-                  <BriefcaseBusiness size={20} />
+                  <Euro size={20} />
                 </span>
                 <InputText
-                  placeholder="Contact Person Designation"
+                  placeholder="Product Price"
                   value={formData.contactPersonDesignation}
                   onChange={(e) =>
                     handleInputChange(e, "contactPersonDesignation")
                   }
                 />{" "}
+              </div>
+            </div>
+            <div className="flex gap-3 mt-3">
+              <div className="p-inputgroup flex-1">
+                <span className="p-inputgroup-addon">
+                  <Beef size={20} />
+                </span>
+                <Dropdown
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.value)}
+                  options={cities}
+                  optionLabel="name"
+                  placeholder="Category"
+                  className="w-full md:w-14rem"
+                />
+              </div>
+              <div className="p-inputgroup flex-1">
+                <span className="p-inputgroup-addon">
+                  <Euro size={20} />
+                </span>
+                <InputText
+                  placeholder="Description"
+                  value={formData.contactPersonDesignation}
+                  onChange={(e) =>
+                    handleInputChange(e, "contactPersonDesignation")
+                  }
+                />{" "}
+              </div>
+              <div className="p-inputgroup flex-1">
+                <span className="p-inputgroup-addon">
+                  <Euro size={20} />
+                </span>
+                <Dropdown
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.value)}
+                  options={cities}
+                  optionLabel="name"
+                  placeholder="Rating"
+                  className="w-full md:w-14rem"
+                />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="fileUpload mt-3 flex-col">
+                <div className="flex align-items-center gap-3">
+                  <InputSwitch
+                    checked={uploadLogoEnabled}
+                    onChange={(e) => setUploadLogoEnabled(e.value)}
+                  />
+                  <span className="">Upload Image</span>
+                </div>
+                <FileUploadTemplate enabled={uploadLogoEnabled} />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="fileUpload mt-3 flex-col">
+                <div className="flex align-items-center gap-3">
+                  <InputSwitch
+                    checked={uploadLogoEnabled}
+                    onChange={(e) => setUploadLogoEnabled(e.value)}
+                  />
+                  <span className="">Offers Applied</span>
+                </div>
+                <div className="flex gap-3 mt-3">
+                  <div className="p-inputgroup flex-1">
+                    <span className="p-inputgroup-addon">
+                      <Percent size={20} />
+                    </span>
+                    <Dropdown
+                      value={selectedCity}
+                      onChange={(e) => setSelectedCity(e.value)}
+                      options={cities}
+                      optionLabel="name"
+                      placeholder="Select Offer"
+                      className="w-full md:w-14rem"
+                    />
+                  </div>
+                  <div className="p-inputgroup flex-1">
+                    <span className="p-inputgroup-addon">
+                      <CalendarRange size={20} />
+                    </span>
+                    <Calendar
+                      value={dates}
+                      onChange={(e) => setDates(e.value)}
+                      selectionMode="range"
+                      readOnlyInput
+                      placeholder="Offer Valid Range"
+                      hideOnRangeSelection
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
