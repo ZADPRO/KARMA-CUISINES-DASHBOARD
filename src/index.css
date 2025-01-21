@@ -39,3 +39,12 @@ p {
 .p-fieldset .p-fieldset-content {
   padding: 0.25rem !important;
 }
+
+.restroDocTable
+  .p-datatable-wrapper
+  .p-datatable-table.p-datatable-scrollable-table
+  .p-datatable-tbody
+  tr
+  td {
+  padding: 2px 1rem;
+}
