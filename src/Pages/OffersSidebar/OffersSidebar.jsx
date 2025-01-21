@@ -4,7 +4,7 @@ import {
   BadgeEuro,
   CalendarArrowDown,
   CalendarArrowUp,
-  Copy,
+  HandCoins,
   Percent,
   TicketPercent,
 } from "lucide-react";
@@ -40,9 +40,8 @@ export default function OffersSidebar() {
   ];
 
   const [formData, setFormData] = useState({
-    restaurantName: "", // Minimum Value
-    productName: "", // Discount / Offers
-    productPrice: "", // Description
+    minValue: "", // Minimum Value
+    discountPrice: "", // Discount / Offers
     description: "", // Description
     coupon: "", // Coupon
     startDate: null, // Start Date
@@ -54,9 +53,9 @@ export default function OffersSidebar() {
         id: 1,
         offerType: "Flat Discount",
         code: "FLAT50",
-        name: "Flat ₹50 Off",
-        vendor: "Amazon",
-        description: "Get ₹50 off on all products",
+        name: "Flat ₹50 Off on Main Course",
+        vendor: "Tandoori Palace",
+        description: "Get ₹50 off on any main course",
         product: "2025-01-15",
         date: "2025-02-15",
         status: "LIVE",
@@ -67,9 +66,9 @@ export default function OffersSidebar() {
         id: 2,
         offerType: "Percentage Discount",
         code: "SAVE20",
-        name: "20% Off",
-        vendor: "Flipkart",
-        description: "Save 20% on electronics",
+        name: "20% Off on Pizza",
+        vendor: "Pizza Delight",
+        description: "Save 20% on all pizzas",
         product: "2025-01-01",
         date: "2025-01-31",
         status: "EXPIRE TODAY",
@@ -80,9 +79,9 @@ export default function OffersSidebar() {
         id: 3,
         offerType: "Flat Discount",
         code: "FLAT100",
-        name: "Flat ₹100 Off",
-        vendor: "Myntra",
-        description: "₹100 off on apparel",
+        name: "Flat ₹100 Off on Buffet",
+        vendor: "Royal Buffet",
+        description: "₹100 off on any buffet package",
         product: "2024-12-01",
         date: "2025-01-01",
         status: "EXPIRED",
@@ -93,9 +92,9 @@ export default function OffersSidebar() {
         id: 4,
         offerType: "Buy One Get One",
         code: "BOGO",
-        name: "Buy 1 Get 1 Free",
-        vendor: "Zomato",
-        description: "Applicable on main courses",
+        name: "Buy 1 Get 1 Free on Burgers",
+        vendor: "Burger Junction",
+        description: "Applicable on all burgers",
         product: "2025-01-10",
         date: "2025-01-25",
         status: "LIVE",
@@ -106,9 +105,9 @@ export default function OffersSidebar() {
         id: 5,
         offerType: "Cashback",
         code: "CASHBACK10",
-        name: "10% Cashback",
-        vendor: "Paytm",
-        description: "Get 10% cashback up to ₹100",
+        name: "10% Cashback on Orders Above ₹500",
+        vendor: "Café Mocha",
+        description: "Get 10% cashback on orders above ₹500",
         product: "2025-01-01",
         date: "2025-03-01",
         status: "LIVE",
@@ -119,9 +118,9 @@ export default function OffersSidebar() {
         id: 6,
         offerType: "Free Shipping",
         code: "FREESHIP",
-        name: "Free Shipping",
-        vendor: "Ajio",
-        description: "No shipping fees on orders above ₹500",
+        name: "Free Delivery on Orders Above ₹300",
+        vendor: "Foodie Express",
+        description: "No delivery charges on orders above ₹300",
         product: "2024-12-15",
         date: "2025-01-15",
         status: "EXPIRED",
@@ -132,9 +131,9 @@ export default function OffersSidebar() {
         id: 7,
         offerType: "Flat Discount",
         code: "FLAT200",
-        name: "Flat ₹200 Off",
-        vendor: "BigBasket",
-        description: "₹200 off on groceries",
+        name: "Flat ₹200 Off on Family Meal",
+        vendor: "Family Feast",
+        description: "₹200 off on any family meal set",
         product: "2025-01-05",
         date: "2025-01-20",
         status: "EXPIRE TODAY",
@@ -145,8 +144,8 @@ export default function OffersSidebar() {
         id: 8,
         offerType: "Referral Bonus",
         code: "REFER50",
-        name: "₹50 Referral Bonus",
-        vendor: "Uber",
+        name: "₹50 Referral Bonus on Next Order",
+        vendor: "QuickBites",
         description: "Earn ₹50 for every friend referred",
         product: "2024-12-01",
         date: "2025-03-01",
@@ -157,10 +156,10 @@ export default function OffersSidebar() {
       {
         id: 9,
         offerType: "Membership Discount",
-        code: "PRIME30",
-        name: "30% Off on Membership",
-        vendor: "Amazon",
-        description: "30% off on Prime Membership",
+        code: "VIP20",
+        name: "20% Off on VIP Membership",
+        vendor: "The Gourmet Club",
+        description: "20% off on all VIP memberships",
         product: "2025-01-01",
         date: "2025-12-31",
         status: "LIVE",
@@ -171,9 +170,9 @@ export default function OffersSidebar() {
         id: 10,
         offerType: "Festive Sale",
         code: "DIWALI25",
-        name: "25% Off",
-        vendor: "Reliance Digital",
-        description: "Festive discounts on gadgets",
+        name: "25% Off on Diwali Special Sweets",
+        vendor: "Sweet Treats",
+        description: "Festive discounts on Diwali sweets",
         product: "2025-01-01",
         date: "2025-01-10",
         status: "EXPIRED",
@@ -181,6 +180,7 @@ export default function OffersSidebar() {
         contactNo: "Edit/Delete",
       },
     ];
+
     setProducts(restaurantData);
   }, []);
 
@@ -268,8 +268,8 @@ export default function OffersSidebar() {
 
   const handleClear = () => {
     setFormData({
-      restaurantName: "",
-      productName: "",
+      minValue: "",
+      discountPrice: "",
       productPrice: "",
       description: "",
       coupon: "",
@@ -280,6 +280,30 @@ export default function OffersSidebar() {
       severity: "info",
       summary: "Cleared",
       detail: "Form has been cleared",
+    });
+  };
+
+  const generateCouponCode = () => {
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let couponCode = "";
+    const codeLength = 7; // Max 7 characters
+
+    for (let i = 0; i < codeLength; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      couponCode += characters[randomIndex];
+    }
+
+    setFormData({ ...formData, coupon: couponCode });
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(formData.coupon);
+    toast.current.show({
+      severity: "success",
+      summary: "Success",
+      detail: "Coupon copied successfully!",
+      life: 3000,
     });
   };
 
@@ -356,7 +380,7 @@ export default function OffersSidebar() {
                 style={{ minWidth: "12rem" }}
               ></Column>
               <Column
-                field="vendor"
+                field="description"
                 header="Description"
                 style={{ minWidth: "12rem" }}
               ></Column>
@@ -419,15 +443,27 @@ export default function OffersSidebar() {
           <TabPanel header="Add Offers">
             <div className="border-2 px-5 py-5 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
               <div className="inputForms w-full">
-                <div className="p-inputgroup flex-1">
-                  <span className="p-inputgroup-addon">
-                    <BadgeEuro size={20} />
-                  </span>
-                  <InputText
-                    placeholder="Minimum Value"
-                    value={formData.restaurantName}
-                    onChange={(e) => handleInputChange(e, "restaurantName")}
-                  />
+                <div className="flex gap-3 mt-3">
+                  <div className="p-inputgroup flex-1">
+                    <span className="p-inputgroup-addon">
+                      <HandCoins size={20} />
+                    </span>
+                    <InputText
+                      placeholder="Offer Name"
+                      value={formData.minValue}
+                      onChange={(e) => handleInputChange(e, "minValue")}
+                    />
+                  </div>
+                  <div className="p-inputgroup flex-1">
+                    <span className="p-inputgroup-addon">
+                      <BadgeEuro size={20} />
+                    </span>
+                    <InputText
+                      placeholder="Minimum Value"
+                      value={formData.minValue}
+                      onChange={(e) => handleInputChange(e, "minValue")}
+                    />
+                  </div>
                 </div>
                 <div className="flex gap-3 mt-3">
                   <div className="p-inputgroup flex-1">
@@ -436,8 +472,8 @@ export default function OffersSidebar() {
                     </span>
                     <InputText
                       placeholder="Discount / Offers"
-                      value={formData.productName}
-                      onChange={(e) => handleInputChange(e, "productName")}
+                      value={formData.discountPrice}
+                      onChange={(e) => handleInputChange(e, "discountPrice")}
                     />
                   </div>
                   <div className="p-inputgroup flex-1">
@@ -446,7 +482,7 @@ export default function OffersSidebar() {
                     </span>
                     <InputText
                       placeholder="Description"
-                      value={formData.productPrice}
+                      value={formData.description}
                       onChange={(e) => handleInputChange(e, "productPrice")}
                     />
                   </div>
@@ -495,14 +531,19 @@ export default function OffersSidebar() {
                       onChange={(e) => handleInputChange(e, "coupon")}
                     />
                   </div>
-                  <div className="p-inputgroup flex-1 gap-4">
-                    <div className="fle">
-                      <Button severity="success" label="Generate" />
-                    </div>
-                    <div className="flex align-items-center justify-content-center cursor-pointer border-1 pl-2 pr-2">
-                      <Copy />
-                      <p>Copy Coupon</p>
-                    </div>
+                  <div className="flex gap-4">
+                    <Button
+                      severity="success"
+                      label="Generate"
+                      onClick={generateCouponCode}
+                    />
+                    <Button
+                      severity="success"
+                      label="Copy"
+                      icon="pi pi-copy"
+                      outlined
+                      onClick={handleCopy}
+                    />
                   </div>
                 </div>
                 <div className="flex mt-2">
