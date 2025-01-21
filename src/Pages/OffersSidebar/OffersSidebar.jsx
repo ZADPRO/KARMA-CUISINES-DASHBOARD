@@ -1,4 +1,14 @@
-import { Beef, Euro, Utensils } from "lucide-react";
+import axios from "axios";
+import {
+  AlignLeft,
+  BadgeEuro,
+  CalendarArrowDown,
+  CalendarArrowUp,
+  Copy,
+  Percent,
+  TicketPercent,
+} from "lucide-react";
+import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
@@ -9,10 +19,12 @@ import { InputText } from "primereact/inputtext";
 import { MultiSelect } from "primereact/multiselect";
 import { TabPanel, TabView } from "primereact/tabview";
 import { Tag } from "primereact/tag";
+import { Toast } from "primereact/toast";
 import { useEffect, useRef, useState } from "react";
 
 export default function OffersSidebar() {
   const dt = useRef(null);
+  const toast = useRef(null);
 
   const [filteredProducts, setFilteredProducts] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState(null);
@@ -22,85 +34,153 @@ export default function OffersSidebar() {
 
   const [products, setProducts] = useState(null);
 
-  const restaurants = [{ name: "Percentage" }, { name: "Discount" }];
+  const restaurants = [
+    { name: "Percentage", id: "Percentage" },
+    { name: "Discount", id: "Discount" },
+  ];
 
   const [formData, setFormData] = useState({
-    restaurantName: "",
-    productName: "",
-    productPrice: "",
-    description: "",
+    restaurantName: "", // Minimum Value
+    productName: "", // Discount / Offers
+    productPrice: "", // Description
+    description: "", // Description
+    coupon: "", // Coupon
+    startDate: null, // Start Date
+    endDate: null, // End Date
   });
-
   useEffect(() => {
     const restaurantData = [
       {
-        id: "Percentage",
-        code: "US001",
-        name: "User 1",
-        vendor: "Kings Kurry",
-        product: "Dish 1",
-        date: "19/12/2024",
-        time: "08:37 AM",
-        contactNo: "9876543210",
-        status: "DELIVERED",
+        id: 1,
+        offerType: "Flat Discount",
+        code: "FLAT50",
+        name: "Flat ₹50 Off",
+        vendor: "Amazon",
+        description: "Get ₹50 off on all products",
+        product: "2025-01-15",
+        date: "2025-02-15",
+        status: "LIVE",
+        time: "2025-01-10",
+        contactNo: "Edit/Delete",
       },
       {
-        id: "Percentage",
-        code: "US002",
-        name: "User 2",
-        vendor: "Fajita Friends",
-        product: "Dish 2",
-        date: "19/12/2024",
-        time: "08:37 AM",
-        contactNo: "9876543210",
-        status: "CANCELLED",
+        id: 2,
+        offerType: "Percentage Discount",
+        code: "SAVE20",
+        name: "20% Off",
+        vendor: "Flipkart",
+        description: "Save 20% on electronics",
+        product: "2025-01-01",
+        date: "2025-01-31",
+        status: "EXPIRE TODAY",
+        time: "2025-01-05",
+        contactNo: "Edit/Delete",
       },
       {
-        id: "Discount",
-        code: "US003",
-        name: "User 3",
-        vendor: "Kings Kurry",
-        product: "Dish 3",
-        date: "19/12/2024",
-        time: "08:37 AM",
-        contactNo: "9876543210",
-        status: "CANCELLED",
+        id: 3,
+        offerType: "Flat Discount",
+        code: "FLAT100",
+        name: "Flat ₹100 Off",
+        vendor: "Myntra",
+        description: "₹100 off on apparel",
+        product: "2024-12-01",
+        date: "2025-01-01",
+        status: "EXPIRED",
+        time: "2024-11-25",
+        contactNo: "Edit/Delete",
       },
       {
-        id: "Percentage",
-        code: "US004",
-        name: "User 4",
-        vendor: "Fajita Friends",
-        product: "Dish 4",
-        date: "04/12/2024",
-        time: "08:37 AM",
-        contactNo: "9876543210",
-        status: "YET TO DELIVER",
+        id: 4,
+        offerType: "Buy One Get One",
+        code: "BOGO",
+        name: "Buy 1 Get 1 Free",
+        vendor: "Zomato",
+        description: "Applicable on main courses",
+        product: "2025-01-10",
+        date: "2025-01-25",
+        status: "LIVE",
+        time: "2025-01-05",
+        contactNo: "Edit/Delete",
       },
       {
-        id: "Discount",
-        code: "US005",
-        name: "User 5",
-        vendor: "Ban Thai",
-        product: "Dish 5",
-        date: "19/12/2024",
-        time: "08:37 AM",
-        contactNo: "9876543210",
-        status: "DELIVERED",
+        id: 5,
+        offerType: "Cashback",
+        code: "CASHBACK10",
+        name: "10% Cashback",
+        vendor: "Paytm",
+        description: "Get 10% cashback up to ₹100",
+        product: "2025-01-01",
+        date: "2025-03-01",
+        status: "LIVE",
+        time: "2024-12-30",
+        contactNo: "Edit/Delete",
       },
       {
-        id: "Discount",
-        code: "US006",
-        name: "User 6",
-        vendor: "Ban Thai",
-        product: "Dish 6",
-        date: "19/12/2024",
-        time: "08:37 AM",
-        contactNo: "9876543210",
-        status: "DELIVERED",
+        id: 6,
+        offerType: "Free Shipping",
+        code: "FREESHIP",
+        name: "Free Shipping",
+        vendor: "Ajio",
+        description: "No shipping fees on orders above ₹500",
+        product: "2024-12-15",
+        date: "2025-01-15",
+        status: "EXPIRED",
+        time: "2024-12-10",
+        contactNo: "Edit/Delete",
+      },
+      {
+        id: 7,
+        offerType: "Flat Discount",
+        code: "FLAT200",
+        name: "Flat ₹200 Off",
+        vendor: "BigBasket",
+        description: "₹200 off on groceries",
+        product: "2025-01-05",
+        date: "2025-01-20",
+        status: "EXPIRE TODAY",
+        time: "2025-01-01",
+        contactNo: "Edit/Delete",
+      },
+      {
+        id: 8,
+        offerType: "Referral Bonus",
+        code: "REFER50",
+        name: "₹50 Referral Bonus",
+        vendor: "Uber",
+        description: "Earn ₹50 for every friend referred",
+        product: "2024-12-01",
+        date: "2025-03-01",
+        status: "LIVE",
+        time: "2024-11-25",
+        contactNo: "Edit/Delete",
+      },
+      {
+        id: 9,
+        offerType: "Membership Discount",
+        code: "PRIME30",
+        name: "30% Off on Membership",
+        vendor: "Amazon",
+        description: "30% off on Prime Membership",
+        product: "2025-01-01",
+        date: "2025-12-31",
+        status: "LIVE",
+        time: "2024-12-20",
+        contactNo: "Edit/Delete",
+      },
+      {
+        id: 10,
+        offerType: "Festive Sale",
+        code: "DIWALI25",
+        name: "25% Off",
+        vendor: "Reliance Digital",
+        description: "Festive discounts on gadgets",
+        product: "2025-01-01",
+        date: "2025-01-10",
+        status: "EXPIRED",
+        time: "2024-12-25",
+        contactNo: "Edit/Delete",
       },
     ];
-
     setProducts(restaurantData);
   }, []);
 
@@ -114,7 +194,7 @@ export default function OffersSidebar() {
     }
     if (restaurantVendors && restaurantVendors.length) {
       updatedProducts = updatedProducts.filter((product) =>
-        restaurantVendors.some((vendor) => vendor.name === product.vendor)
+        restaurantVendors.some((vendor) => vendor.id === product.offerType)
       );
     }
 
@@ -143,13 +223,13 @@ export default function OffersSidebar() {
 
   const getSeverity = (product) => {
     switch (product.status) {
-      case "DELIVERED":
+      case "LIVE":
         return "success";
 
-      case "YET TO DELIVER":
+      case "EXPIRE TODAY":
         return "warning";
 
-      case "CANCELLED":
+      case "EXPIRED":
         return "danger";
 
       default:
@@ -164,8 +244,49 @@ export default function OffersSidebar() {
     }));
   };
 
+  const handleSubmit = async () => {
+    try {
+      // Send data via axios.post
+      const response = await axios.post("api/v1/2020", formData);
+      console.log(response.data); // Log response from backend
+
+      // Show success toast after successful submission
+      toast.current.show({
+        severity: "success",
+        summary: "Submitted",
+        detail: "Offer added successfully",
+      });
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to add offer",
+      });
+    }
+  };
+
+  const handleClear = () => {
+    setFormData({
+      restaurantName: "",
+      productName: "",
+      productPrice: "",
+      description: "",
+      coupon: "",
+      startDate: null,
+      endDate: null,
+    });
+    toast.current.show({
+      severity: "info",
+      summary: "Cleared",
+      detail: "Form has been cleared",
+    });
+  };
+
   return (
     <div>
+      <Toast ref={toast} />
+
       <div className="card">
         <TabView>
           <TabPanel header="Offers">
@@ -191,7 +312,7 @@ export default function OffersSidebar() {
                     showIcon
                     className="w-full"
                   />
-                  <label htmlFor="calendar-date">Offer Created</label>
+                  <label htmlFor="calendar-date">Offer Created At</label>
                 </FloatLabel>
               </div>
             </div>
@@ -204,6 +325,7 @@ export default function OffersSidebar() {
               paginator
               showGridlines
               scrollable
+              style={{ fontSize: "1rem" }}
               stripedRows
               rows={5}
               rowsPerPageOptions={[5, 10, 25]}
@@ -213,7 +335,7 @@ export default function OffersSidebar() {
               header={header}
             >
               <Column
-                field="id"
+                field="offerType"
                 header="Offer Type"
                 frozen
                 style={{ minWidth: "8rem", background: "white" }}
@@ -234,6 +356,11 @@ export default function OffersSidebar() {
                 style={{ minWidth: "12rem" }}
               ></Column>
               <Column
+                field="vendor"
+                header="Description"
+                style={{ minWidth: "12rem" }}
+              ></Column>
+              <Column
                 field="product"
                 header="Starting Date"
                 style={{ minWidth: "9rem" }}
@@ -251,13 +378,41 @@ export default function OffersSidebar() {
               ></Column>
               <Column
                 field="time"
-                header="Edit"
+                header="Created At"
                 style={{ minWidth: "9rem" }}
               ></Column>
               <Column
-                field="contactNo"
-                header="Delete"
-                style={{ minWidth: "10rem" }}
+                field="time"
+                header="Edit"
+                style={{ minWidth: "9rem" }}
+                body={(rowData) => (
+                  <div className="flex gap-3">
+                    <Button
+                      icon="pi pi-pencil"
+                      severity="success"
+                      rounded
+                      onClick={() =>
+                        toast.current.show({
+                          severity: "info",
+                          summary: "Edit",
+                          detail: `Editing ${rowData.name}`,
+                        })
+                      }
+                    ></Button>
+                    <Button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      rounded
+                      onClick={() =>
+                        toast.current.show({
+                          severity: "warn",
+                          summary: "Delete",
+                          detail: `Deleting ${rowData.name}`,
+                        })
+                      }
+                    ></Button>
+                  </div>
+                )}
               ></Column>
             </DataTable>
           </TabPanel>
@@ -266,7 +421,7 @@ export default function OffersSidebar() {
               <div className="inputForms w-full">
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
-                    <Utensils size={20} />
+                    <BadgeEuro size={20} />
                   </span>
                   <InputText
                     placeholder="Minimum Value"
@@ -277,26 +432,97 @@ export default function OffersSidebar() {
                 <div className="flex gap-3 mt-3">
                   <div className="p-inputgroup flex-1">
                     <span className="p-inputgroup-addon">
-                      <Beef size={20} />
+                      <Percent size={20} />
                     </span>
                     <InputText
-                      placeholder="Product Name"
+                      placeholder="Discount / Offers"
                       value={formData.productName}
                       onChange={(e) => handleInputChange(e, "productName")}
                     />
                   </div>
                   <div className="p-inputgroup flex-1">
                     <span className="p-inputgroup-addon">
-                      <Euro size={20} />
+                      <AlignLeft size={20} />
                     </span>
                     <InputText
-                      placeholder="Product Price"
+                      placeholder="Description"
                       value={formData.productPrice}
                       onChange={(e) => handleInputChange(e, "productPrice")}
                     />
                   </div>
                 </div>
+                <div className="flex gap-3 mt-3">
+                  <div className="p-inputgroup flex-1">
+                    <span className="p-inputgroup-addon">
+                      <CalendarArrowUp size={20} />
+                    </span>
+                    <Calendar
+                      placeholder="Start Date"
+                      value={formData.startDate}
+                      onChange={(e) =>
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          startDate: e.value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="p-inputgroup flex-1">
+                    <span className="p-inputgroup-addon">
+                      <CalendarArrowDown size={20} />
+                    </span>
+                    <Calendar
+                      placeholder="End Date"
+                      value={formData.endDate}
+                      onChange={(e) =>
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          endDate: e.value,
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-3 mt-3 align-items-center justify-content-center">
+                  <div className="p-inputgroup flex-1">
+                    <span className="p-inputgroup-addon">
+                      <TicketPercent size={20} />
+                    </span>
+                    <InputText
+                      placeholder="Coupon"
+                      value={formData.coupon}
+                      onChange={(e) => handleInputChange(e, "coupon")}
+                    />
+                  </div>
+                  <div className="p-inputgroup flex-1 gap-4">
+                    <div className="fle">
+                      <Button severity="success" label="Generate" />
+                    </div>
+                    <div className="flex align-items-center justify-content-center cursor-pointer border-1 pl-2 pr-2">
+                      <Copy />
+                      <p>Copy Coupon</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex mt-2">
+                  <small>Valid / Invalid</small>
+                </div>
               </div>
+            </div>
+            <div className="flex justify-content-end mt-3 gap-3">
+              <Button
+                severity="success"
+                label="Submit"
+                icon="pi pi-check"
+                onClick={handleSubmit}
+              />
+              <Button
+                severity="danger"
+                label="Clear All"
+                icon="pi pi-times"
+                onClick={handleClear}
+              />
             </div>
           </TabPanel>
         </TabView>
