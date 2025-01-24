@@ -1,18 +1,21 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { classNames } from "primereact/utils";
-
 import { Checkbox } from "primereact/checkbox";
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 import { InputText } from "primereact/inputtext";
+import { Toast } from "primereact/toast";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
 import decrypt from "../../helper";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [checked, setChecked] = useState(false);
+  const toast = useRef(null);
+  const navigate = useNavigate();
 
   const containerClassName = classNames(
     "surface-ground flex align-items-center justify-content-center overflow-hidden"
@@ -25,29 +28,85 @@ export default function Login() {
         password: password,
       };
 
-      console.log("import.meta.env.VITE_API_URL", import.meta.env.VITE_API_URL);
       const response = await axios.post(
         import.meta.env.VITE_API_URL + "/admin/login",
         credentials
       );
-      console.log("response", response);
 
       const data = decrypt(
         response.data[1],
         response.data[0],
         import.meta.env.VITE_ENCRYPTION_KEY
       );
-      console.log("data", data);
 
-      alert("Login successful!");
+      if (data.success) {
+        const userDetails = data.userDetails[0];
+        console.log("userDetails", userDetails);
+
+        localStorage.setItem("loginStatus", true);
+        localStorage.setItem("userDetails", JSON.stringify(userDetails)); // Convert the userDetails object to JSON
+
+        confirmDialog({
+          group: "headless",
+          message: "Login successful!",
+          header: "Success",
+          icon: "pi pi-check",
+          accept: () => {
+            navigate("/");
+          },
+        });
+      } else {
+        toast.current.show({
+          severity: "error",
+          summary: "Login Failed",
+          detail: "Invalid credentials",
+          life: 3000,
+        });
+      }
     } catch (error) {
       console.error("Login failed:", error);
-      alert("Login failed. Please check your credentials.");
+      toast.current.show({
+        severity: "error",
+        summary: "Login Failed",
+        detail: "Please check your credentials.",
+        life: 3000,
+      });
     }
   };
 
   return (
     <div>
+      <Toast ref={toast} />
+      <ConfirmDialog
+        group="headless"
+        content={({ headerRef, contentRef, footerRef, hide, message }) => (
+          <div className="flex flex-column align-items-center p-5 surface-overlay border-round">
+            <div className="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8">
+              <i className="pi pi-check text-5xl"></i>
+            </div>
+            <span
+              className="font-bold text-2xl block mb-2 mt-4"
+              ref={headerRef}
+            >
+              {message.header}
+            </span>
+            <p className="mb-0" ref={contentRef}>
+              {message.message}
+            </p>
+            <div className="flex align-items-center gap-2 mt-4" ref={footerRef}>
+              <Button
+                label="OK"
+                onClick={(event) => {
+                  hide(event);
+                  navigate("/");
+                }}
+                className="w-8rem"
+              ></Button>
+            </div>
+          </div>
+        )}
+      />
+
       <div className={containerClassName}>
         <div className="flex flex-column h-screen align-items-center justify-content-center">
           <div
@@ -124,11 +183,8 @@ export default function Login() {
                 <Button
                   label="Sign In"
                   className="w-full p-3 text-xl"
-                  style={{
-                    background: "#00052e",
-                  }}
+                  style={{ background: "#00052e" }}
                   onClick={handleSignIn}
-                  //   onClick={() => router.push("/")}
                 ></Button>
               </div>
             </div>
