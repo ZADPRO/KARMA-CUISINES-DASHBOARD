@@ -5,14 +5,46 @@ import { Checkbox } from "primereact/checkbox";
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 import { InputText } from "primereact/inputtext";
+import axios from "axios";
+
+import decrypt from "../../helper";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [checked, setChecked] = useState(false);
 
   const containerClassName = classNames(
     "surface-ground flex align-items-center justify-content-center overflow-hidden"
   );
+
+  const handleSignIn = async () => {
+    try {
+      const credentials = {
+        login: email,
+        password: password,
+      };
+
+      console.log("import.meta.env.VITE_API_URL", import.meta.env.VITE_API_URL);
+      const response = await axios.post(
+        import.meta.env.VITE_API_URL + "/admin/login",
+        credentials
+      );
+      console.log("response", response);
+
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
+      console.log("data", data);
+
+      alert("Login successful!");
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert("Login failed. Please check your credentials.");
+    }
+  };
 
   return (
     <div>
@@ -51,6 +83,8 @@ export default function Login() {
                   type="text"
                   placeholder="Email address"
                   className="w-full md:w-30rem mb-5"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   style={{ padding: "1rem" }}
                 />
 
@@ -93,6 +127,7 @@ export default function Login() {
                   style={{
                     background: "#00052e",
                   }}
+                  onClick={handleSignIn}
                   //   onClick={() => router.push("/")}
                 ></Button>
               </div>

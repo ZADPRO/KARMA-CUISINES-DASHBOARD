@@ -1,9 +1,10 @@
-import axios from "axios";
+import { Axios } from "axios";
 import {
   AlignLeft,
   BadgeEuro,
   CalendarArrowDown,
   CalendarArrowUp,
+  Euro,
   HandCoins,
   Percent,
   TicketPercent,
@@ -15,6 +16,7 @@ import { DataTable } from "primereact/datatable";
 import { FloatLabel } from "primereact/floatlabel";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
+import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
 import { MultiSelect } from "primereact/multiselect";
 import { TabPanel, TabView } from "primereact/tabview";
@@ -22,12 +24,15 @@ import { Tag } from "primereact/tag";
 import { Toast } from "primereact/toast";
 import { useEffect, useRef, useState } from "react";
 
+import decrypt from "../../helper";
+
 export default function OffersSidebar() {
   const dt = useRef(null);
   const toast = useRef(null);
 
   const [filteredProducts, setFilteredProducts] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState(null);
+  const [uploadLogoEnabled, setUploadLogoEnabled] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [restaurantVendors, setRestaurantVendor] = useState(null);
@@ -40,12 +45,14 @@ export default function OffersSidebar() {
   ];
 
   const [formData, setFormData] = useState({
-    minValue: "", // Minimum Value
-    discountPrice: "", // Discount / Offers
-    description: "", // Description
-    coupon: "", // Coupon
-    startDate: null, // Start Date
-    endDate: null, // End Date
+    offerName: "",
+    minValue: "",
+    discountPrice: "",
+    isOffer: false,
+    description: "",
+    coupon: "",
+    startDate: null,
+    endDate: null,
   });
   useEffect(() => {
     const restaurantData = [
@@ -246,9 +253,25 @@ export default function OffersSidebar() {
 
   const handleSubmit = async () => {
     try {
-      // Send data via axios.post
-      const response = await axios.post("api/v1/2020", formData);
-      console.log(response.data); // Log response from backend
+      // Send data via axios.post - /api/v1/vendorRoutes/offersApplied
+
+      Axios.post(
+        import.meta.env.VITE_API_URL + "/api/v1/vendorRoutes/offersApplied",
+        { refStId: null },
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
+      ).then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+        console.log("data", data);
+      });
 
       // Show success toast after successful submission
       toast.current.show({
@@ -268,8 +291,10 @@ export default function OffersSidebar() {
 
   const handleClear = () => {
     setFormData({
+      offerName: "",
       minValue: "",
       discountPrice: "",
+      ifOffer: false,
       productPrice: "",
       description: "",
       coupon: "",
@@ -450,8 +475,8 @@ export default function OffersSidebar() {
                     </span>
                     <InputText
                       placeholder="Offer Name"
-                      value={formData.minValue}
-                      onChange={(e) => handleInputChange(e, "minValue")}
+                      value={formData.offerName}
+                      onChange={(e) => handleInputChange(e, "offerName")}
                     />
                   </div>
                   <div className="p-inputgroup flex-1">
@@ -465,13 +490,24 @@ export default function OffersSidebar() {
                     />
                   </div>
                 </div>
-                <div className="flex gap-3 mt-3">
+
+                <div className="flex gap-3 mt-3 align-items-center">
+                  <InputSwitch
+                    checked={uploadLogoEnabled}
+                    onChange={(e) => setUploadLogoEnabled(e.value)}
+                  />
                   <div className="p-inputgroup flex-1">
                     <span className="p-inputgroup-addon">
-                      <Percent size={20} />
+                      {uploadLogoEnabled ? (
+                        <Euro size={20} />
+                      ) : (
+                        <Percent size={20} />
+                      )}{" "}
                     </span>
                     <InputText
-                      placeholder="Discount / Offers"
+                      placeholder={
+                        uploadLogoEnabled ? "Price / Offer" : "Discount / Offer"
+                      }
                       value={formData.discountPrice}
                       onChange={(e) => handleInputChange(e, "discountPrice")}
                     />
@@ -483,7 +519,7 @@ export default function OffersSidebar() {
                     <InputText
                       placeholder="Description"
                       value={formData.description}
-                      onChange={(e) => handleInputChange(e, "productPrice")}
+                      onChange={(e) => handleInputChange(e, "description")}
                     />
                   </div>
                 </div>

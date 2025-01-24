@@ -19,6 +19,7 @@ export default function AddProductSideBar() {
   });
 
   const [uploadLogoEnabled, setUploadLogoEnabled] = useState(false);
+  const [updateOffersEnabled, setUpdateOffersEnabled] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedRating, setSelectedRating] = useState(null);
   const [selectedOffer, setSelectedOffer] = useState(null);
@@ -67,6 +68,8 @@ export default function AddProductSideBar() {
       offer: selectedOffer ? selectedOffer.name : null,
       range: dates,
     };
+
+    // ADD PRODUCT PAYLOAD - /api/v1/vendorRoutes/addProduct
 
     console.log("Payload:", payload);
 
@@ -172,8 +175,8 @@ export default function AddProductSideBar() {
               <div className="fileUpload mt-3 flex-col">
                 <div className="flex align-items-center gap-3">
                   <InputSwitch
-                    checked={uploadLogoEnabled}
-                    onChange={(e) => setUploadLogoEnabled(e.value)}
+                    checked={updateOffersEnabled}
+                    onChange={(e) => setUpdateOffersEnabled(e.value)}
                   />
                   <span className="">Offers Applied</span>
                 </div>
