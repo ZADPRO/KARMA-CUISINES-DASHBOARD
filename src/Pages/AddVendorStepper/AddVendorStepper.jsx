@@ -237,6 +237,10 @@ export default function AddVendorStepper() {
 
   const handleToRestroDoc = () => {
     if (validateForm()) {
+      axios.post(
+        import.meta.env.VITE_API_URL + "/vendorRoutes/BasicDetails",
+        {}
+      );
       stepperRef.current.nextCallback();
     }
   };
@@ -460,20 +464,32 @@ export default function AddVendorStepper() {
                 <span className="p-inputgroup-addon">
                   <Landmark size={20} />
                 </span>
-                <InputText placeholder="Bank Name" />
+                <InputText
+                  placeholder="Bank Name"
+                  value={bankData.bankName}
+                  onChange={(e) => handleInputChange(e, "bankName")}
+                />
               </div>
               <div className="flex gap-3 mt-3 mb-3">
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
                     <Banknote size={20} />
                   </span>
-                  <InputText placeholder="Account Number" />
+                  <InputText
+                    placeholder="Account Number"
+                    value={bankData.accountNumber}
+                    onChange={(e) => handleInputChange(e, "accountNumber")}
+                  />
                 </div>
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
                     <CreditCard size={20} />
                   </span>
-                  <InputText placeholder="IBAN Code" />
+                  <InputText
+                    placeholder="IBAN Code"
+                    value={bankData.ibanCode}
+                    onChange={(e) => handleInputChange(e, "ibanCode")}
+                  />
                 </div>
               </div>
               <span>Payment Accepted</span>
