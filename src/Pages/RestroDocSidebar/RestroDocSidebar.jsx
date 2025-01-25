@@ -6,6 +6,7 @@ import { InputSwitch } from "primereact/inputswitch";
 import { useEffect, useRef, useState } from "react";
 import { FileText } from "lucide-react";
 import { InputText } from "primereact/inputtext";
+import decrypt from "../../helper";
 import axios from "axios";
 
 export default function RestroDocSidebar() {
@@ -16,37 +17,24 @@ export default function RestroDocSidebar() {
   const [showForm, setShowForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editDocData, setEditDocData] = useState(null);
+  const [uploadLogoEnabled, setUploadLogoEnabled] = useState(false);
 
   useEffect(() => {
-    const restaurantData = [
-      {
-        id: 1,
-        document: "Upload VAT Registration Certificate",
-        visibility: true,
-      },
-      {
-        id: 2,
-        document: "Upload Commercial Register Extract",
-        visibility: false,
-      },
-      {
-        id: 3,
-        document: "Upload Alcohol License (if applicable)",
-        visibility: true,
-      },
-      {
-        id: 4,
-        document: "Upload Food Safety and Hygiene Certificate",
-        visibility: true,
-      },
-      {
-        id: 5,
-        document: "Upload Liability Insurance Certificate",
-        visibility: false,
-      },
-    ];
-
-    setProducts(restaurantData);
+    axios
+      .get(import.meta.env.VITE_API_URL + "/vendorRoutes/getDocuments", {
+        headers: {
+          Authorization: localStorage.getItem("JWTtoken"),
+        },
+      })
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+        console.log("data", data);
+        setProducts(data.restroDetails);
+      });
   }, []);
 
   // Send visibility update to backend
@@ -84,7 +72,6 @@ export default function RestroDocSidebar() {
   // Handle save (for both adding and editing)
   const handleSave = async () => {
     if (editMode) {
-      // Update existing document
       const updatedProducts = [...products];
       const index = updatedProducts.findIndex(
         (product) => product.id === editDocData.id
@@ -94,7 +81,7 @@ export default function RestroDocSidebar() {
         setProducts(updatedProducts);
 
         try {
-          await axios.post("/api/updateDocument", {
+          await axios.post("/vendorRoutes/addDocuments", {
             id: editDocData.id,
             document: editDocData.document,
             visibility: editDocData.visibility,
@@ -116,14 +103,24 @@ export default function RestroDocSidebar() {
     } else {
       // Add new document
       const newDoc = {
-        id: products.length + 1,
-        document: editDocData?.document || "Untitled Document",
-        visibility: true, // Default visibility
+        refCertificateType: editDocData?.document || "Untitled Document",
+        visibility: uploadLogoEnabled,
       };
-      setProducts([...products, newDoc]);
+      console.log("newDoc", newDoc);
 
+      // refCertificateType, visibility
       try {
-        await axios.post("/api/addDocument", newDoc);
+        await axios.post(
+          import.meta.env.VITE_API_URL + "/vendorRoutes/addDocuments",
+          {
+            newDoc,
+          },
+          {
+            headers: {
+              Authorization: localStorage.getItem("JWTtoken"),
+            },
+          }
+        );
         toast.current.show({
           severity: "success",
           summary: "Document Added",
@@ -172,8 +169,8 @@ export default function RestroDocSidebar() {
         {/* Add/Edit Document Form */}
         {showForm && (
           <div className="addNewDoc mb-3">
-            <div className="flex gap-3">
-              <div className="p-inputgroup flex-1">
+            <div className="flex gap-3 align-items-center">
+              <div className="p-inputgroup flex-1 align-items-center">
                 <span className="p-inputgroup-addon">
                   <FileText size={20} />
                 </span>
@@ -187,16 +184,21 @@ export default function RestroDocSidebar() {
                   }
                 />
               </div>
-              <div className="p-inputgroup flex-1">
+              <div className="flex gap-3">
+                <p>Visibility</p>
+                <InputSwitch
+                  checked={uploadLogoEnabled}
+                  onChange={(e) => setUploadLogoEnabled(e.value)}
+                />
+              </div>
+              <div className="p-inputgroup flex-1 justify-content-end">
                 <Button
                   severity="success"
-                  outlined
                   label={editMode ? "Save Changes" : "Add"}
                   onClick={handleSave}
                 />
                 <Button
                   severity="danger"
-                  outlined
                   label="Cancel"
                   onClick={() => {
                     setShowForm(false);
@@ -232,7 +234,7 @@ export default function RestroDocSidebar() {
             style={{ width: "3rem", textAlign: "center" }}
           ></Column>
           <Column
-            field="document"
+            field="refCertificateType"
             header="Document"
             style={{ minWidth: "8rem" }}
           ></Column>
@@ -241,13 +243,16 @@ export default function RestroDocSidebar() {
             header="Visibility"
             body={(rowData) => (
               <InputSwitch
-                checked={rowData.visibility}
+                checked={rowData.visibility === "true"}
                 style={{ transform: "scale(0.8)" }}
-                onChange={(e) => onVisibilityChange(e, rowData)}
+                onChange={(e) =>
+                  onVisibilityChange(e, { ...rowData, visibility: e.value })
+                }
               />
             )}
             style={{ width: "8rem" }}
           ></Column>
+
           <Column
             body={(rowData) => (
               <Button

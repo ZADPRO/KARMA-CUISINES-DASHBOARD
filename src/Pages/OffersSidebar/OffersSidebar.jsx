@@ -39,8 +39,8 @@ export default function OffersSidebar() {
   const [products, setProducts] = useState(null);
 
   const restaurants = [
-    { name: "Percentage", id: "Percentage" },
-    { name: "Discount", id: "Discount" },
+    { name: "Price", id: true },
+    { name: "Discount", id: false },
   ];
 
   const [formData, setFormData] = useState({
@@ -80,7 +80,7 @@ export default function OffersSidebar() {
     }
     if (restaurantVendors && restaurantVendors.length) {
       updatedProducts = updatedProducts.filter((product) =>
-        restaurantVendors.some((vendor) => vendor.id === product.offerType)
+        restaurantVendors.some((vendor) => vendor.id === product.refOfferType)
       );
     }
 
