@@ -12,7 +12,6 @@ import FileUploadTemplate from "../FileUpload/FileUploadTemplate";
 import {
   BriefcaseBusiness,
   Contact,
-  MapPinHouse,
   Phone,
   User,
   Utensils,
@@ -29,6 +28,7 @@ import axios from "axios";
 import { FileUpload } from "primereact/fileupload";
 import { MultiSelect } from "primereact/multiselect";
 import { Calendar } from "primereact/calendar";
+import { Divider } from "primereact/divider";
 
 import decrypt from "../../helper";
 
@@ -42,7 +42,6 @@ export default function AddVendorStepper() {
   const [acceptTwint, setAcceptTwint] = useState(false);
   const [acceptPostFinance, setAcceptPostFinance] = useState(false);
   const [acceptApplePay, setAcceptApplePay] = useState(false);
-  const [time, setTime] = useState(null);
 
   const [formData, setFormData] = useState({
     restaurantName: "",
@@ -50,7 +49,11 @@ export default function AddVendorStepper() {
     contactPersonDesignation: "",
     contactPersonNumber: "",
     contactPersonEmail: "",
-    restaurantAddress: "",
+    doorNumber: "",
+    city: "",
+    postalCode: "",
+    zone: "",
+    country: "",
     logoUrl: "",
     websiteURL: "",
     facebook: "",
@@ -66,7 +69,6 @@ export default function AddVendorStepper() {
     moneyTransferDetails: "",
   });
 
-  const [selectedCities, setSelectedCities] = useState(null);
   const cities = [
     { name: "Monday", code: 1 },
     { name: "Tuesday", code: 2 },
@@ -78,6 +80,23 @@ export default function AddVendorStepper() {
   ];
 
   const [fileUploadSections, setFileUploadSections] = useState([]);
+
+  const [inputGroups, setInputGroups] = useState([
+    { selectedCities: [], openingTime: null, closingTime: null },
+  ]);
+
+  const handleAddGroup = () => {
+    setInputGroups([
+      ...inputGroups,
+      { selectedCities: [], openingTime: null, closingTime: null },
+    ]);
+  };
+
+  const handleInputGroupChange = (index, field, value) => {
+    const newInputGroups = [...inputGroups];
+    newInputGroups[index][field] = value;
+    setInputGroups(newInputGroups);
+  };
 
   const handleToggleSwitch = (id, value) => {
     setFileUploadSections((prevSections) =>
@@ -227,7 +246,7 @@ export default function AddVendorStepper() {
         handleUploadFailure(data);
       }
     } catch (error) {
-      handleUploadFailure(error); // Handle any network errors
+      handleUploadFailure(error);
     }
   };
 
@@ -251,13 +270,37 @@ export default function AddVendorStepper() {
   };
 
   const handleToRestroDoc = () => {
-    if (validateForm()) {
-      axios.post(
-        import.meta.env.VITE_API_URL + "/vendorRoutes/BasicDetails",
-        {}
-      );
-      stepperRef.current.nextCallback();
-    }
+    console.log("Form Data:", formData);
+    console.log("Input Groups:", inputGroups);
+    axios
+      .post(
+        import.meta.env.VITE_API_URL + "/vendorRoutes",
+        {
+          formData: formData,
+          inputGroups: inputGroups,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+        console.log("data", data);
+      });
+    // if (validateForm()) {
+    //   axios.post(
+    //     import.meta.env.VITE_API_URL + "/vendorRoutes/BasicDetails",
+    //     {}
+    //   );
+    //   stepperRef.current.nextCallback();
+    // }
   };
 
   const handleInputChange = (e, field) => {
@@ -333,81 +376,106 @@ export default function AddVendorStepper() {
                   />{" "}
                 </div>
               </div>
-              <div className="flex gap-3 mt-3">
-                <div className="p-inputgroup flex-1">
-                  <span className="p-inputgroup-addon">
-                    <Phone size={20} />
-                  </span>
-                  <MultiSelect
-                    value={selectedCities}
-                    onChange={(e) => setSelectedCities(e.value)}
-                    options={cities}
-                    optionLabel="name"
-                    display="chip"
-                    placeholder="Select Working Days"
-                    maxSelectedLabels={3}
-                  />
-                </div>
-                <div className="p-inputgroup flex-1">
-                  <span className="p-inputgroup-addon">
-                    <Contact size={20} />{" "}
-                  </span>
-                  <Calendar
-                    placeholder="Restro Opening Time"
-                    value={time}
-                    onChange={(e) => setTime(e.value)}
-                    timeOnly
-                  />
-                </div>
-                <div className="p-inputgroup flex-1">
-                  <span className="p-inputgroup-addon">
-                    <Phone size={20} />
-                  </span>
-                  <Calendar
-                    placeholder="Restro Closing Time"
-                    value={time}
-                    onChange={(e) => setTime(e.value)}
-                    timeOnly
-                  />
-                </div>
-                <Button icon="pi pi-plus" rounded />
+              <Divider />
+              <div className="flex justify-content-end">
+                <Button
+                  icon="pi pi-plus"
+                  severity="success"
+                  label="Add New Timing"
+                  onClick={handleAddGroup}
+                />
               </div>
+              <div>
+                {inputGroups.map((group, index) => (
+                  <div key={index} className="flex gap-3 mt-3">
+                    <div className="p-inputgroup flex-1">
+                      <span className="p-inputgroup-addon">
+                        <Phone size={20} />
+                      </span>
+                      <MultiSelect
+                        value={group.selectedCities}
+                        onChange={(e) =>
+                          handleInputGroupChange(
+                            index,
+                            "selectedCities",
+                            e.value
+                          )
+                        }
+                        options={cities}
+                        optionLabel="name"
+                        style={{ minWidth: "10rem" }}
+                        display="chip"
+                        placeholder="Select Working Days"
+                        maxSelectedLabels={1}
+                      />
+                    </div>
+                    <div className="p-inputgroup flex-1">
+                      <span className="p-inputgroup-addon">
+                        <Contact size={20} />
+                      </span>
+                      <Calendar
+                        placeholder="Restro Opening Time"
+                        value={group.openingTime}
+                        style={{ minWidth: "4rem" }}
+                        onChange={(e) =>
+                          handleInputGroupChange(index, "openingTime", e.value)
+                        }
+                        timeOnly
+                      />
+                    </div>
+                    <div className="p-inputgroup flex-1">
+                      <span className="p-inputgroup-addon">
+                        <Phone size={20} />
+                      </span>
+                      <Calendar
+                        placeholder="Restro Closing Time"
+                        value={group.closingTime}
+                        style={{ minWidth: "4rem" }}
+                        onChange={(e) =>
+                          handleInputGroupChange(index, "closingTime", e.value)
+                        }
+                        timeOnly
+                        minDate={
+                          group.openingTime
+                            ? new Date(group.openingTime)
+                            : undefined
+                        }
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Divider />
               <div className="flex gap-3 mt-3">
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
                     <Phone size={20} />
                   </span>
-                  <MultiSelect
-                    value={selectedCities}
-                    onChange={(e) => setSelectedCities(e.value)}
-                    options={cities}
-                    optionLabel="name"
-                    display="chip"
+                  <InputText
                     placeholder="Door No, Street"
-                    maxSelectedLabels={3}
-                  />
+                    value={formData.doorNumber}
+                    onChange={(e) => handleInputChange(e, "doorNumber")}
+                  />{" "}
                 </div>
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
                     <Contact size={20} />{" "}
                   </span>
-                  <Calendar
-                    placeholder="Street"
-                    value={time}
-                    onChange={(e) => setTime(e.value)}
-                    timeOnly
-                  />
+                  <InputText
+                    placeholder="City"
+                    value={formData.city}
+                    onChange={(e) => handleInputChange(e, "city")}
+                  />{" "}
                 </div>
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
                     <Phone size={20} />
                   </span>
-                  <Calendar
+                  <InputText
                     placeholder="Postal Code"
-                    value={time}
-                    onChange={(e) => setTime(e.value)}
-                    timeOnly
-                  />
+                    value={formData.postalCode}
+                    onChange={(e) => handleInputChange(e, "postalCode")}
+                  />{" "}
                 </div>
               </div>
               <div className="flex gap-3 mt-3">
@@ -415,38 +483,23 @@ export default function AddVendorStepper() {
                   <span className="p-inputgroup-addon">
                     <Phone size={20} />
                   </span>
-                  <MultiSelect
-                    value={selectedCities}
-                    onChange={(e) => setSelectedCities(e.value)}
-                    options={cities}
-                    optionLabel="name"
-                    display="chip"
+                  <InputText
                     placeholder="Zone"
-                    maxSelectedLabels={3}
-                  />
+                    value={formData.zone}
+                    onChange={(e) => handleInputChange(e, "zone")}
+                  />{" "}
                 </div>
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
                     <Contact size={20} />{" "}
                   </span>
-                  <Calendar
+                  <InputText
                     placeholder="Country"
-                    value={time}
-                    onChange={(e) => setTime(e.value)}
-                    timeOnly
-                  />
+                    value={formData.country}
+                    onChange={(e) => handleInputChange(e, "country")}
+                  />{" "}
                 </div>
               </div>
-              <div className="p-inputgroup flex-1 mt-3">
-                <span className="p-inputgroup-addon">
-                  <MapPinHouse size={20} />{" "}
-                </span>
-                <InputText
-                  placeholder="Restaurant Address"
-                  value={formData.restaurantAddress}
-                  onChange={(e) => handleInputChange(e, "restaurantAddress")}
-                />{" "}
-              </div>{" "}
               <div className="p-inputgroup flex-1 mt-3">
                 <span className="p-inputgroup-addon">
                   <Link size={20} />
