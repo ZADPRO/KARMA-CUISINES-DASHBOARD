@@ -27,6 +27,9 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { FileUpload } from "primereact/fileupload";
+import { MultiSelect } from "primereact/multiselect";
+import { Calendar } from "primereact/calendar";
+
 import decrypt from "../../helper";
 
 export default function AddVendorStepper() {
@@ -39,6 +42,7 @@ export default function AddVendorStepper() {
   const [acceptTwint, setAcceptTwint] = useState(false);
   const [acceptPostFinance, setAcceptPostFinance] = useState(false);
   const [acceptApplePay, setAcceptApplePay] = useState(false);
+  const [time, setTime] = useState(null);
 
   const [formData, setFormData] = useState({
     restaurantName: "",
@@ -61,6 +65,17 @@ export default function AddVendorStepper() {
     paymentMethods: "",
     moneyTransferDetails: "",
   });
+
+  const [selectedCities, setSelectedCities] = useState(null);
+  const cities = [
+    { name: "Monday", code: 1 },
+    { name: "Tuesday", code: 2 },
+    { name: "Wednesday", code: 3 },
+    { name: "Thursday", code: 4 },
+    { name: "Friday", code: 5 },
+    { name: "Saturday", code: 6 },
+    { name: "Sunday", code: 7 },
+  ];
 
   const [fileUploadSections, setFileUploadSections] = useState([]);
 
@@ -318,6 +333,110 @@ export default function AddVendorStepper() {
                   />{" "}
                 </div>
               </div>
+              <div className="flex gap-3 mt-3">
+                <div className="p-inputgroup flex-1">
+                  <span className="p-inputgroup-addon">
+                    <Phone size={20} />
+                  </span>
+                  <MultiSelect
+                    value={selectedCities}
+                    onChange={(e) => setSelectedCities(e.value)}
+                    options={cities}
+                    optionLabel="name"
+                    display="chip"
+                    placeholder="Select Working Days"
+                    maxSelectedLabels={3}
+                  />
+                </div>
+                <div className="p-inputgroup flex-1">
+                  <span className="p-inputgroup-addon">
+                    <Contact size={20} />{" "}
+                  </span>
+                  <Calendar
+                    placeholder="Restro Opening Time"
+                    value={time}
+                    onChange={(e) => setTime(e.value)}
+                    timeOnly
+                  />
+                </div>
+                <div className="p-inputgroup flex-1">
+                  <span className="p-inputgroup-addon">
+                    <Phone size={20} />
+                  </span>
+                  <Calendar
+                    placeholder="Restro Closing Time"
+                    value={time}
+                    onChange={(e) => setTime(e.value)}
+                    timeOnly
+                  />
+                </div>
+                <Button icon="pi pi-plus" rounded />
+              </div>
+              <div className="flex gap-3 mt-3">
+                <div className="p-inputgroup flex-1">
+                  <span className="p-inputgroup-addon">
+                    <Phone size={20} />
+                  </span>
+                  <MultiSelect
+                    value={selectedCities}
+                    onChange={(e) => setSelectedCities(e.value)}
+                    options={cities}
+                    optionLabel="name"
+                    display="chip"
+                    placeholder="Door No, Street"
+                    maxSelectedLabels={3}
+                  />
+                </div>
+                <div className="p-inputgroup flex-1">
+                  <span className="p-inputgroup-addon">
+                    <Contact size={20} />{" "}
+                  </span>
+                  <Calendar
+                    placeholder="Street"
+                    value={time}
+                    onChange={(e) => setTime(e.value)}
+                    timeOnly
+                  />
+                </div>
+                <div className="p-inputgroup flex-1">
+                  <span className="p-inputgroup-addon">
+                    <Phone size={20} />
+                  </span>
+                  <Calendar
+                    placeholder="Postal Code"
+                    value={time}
+                    onChange={(e) => setTime(e.value)}
+                    timeOnly
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-3">
+                <div className="p-inputgroup flex-1">
+                  <span className="p-inputgroup-addon">
+                    <Phone size={20} />
+                  </span>
+                  <MultiSelect
+                    value={selectedCities}
+                    onChange={(e) => setSelectedCities(e.value)}
+                    options={cities}
+                    optionLabel="name"
+                    display="chip"
+                    placeholder="Zone"
+                    maxSelectedLabels={3}
+                  />
+                </div>
+                <div className="p-inputgroup flex-1">
+                  <span className="p-inputgroup-addon">
+                    <Contact size={20} />{" "}
+                  </span>
+                  <Calendar
+                    placeholder="Country"
+                    value={time}
+                    onChange={(e) => setTime(e.value)}
+                    timeOnly
+                  />
+                </div>
+              </div>
               <div className="p-inputgroup flex-1 mt-3">
                 <span className="p-inputgroup-addon">
                   <MapPinHouse size={20} />{" "}
@@ -409,6 +528,7 @@ export default function AddVendorStepper() {
             />
           </div>
         </StepperPanel>
+
         <StepperPanel header="Restro Details">
           <div className="border-2 px-5 py-5 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
             <div className="uploadFiles w-full">

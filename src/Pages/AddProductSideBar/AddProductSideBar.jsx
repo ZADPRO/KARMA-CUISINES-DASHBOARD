@@ -12,6 +12,7 @@ export default function AddProductSideBar() {
   const toastRef = useRef(null);
 
   const [formData, setFormData] = useState({
+    refVendorId: 0,
     restaurantName: "",
     productName: "",
     productPrice: "",
@@ -20,6 +21,8 @@ export default function AddProductSideBar() {
 
   const [uploadLogoEnabled, setUploadLogoEnabled] = useState(false);
   const [updateOffersEnabled, setUpdateOffersEnabled] = useState(false);
+  const [customOffersEnabled, setCustomOffersEnabled] = useState(false);
+  const [customOfferRangeEnabled, setCustomOfferRangeEnabled] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedRating, setSelectedRating] = useState(null);
   const [selectedOffer, setSelectedOffer] = useState(null);
@@ -31,6 +34,14 @@ export default function AddProductSideBar() {
     { name: "Cafe", code: "CA" },
     { name: "Bakery", code: "BK" },
     { name: "Seafood", code: "SF" },
+  ];
+
+  const restroDetails = [
+    { refVendorName: "Restro 1", refVendorId: 1 },
+    { refVendorName: "Restro 2", refVendorId: 2 },
+    { refVendorName: "Restro 3", refVendorId: 3 },
+    { refVendorName: "Restro 4", refVendorId: 4 },
+    { refVendorName: "Restro 5", refVendorId: 5 },
   ];
 
   const ratings = [
@@ -56,8 +67,16 @@ export default function AddProductSideBar() {
     }));
   };
 
+  const handleDropdownChange = (e, fieldName) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [fieldName]: e.value.refVendorId,
+    }));
+  };
+
   const handleSubmit = () => {
     const payload = {
+      refVendorId: formData.refVendorId,
       restaurantName: formData.restaurantName,
       productName: formData.productName,
       productPrice: formData.productPrice,
@@ -93,10 +112,15 @@ export default function AddProductSideBar() {
               <span className="p-inputgroup-addon">
                 <Utensils size={20} />
               </span>
-              <InputText
-                placeholder="Restaurant Name"
-                value={formData.restaurantName}
-                onChange={(e) => handleInputChange(e, "restaurantName")}
+              <Dropdown
+                value={restroDetails.find(
+                  (restro) => restro.refVendorId === formData.refVendorId
+                )} // Find the selected option by comparing the ID
+                options={restroDetails}
+                onChange={(e) => handleDropdownChange(e, "refVendorId")}
+                placeholder="Select a Restaurant Type"
+                optionLabel="refVendorName"
+                className="w-full"
               />
             </div>
             <div className="flex gap-3 mt-3">
@@ -172,21 +196,25 @@ export default function AddProductSideBar() {
               </div>
             </div>
             <div className="mt-3">
-              <div className="fileUpload mt-3 flex-col">
-                <div className="flex align-items-center gap-3">
-                  <InputSwitch
-                    checked={updateOffersEnabled}
-                    onChange={(e) => setUpdateOffersEnabled(e.value)}
-                  />
-                  <span className="">Offers Applied</span>
-                </div>
-                <div className="flex gap-3 mt-3">
-                  <div className="p-inputgroup flex-1">
+              <div className="gap-5 mt-3 flex">
+                <div
+                  className="flex gap-3 mt-3 flex-1"
+                  style={{ flexDirection: "column" }}
+                >
+                  <div className="flex align-items-center gap-3">
+                    <InputSwitch
+                      checked={updateOffersEnabled}
+                      onChange={(e) => setUpdateOffersEnabled(e.value)}
+                    />
+                    <span className="">Offers Applied</span>
+                  </div>
+                  <div className="p-inputgroup">
                     <span className="p-inputgroup-addon">
                       <Percent size={20} />
                     </span>
                     <Dropdown
                       value={selectedOffer}
+                      disabled={!updateOffersEnabled}
                       onChange={(e) => setSelectedOffer(e.value)}
                       options={offers}
                       optionLabel="name"
@@ -194,16 +222,59 @@ export default function AddProductSideBar() {
                       className="w-full md:w-14rem"
                     />
                   </div>
-                  <div className="p-inputgroup flex-1">
+                </div>
+                <div
+                  className="flex gap-3 mt-3 flex-1"
+                  style={{ flexDirection: "column" }}
+                >
+                  <div className="flex align-items-center gap-3">
+                    <InputSwitch
+                      disabled={!updateOffersEnabled}
+                      checked={customOffersEnabled}
+                      onChange={(e) => setCustomOffersEnabled(e.value)}
+                    />
+                    <span className="">Custom Date Select</span>
+                  </div>
+                  <div className="p-inputgroup">
                     <span className="p-inputgroup-addon">
                       <CalendarRange size={20} />
                     </span>
                     <Calendar
                       value={dates}
+                      disabled={!(customOffersEnabled && updateOffersEnabled)}
+                      onChange={(e) => setDates(e.value)}
+                      selectionMode="multiple"
+                      readOnlyInput
+                      placeholder="Select Offer Dates"
+                      hideOnRangeSelection
+                    />
+                  </div>
+                </div>
+                <div
+                  className="flex gap-3 mt-3 flex-1"
+                  style={{ flexDirection: "column" }}
+                >
+                  <div className="flex align-items-center gap-3">
+                    <InputSwitch
+                      disabled={!updateOffersEnabled}
+                      checked={customOfferRangeEnabled}
+                      onChange={(e) => setCustomOfferRangeEnabled(e.value)}
+                    />
+                    <span className="">Custom Range Selected</span>
+                  </div>
+                  <div className="p-inputgroup">
+                    <span className="p-inputgroup-addon">
+                      <CalendarRange size={20} />
+                    </span>
+                    <Calendar
+                      value={dates}
+                      disabled={
+                        !(customOfferRangeEnabled && updateOffersEnabled)
+                      }
                       onChange={(e) => setDates(e.value)}
                       selectionMode="range"
                       readOnlyInput
-                      placeholder="Offer Valid Range"
+                      placeholder="Offer Range"
                       hideOnRangeSelection
                     />
                   </div>

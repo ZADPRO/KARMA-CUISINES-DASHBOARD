@@ -16,6 +16,7 @@ export default function PaymentMethodsSidebar() {
   const [showForm, setShowForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editDocData, setEditDocData] = useState(null);
+  const [uploadLogoEnabled, setUploadLogoEnabled] = useState(false);
 
   useEffect(() => {
     const restaurantData = [
@@ -167,7 +168,7 @@ export default function PaymentMethodsSidebar() {
         {/* Add/Edit Document Form */}
         {showForm && (
           <div className="addNewDoc mb-3">
-            <div className="flex gap-3">
+            <div className="flex gap-3 align-items-center">
               <div className="p-inputgroup flex-1">
                 <span className="p-inputgroup-addon">
                   <FileText size={20} />
@@ -182,16 +183,21 @@ export default function PaymentMethodsSidebar() {
                   }
                 />
               </div>
+              <div className="flex gap-3">
+                <p>Visibility</p>
+                <InputSwitch
+                  checked={uploadLogoEnabled}
+                  onChange={(e) => setUploadLogoEnabled(e.value)}
+                />
+              </div>
               <div className="p-inputgroup flex-1">
                 <Button
                   severity="success"
-                  outlined
                   label={editMode ? "Save Changes" : "Add"}
                   onClick={handleSave}
                 />
                 <Button
                   severity="danger"
-                  outlined
                   label="Cancel"
                   onClick={() => {
                     setShowForm(false);
