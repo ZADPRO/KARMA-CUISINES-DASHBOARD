@@ -43,8 +43,10 @@ export default function Login() {
         const userDetails = data.userDetails[0];
         console.log("userDetails", userDetails);
 
+        localStorage.setItem("JWTtoken", "Bearer " + data.token);
         localStorage.setItem("loginStatus", true);
-        localStorage.setItem("userDetails", JSON.stringify(userDetails)); // Convert the userDetails object to JSON
+        localStorage.setItem("userDetails", JSON.stringify(userDetails));
+        localStorage.setItem("rememberMe", checked);
 
         confirmDialog({
           group: "headless",
@@ -80,7 +82,10 @@ export default function Login() {
       <ConfirmDialog
         group="headless"
         content={({ headerRef, contentRef, footerRef, hide, message }) => (
-          <div className="flex flex-column align-items-center p-5 surface-overlay border-round">
+          <div
+            className="flex flex-column align-items-center p-5 surface-overlay border-round"
+            style={{ width: "400px", maxWidth: "100%" }}
+          >
             <div className="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8">
               <i className="pi pi-check text-5xl"></i>
             </div>

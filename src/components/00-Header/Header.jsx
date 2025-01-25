@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import { AnimatePresence, motion } from "framer-motion";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import "./Header.css";
 import {
@@ -73,14 +73,17 @@ const routes = [
     icon: <Settings />,
   },
   {
-    path: "/logout",
+    path: "/login",
     name: "Logout",
     icon: <LogOut />,
+    logout: true, // Add a flag to identify the logout route
   },
 ];
 
 export default function Header({ children }) {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
   const toggle = () => setIsOpen(!isOpen);
 
   const showAnimation = {
@@ -98,6 +101,14 @@ export default function Header({ children }) {
         duration: 0.2,
       },
     },
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("loginStatus");
+    localStorage.removeItem("rememberMe");
+    localStorage.removeItem("userDetails");
+
+    navigate("/login");
   };
 
   return (
@@ -140,6 +151,7 @@ export default function Header({ children }) {
                 key={route.name}
                 className="link"
                 activeClassName="active"
+                onClick={route.logout ? handleLogout : undefined} // Add click handler for logout
               >
                 <div className="icon">{route.icon}</div>
                 <AnimatePresence>

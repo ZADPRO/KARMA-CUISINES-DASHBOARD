@@ -1,4 +1,4 @@
-import { Axios } from "axios";
+import Axios from "axios";
 import {
   AlignLeft,
   BadgeEuro,
@@ -20,7 +20,6 @@ import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
 import { MultiSelect } from "primereact/multiselect";
 import { TabPanel, TabView } from "primereact/tabview";
-import { Tag } from "primereact/tag";
 import { Toast } from "primereact/toast";
 import { useEffect, useRef, useState } from "react";
 
@@ -55,140 +54,20 @@ export default function OffersSidebar() {
     endDate: null,
   });
   useEffect(() => {
-    const restaurantData = [
-      {
-        id: 1,
-        offerType: "Flat Discount",
-        code: "FLAT50",
-        name: "Flat ₹50 Off on Main Course",
-        vendor: "Tandoori Palace",
-        description: "Get ₹50 off on any main course",
-        product: "2025-01-15",
-        date: "2025-02-15",
-        status: "LIVE",
-        time: "2025-01-10",
-        contactNo: "Edit/Delete",
+    Axios.get(import.meta.env.VITE_API_URL + "/vendorRoutes/getOffers", {
+      headers: {
+        Authorization: localStorage.getItem("JWTtoken"),
       },
-      {
-        id: 2,
-        offerType: "Percentage Discount",
-        code: "SAVE20",
-        name: "20% Off on Pizza",
-        vendor: "Pizza Delight",
-        description: "Save 20% on all pizzas",
-        product: "2025-01-01",
-        date: "2025-01-31",
-        status: "EXPIRE TODAY",
-        time: "2025-01-05",
-        contactNo: "Edit/Delete",
-      },
-      {
-        id: 3,
-        offerType: "Flat Discount",
-        code: "FLAT100",
-        name: "Flat ₹100 Off on Buffet",
-        vendor: "Royal Buffet",
-        description: "₹100 off on any buffet package",
-        product: "2024-12-01",
-        date: "2025-01-01",
-        status: "EXPIRED",
-        time: "2024-11-25",
-        contactNo: "Edit/Delete",
-      },
-      {
-        id: 4,
-        offerType: "Buy One Get One",
-        code: "BOGO",
-        name: "Buy 1 Get 1 Free on Burgers",
-        vendor: "Burger Junction",
-        description: "Applicable on all burgers",
-        product: "2025-01-10",
-        date: "2025-01-25",
-        status: "LIVE",
-        time: "2025-01-05",
-        contactNo: "Edit/Delete",
-      },
-      {
-        id: 5,
-        offerType: "Cashback",
-        code: "CASHBACK10",
-        name: "10% Cashback on Orders Above ₹500",
-        vendor: "Café Mocha",
-        description: "Get 10% cashback on orders above ₹500",
-        product: "2025-01-01",
-        date: "2025-03-01",
-        status: "LIVE",
-        time: "2024-12-30",
-        contactNo: "Edit/Delete",
-      },
-      {
-        id: 6,
-        offerType: "Free Shipping",
-        code: "FREESHIP",
-        name: "Free Delivery on Orders Above ₹300",
-        vendor: "Foodie Express",
-        description: "No delivery charges on orders above ₹300",
-        product: "2024-12-15",
-        date: "2025-01-15",
-        status: "EXPIRED",
-        time: "2024-12-10",
-        contactNo: "Edit/Delete",
-      },
-      {
-        id: 7,
-        offerType: "Flat Discount",
-        code: "FLAT200",
-        name: "Flat ₹200 Off on Family Meal",
-        vendor: "Family Feast",
-        description: "₹200 off on any family meal set",
-        product: "2025-01-05",
-        date: "2025-01-20",
-        status: "EXPIRE TODAY",
-        time: "2025-01-01",
-        contactNo: "Edit/Delete",
-      },
-      {
-        id: 8,
-        offerType: "Referral Bonus",
-        code: "REFER50",
-        name: "₹50 Referral Bonus on Next Order",
-        vendor: "QuickBites",
-        description: "Earn ₹50 for every friend referred",
-        product: "2024-12-01",
-        date: "2025-03-01",
-        status: "LIVE",
-        time: "2024-11-25",
-        contactNo: "Edit/Delete",
-      },
-      {
-        id: 9,
-        offerType: "Membership Discount",
-        code: "VIP20",
-        name: "20% Off on VIP Membership",
-        vendor: "The Gourmet Club",
-        description: "20% off on all VIP memberships",
-        product: "2025-01-01",
-        date: "2025-12-31",
-        status: "LIVE",
-        time: "2024-12-20",
-        contactNo: "Edit/Delete",
-      },
-      {
-        id: 10,
-        offerType: "Festive Sale",
-        code: "DIWALI25",
-        name: "25% Off on Diwali Special Sweets",
-        vendor: "Sweet Treats",
-        description: "Festive discounts on Diwali sweets",
-        product: "2025-01-01",
-        date: "2025-01-10",
-        status: "EXPIRED",
-        time: "2024-12-25",
-        contactNo: "Edit/Delete",
-      },
-    ];
+    }).then((res) => {
+      const data = decrypt(
+        res.data[1],
+        res.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
+      console.log("data", data);
 
-    setProducts(restaurantData);
+      setProducts(data.restroOffers);
+    });
   }, []);
 
   useEffect(() => {
@@ -224,26 +103,6 @@ export default function OffersSidebar() {
     </div>
   );
 
-  const statusBodyTemplate = (rowData) => {
-    return <Tag value={rowData.status} severity={getSeverity(rowData)}></Tag>;
-  };
-
-  const getSeverity = (product) => {
-    switch (product.status) {
-      case "LIVE":
-        return "success";
-
-      case "EXPIRE TODAY":
-        return "warning";
-
-      case "EXPIRED":
-        return "danger";
-
-      default:
-        return null;
-    }
-  };
-
   const handleInputChange = (e, field) => {
     setFormData((prev) => ({
       ...prev,
@@ -256,8 +115,17 @@ export default function OffersSidebar() {
       // Send data via axios.post - /api/v1/vendorRoutes/offersApplied
 
       Axios.post(
-        import.meta.env.VITE_API_URL + "/api/v1/vendorRoutes/offersApplied",
-        { refStId: null },
+        import.meta.env.VITE_API_URL + "/vendorRoutes/offersApplied",
+        {
+          refOfferName: formData.offerName,
+          refOfferMinValue: formData.minValue,
+          refDiscountPrice: formData.discountPrice,
+          refOfferType: formData.isOffer,
+          refOfferDescription: formData.description,
+          refStartDate: formData.startDate,
+          refEndDate: formData.endDate,
+          refCoupon: formData.coupon,
+        },
         {
           headers: {
             Authorization: localStorage.getItem("JWTtoken"),
@@ -295,7 +163,6 @@ export default function OffersSidebar() {
       minValue: "",
       discountPrice: "",
       ifOffer: false,
-      productPrice: "",
       description: "",
       coupon: "",
       startDate: null,
@@ -384,47 +251,99 @@ export default function OffersSidebar() {
               header={header}
             >
               <Column
-                field="offerType"
+                field="refOfferType"
                 header="Offer Type"
                 frozen
-                style={{ minWidth: "8rem", background: "white" }}
+                body={(rowData) =>
+                  rowData.refOfferType ? "Price" : "Discount"
+                }
+                style={{ minWidth: "8rem" }}
               ></Column>
               <Column
-                field="code"
+                field="refCoupon"
                 header="Coupon"
                 style={{ minWidth: "8rem" }}
               ></Column>
               <Column
-                field="name"
+                field="refOfferMinValue"
                 header="Minimum Value / Flat"
                 style={{ minWidth: "13rem" }}
               ></Column>
               <Column
-                field="vendor"
+                field="refDiscountPrice"
                 header="Discount %"
                 style={{ minWidth: "12rem" }}
               ></Column>
               <Column
-                field="description"
+                field="refOfferDescription"
                 header="Description"
                 style={{ minWidth: "12rem" }}
               ></Column>
               <Column
-                field="product"
+                field="refStartDate"
                 header="Starting Date"
                 style={{ minWidth: "9rem" }}
+                body={(rowData) =>
+                  new Date(rowData.refStartDate).toLocaleDateString("en-GB")
+                }
               ></Column>
               <Column
-                field="date"
+                field="refEndDate"
                 header="Ending Date"
                 style={{ minWidth: "9rem" }}
+                body={(rowData) =>
+                  new Date(rowData.refEndDate).toLocaleDateString("en-GB")
+                }
               ></Column>
               <Column
                 field="status"
                 header="Status"
-                body={statusBodyTemplate}
+                body={(rowData) => {
+                  const currentTime = new Date();
+                  const startDate = new Date(rowData.refStartDate);
+                  const endDate = new Date(rowData.refEndDate);
+
+                  let statusSeverity = "";
+
+                  if (currentTime < startDate) {
+                    statusSeverity = "UPCOMING";
+                  } else if (
+                    currentTime >= startDate &&
+                    currentTime < endDate
+                  ) {
+                    statusSeverity = "LIVE";
+                  } else if (
+                    currentTime.toDateString() === endDate.toDateString() &&
+                    currentTime <= endDate
+                  ) {
+                    statusSeverity = "EXPIRE TODAY";
+                  } else if (currentTime > endDate) {
+                    statusSeverity = "EXPIRED";
+                  }
+
+                  console.log("statusSeverity", statusSeverity);
+                  switch (statusSeverity) {
+                    case "UPCOMING":
+                      return <span className="badge badge-info">UPCOMING</span>;
+                    case "LIVE":
+                      return <span className="badge badge-success">LIVE</span>;
+                    case "EXPIRE TODAY":
+                      return (
+                        <span className="badge badge-warning">
+                          EXPIRE TODAY
+                        </span>
+                      );
+                    case "EXPIRED":
+                      return (
+                        <span className="badge badge-danger">EXPIRED</span>
+                      );
+                    default:
+                      return null;
+                  }
+                }}
                 style={{ minWidth: "10rem" }}
               ></Column>
+
               <Column
                 field="time"
                 header="Created At"

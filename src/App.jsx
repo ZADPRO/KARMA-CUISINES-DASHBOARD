@@ -38,7 +38,7 @@ function App() {
           <Route path="/messages" element={<Messages />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/logout" element={<Login />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </ConditionalHeader>
     </Router>
@@ -48,7 +48,7 @@ function App() {
 function ConditionalHeader({ children }) {
   const location = useLocation();
 
-  const excludedRoutes = ["/logout"];
+  const excludedRoutes = ["/login"];
   const isExcluded = excludedRoutes.includes(location.pathname);
 
   return isExcluded ? children : <Header>{children}</Header>;
