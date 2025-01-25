@@ -33,18 +33,7 @@ export default function AddVendorStepper() {
   const toastRef = useRef(null);
 
   const stepperRef = useRef(null);
-  const [uploadLogoEnabled, setUploadLogoEnabled] = useState(false);
   const [socialLinksEnabled, setSocialLinksEnabled] = useState(false);
-
-  const [logoFile, setLogoFile] = useState(null);
-
-  const [isCommercialRegisterEnabled, setCommercialRegisterEnabled] =
-    useState(false);
-  const [isVatEnabled, setVatEnabled] = useState(false);
-  const [isAlcoholLicenseEnabled, setAlcoholLicenseEnabled] = useState(false);
-  const [isFoodSafetyEnabled, setFoodSafetyEnabled] = useState(false);
-  const [isLiabilityInsuranceEnabled, setLiabilityInsuranceEnabled] =
-    useState(false);
 
   const [acceptInternationalCard, setAcceptInternationalCard] = useState(false);
   const [acceptTwint, setAcceptTwint] = useState(false);
@@ -73,15 +62,32 @@ export default function AddVendorStepper() {
     moneyTransferDetails: "",
   });
 
-  // States for file uploads
-  const [vatCertificateFile, setVatCertificateFile] = useState(null);
-  const [commercialRegisterFile, setCommercialRegisterFile] = useState(null);
-  const [alcoholLicenseFile, setAlcoholLicenseFile] = useState(null);
-  const [foodSafetyFile, setFoodSafetyFile] = useState(null);
-  const [liabilityInsuranceFile, setLiabilityInsuranceFile] = useState(null);
+  const [fileUploadSections, setFileUploadSections] = useState([]);
 
-  const [documentName, setDocumentName] = useState(null);
+  const handleToggleSwitch = (id, value) => {
+    setFileUploadSections((prevSections) =>
+      prevSections.map((section) =>
+        section.restroDocId === id ? { ...section, isEnabled: value } : section
+      )
+    );
+  };
 
+  const handleNext = () => {
+    const incompleteUploads = fileUploadSections.some(
+      (section) => section.isEnabled && !section.fileUploaded
+    );
+
+    if (incompleteUploads) {
+      toastRef.current.show({
+        severity: "warn",
+        summary: "Incomplete",
+        detail: "Please upload all enabled documents before proceeding.",
+        life: 3000,
+      });
+    } else {
+      stepperRef.current.nextCallback();
+    }
+  };
   useEffect(() => {
     axios
       .get(import.meta.env.VITE_API_URL + "/vendorRoutes/getDocuments", {
@@ -96,64 +102,68 @@ export default function AddVendorStepper() {
           import.meta.env.VITE_ENCRYPTION_KEY
         );
         console.log("restro doc data", data);
-        setDocumentName(data.restroDetails);
+
+        // Filter the data to include only items where visibility is "true"
+        const filteredSections = data.restroDetails
+          .filter((section) => section.visibility === "true")
+          .map((section) => ({
+            id: section.restroDocId, // Use restroDocId as id
+            label: section.refCertificateType, // Use refCertificateType as label
+            isEnabled: section.visibility === "true", // Convert visibility to boolean
+          }));
+
+        setFileUploadSections(filteredSections);
       });
-  }, [documentName]);
+  }, []);
 
-  const handleNext = async () => {
-    try {
-      // Create FormData instance
-      const formData = new FormData();
+  // const handleNext = async () => {
+  //   try {
+  //     const formData = new FormData();
 
-      // Append enabled flags
-      formData.append("isVatEnabled", isVatEnabled);
-      formData.append(
-        "isCommercialRegisterEnabled",
-        isCommercialRegisterEnabled
-      );
-      formData.append("isAlcoholLicenseEnabled", isAlcoholLicenseEnabled);
-      formData.append("isFoodSafetyEnabled", isFoodSafetyEnabled);
-      formData.append(
-        "isLiabilityInsuranceEnabled",
-        isLiabilityInsuranceEnabled
-      );
+  //     formData.append("isVatEnabled", isVatEnabled);
+  //     formData.append(
+  //       "isCommercialRegisterEnabled",
+  //       isCommercialRegisterEnabled
+  //     );
+  //     formData.append("isAlcoholLicenseEnabled", isAlcoholLicenseEnabled);
+  //     formData.append("isFoodSafetyEnabled", isFoodSafetyEnabled);
+  //     formData.append(
+  //       "isLiabilityInsuranceEnabled",
+  //       isLiabilityInsuranceEnabled
+  //     );
 
-      // Append files (only if uploaded and the corresponding switch is enabled)
-      if (isVatEnabled && vatCertificateFile) {
-        formData.append("vatCertificate", vatCertificateFile);
-      }
-      if (isCommercialRegisterEnabled && commercialRegisterFile) {
-        formData.append("commercialRegister", commercialRegisterFile);
-      }
-      if (isAlcoholLicenseEnabled && alcoholLicenseFile) {
-        formData.append("alcoholLicense", alcoholLicenseFile);
-      }
-      if (isFoodSafetyEnabled && foodSafetyFile) {
-        formData.append("foodSafetyCertificate", foodSafetyFile);
-      }
-      if (isLiabilityInsuranceEnabled && liabilityInsuranceFile) {
-        formData.append("liabilityInsurance", liabilityInsuranceFile);
-      }
+  //     if (isVatEnabled && vatCertificateFile) {
+  //       formData.append("vatCertificate", vatCertificateFile);
+  //     }
+  //     if (isCommercialRegisterEnabled && commercialRegisterFile) {
+  //       formData.append("commercialRegister", commercialRegisterFile);
+  //     }
+  //     if (isAlcoholLicenseEnabled && alcoholLicenseFile) {
+  //       formData.append("alcoholLicense", alcoholLicenseFile);
+  //     }
+  //     if (isFoodSafetyEnabled && foodSafetyFile) {
+  //       formData.append("foodSafetyCertificate", foodSafetyFile);
+  //     }
+  //     if (isLiabilityInsuranceEnabled && liabilityInsuranceFile) {
+  //       formData.append("liabilityInsurance", liabilityInsuranceFile);
+  //     }
 
-      // Axios POST request
-      const response = await axios.post(
-        "https://your-api-endpoint.com/restro-details",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+  //     // Axios POST request
+  //     const response = await axios.post(
+  //       "https://your-api-endpoint.com/restro-details",
+  //       formData,
+  //       {
+  //         headers: { "Content-Type": "multipart/form-data" },
+  //       }
+  //     );
 
-      // Handle success
-      console.log("Data submitted successfully:", response.data);
+  //     console.log("Data submitted successfully:", response.data);
 
-      // Proceed to the next step
-      stepperRef.current.nextCallback();
-    } catch (error) {
-      // Handle error
-      console.error("Error submitting data:", error);
-    }
-  };
+  //     stepperRef.current.nextCallback();
+  //   } catch (error) {
+  //     console.error("Error submitting data:", error);
+  //   }
+  // };
 
   const handleUploadSuccess = (response) => {
     console.log("Upload Successful:", response);
@@ -227,7 +237,7 @@ export default function AddVendorStepper() {
 
   const handleToRestroDoc = () => {
     if (validateForm()) {
-      stepperRef.current.nextCallback(); // Proceed to next step
+      stepperRef.current.nextCallback();
     }
   };
 
@@ -398,30 +408,31 @@ export default function AddVendorStepper() {
         <StepperPanel header="Restro Details">
           <div className="border-2 px-5 py-5 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
             <div className="uploadFiles w-full">
-              {documentName && (
-                <>
-                  <div className="fileUpload mt-3 flex-col">
-                    <div className="flex align-items-center gap-3">
-                      <InputSwitch
-                        checked={isVatEnabled}
-                        onChange={(e) => setVatEnabled(e.value)}
-                      />
-                      <span>Upload VAT Registration Certificate</span>
-                    </div>
-                    <FileUploadTemplate enabled={isVatEnabled} />
+              {fileUploadSections.map((section) => (
+                <div className="fileUpload mt-3 flex-col" key={section.id}>
+                  <div className="flex align-items-center gap-3">
+                    <InputSwitch
+                      checked={section.isEnabled}
+                      onChange={(e) => handleToggleSwitch(section.id, e.value)}
+                    />
+                    <span>{section.label}</span>
                   </div>
-                  <div className="fileUpload mt-3 flex-col">
-                    <div className="flex align-items-center gap-3">
-                      <InputSwitch
-                        checked={isVatEnabled}
-                        onChange={(e) => setVatEnabled(e.value)}
-                      />
-                      <span>Upload VAT Registration Certificate</span>
-                    </div>
-                    <FileUploadTemplate enabled={isVatEnabled} />
-                  </div>
-                </>
-              )}
+                  {section.isEnabled && (
+                    <FileUploadTemplate
+                      enabled={section.isEnabled}
+                      onUploadSuccess={(filePath) =>
+                        setFileUploadSections((prevSections) =>
+                          prevSections.map((item) =>
+                            item.id === section.id
+                              ? { ...item, fileUploaded: filePath }
+                              : item
+                          )
+                        )
+                      }
+                    />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
           <div className="flex pt-4 justify-content-between">
@@ -440,6 +451,7 @@ export default function AddVendorStepper() {
             />
           </div>
         </StepperPanel>
+
         <StepperPanel header="Financial Info">
           <div className="border-2 px-5 py-5 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
             <div className="inputForms w-full">
