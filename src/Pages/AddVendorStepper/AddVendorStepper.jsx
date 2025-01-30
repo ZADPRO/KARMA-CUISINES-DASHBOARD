@@ -71,32 +71,43 @@ export default function AddVendorStepper() {
     refMonTransDetail: "",
   });
 
-  const cities = [
-    { name: "Monday", code: 1 },
-    { name: "Tuesday", code: 2 },
-    { name: "Wednesday", code: 3 },
-    { name: "Thursday", code: 4 },
-    { name: "Friday", code: 5 },
-    { name: "Saturday", code: 6 },
-    { name: "Sunday", code: 7 },
+  const days = [
+    { name: "Monday", value: 1 },
+    { name: "Tuesday", value: 2 },
+    { name: "Wednesday", value: 3 },
+    { name: "Thursday", value: 4 },
+    { name: "Friday", value: 5 },
+    { name: "Saturday", value: 6 },
+    { name: "Sunday", value: 7 },
   ];
 
   const [fileUploadSections, setFileUploadSections] = useState([]);
 
+  const formatTime = (date) => {
+    if (!date) return null;
+    const options = { hour: "2-digit", minute: "2-digit", hour12: true };
+    return new Date(date).toLocaleTimeString([], options);
+  };
+
   const [inputGroups, setInputGroups] = useState([
-    { selectedCities: [], refStartTime: null, refEndTime: null },
+    { selectedDays: [], refStartTime: null, refEndTime: null },
   ]);
 
   const handleAddGroup = () => {
     setInputGroups([
       ...inputGroups,
-      { selectedCities: [], refStartTime: null, refEndTime: null },
+      { selectedDays: [], refStartTime: null, refEndTime: null },
     ]);
   };
 
   const handleInputGroupChange = (index, field, value) => {
     const newInputGroups = [...inputGroups];
     newInputGroups[index][field] = value;
+    setInputGroups(newInputGroups);
+  };
+
+  const handleDeleteGroup = (index) => {
+    const newInputGroups = inputGroups.filter((_, i) => i !== index);
     setInputGroups(newInputGroups);
   };
 
@@ -362,7 +373,6 @@ export default function AddVendorStepper() {
     const userDetails = localStorage.getItem("userDetails");
     const userDetailsObj = userDetails ? JSON.parse(userDetails) : {};
 
-    // Access the refRoleId
     const refRoleId = userDetailsObj.refRoleId;
     const BasicInfo = {
       Users: {
@@ -382,16 +392,11 @@ export default function AddVendorStepper() {
         refCountry: formData.refCountry || "",
       },
       RestroWork: [
-        {
-          refDayId: 1,
-          refStartTime: formData.refStartTime1 || "",
-          refEndTime: formData.refEndTime1 || "",
-        },
-        {
-          refDayId: 2,
-          refStartTime: formData.refStartTime2,
-          refEndTime: formData.refEndTime2,
-        },
+        inputGroups.map((group) => ({
+          selectedDays: group.selectedDays,
+          refStartTime: formatTime(group.refStartTime),
+          refEndTime: formatTime(group.refEndTime),
+        })),
       ],
       Vendor: {
         refRestroName: formData.refRestroName || "",
@@ -545,15 +550,11 @@ export default function AddVendorStepper() {
                         <Phone size={20} />
                       </span>
                       <MultiSelect
-                        value={group.selectedCities}
+                        value={group.selectedDays}
                         onChange={(e) =>
-                          handleInputGroupChange(
-                            index,
-                            "selectedCities",
-                            e.value
-                          )
+                          handleInputGroupChange(index, "selectedDays", e.value)
                         }
-                        options={cities}
+                        options={days}
                         optionLabel="name"
                         style={{ minWidth: "10rem" }}
                         display="chip"
@@ -561,6 +562,7 @@ export default function AddVendorStepper() {
                         maxSelectedLabels={1}
                       />
                     </div>
+
                     <div className="p-inputgroup flex-1">
                       <span className="p-inputgroup-addon">
                         <Contact size={20} />
@@ -575,6 +577,7 @@ export default function AddVendorStepper() {
                         timeOnly
                       />
                     </div>
+
                     <div className="p-inputgroup flex-1">
                       <span className="p-inputgroup-addon">
                         <Phone size={20} />
@@ -594,6 +597,15 @@ export default function AddVendorStepper() {
                         }
                       />
                     </div>
+
+                    {/* Delete Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteGroup(index)}
+                      className="p-button p-button-danger p-button-text p-ml-3"
+                    >
+                      Delete
+                    </button>
                   </div>
                 ))}
               </div>
