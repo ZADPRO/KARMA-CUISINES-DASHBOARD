@@ -428,11 +428,20 @@ export default function AddVendorStepper() {
     };
 
     axios
-      .post("https://dummyapi.com/submit", {
-        BasicInfo,
-        RestroDetails,
-        FinancialInfo,
-      })
+      .post(
+        import.meta.env.VITE_API_URL + "/vendor/addNew",
+        {
+          BasicInfo,
+          RestroDetails,
+          FinancialInfo,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then((res) => {
         console.log("res", res);
         console.log("Payload as RestroDetails:", {

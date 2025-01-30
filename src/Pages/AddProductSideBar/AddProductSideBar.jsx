@@ -5,8 +5,10 @@ import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 import { Calendar } from "primereact/calendar";
-import { useRef, useState } from "react";
-import FileUploadTemplate from "../FileUpload/FileUploadTemplate";
+import { useEffect, useRef, useState } from "react";
+import axios from "axios";
+import decrypt from "../../helper";
+import { FileUpload } from "primereact/fileupload";
 
 export default function AddProductSideBar() {
   const toastRef = useRef(null);
@@ -15,18 +17,19 @@ export default function AddProductSideBar() {
     refVendorId: 0,
     restaurantName: "",
     productName: "",
+    productImage: "",
     productPrice: "",
     description: "",
   });
 
-  const [uploadLogoEnabled, setUploadLogoEnabled] = useState(false);
   const [updateOffersEnabled, setUpdateOffersEnabled] = useState(false);
   const [customOffersEnabled, setCustomOffersEnabled] = useState(false);
   const [customOfferRangeEnabled, setCustomOfferRangeEnabled] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedRating, setSelectedRating] = useState(null);
   const [selectedOffer, setSelectedOffer] = useState(null);
-  const [dates, setDates] = useState(null);
+  const [dateSelect, setDateSelect] = useState(null);
+  const [rangeSelect, setRangeSelect] = useState(null);
 
   const categories = [
     { name: "Fast Food", code: "FF" },
@@ -36,29 +39,56 @@ export default function AddProductSideBar() {
     { name: "Seafood", code: "SF" },
   ];
 
-  const restroDetails = [
-    { refVendorName: "Restro 1", refVendorId: 1 },
-    { refVendorName: "Restro 2", refVendorId: 2 },
-    { refVendorName: "Restro 3", refVendorId: 3 },
-    { refVendorName: "Restro 4", refVendorId: 4 },
-    { refVendorName: "Restro 5", refVendorId: 5 },
-  ];
+  const [restroDetails, setRestroDetails] = useState([]);
 
   const ratings = [
-    { name: "1 Star", code: "1" },
-    { name: "2 Stars", code: "2" },
-    { name: "3 Stars", code: "3" },
-    { name: "4 Stars", code: "4" },
-    { name: "5 Stars", code: "5" },
+    { name: "1 Star", code: 1 },
+    { name: "2 Stars", code: 2 },
+    { name: "3 Stars", code: 3 },
+    { name: "4 Stars", code: 4 },
+    { name: "5 Stars", code: 5 },
   ];
 
-  const offers = [
-    { name: "Buy 1 Get 1 Free", code: "BOGO" },
-    { name: "Flat 50% Off", code: "50OFF" },
-    { name: "Free Dessert", code: "FDESSERT" },
-    { name: "20% Cashback", code: "CASH20" },
-    { name: "No Delivery Charge", code: "NODEL" },
-  ];
+  const [products, setProducts] = useState([]);
+  console.table("products", products);
+
+  useEffect(() => {
+    axios
+      .get(import.meta.env.VITE_API_URL + "/vendorRoutes/getVendorList", {
+        headers: {
+          Authorization: localStorage.getItem("JWTtoken"),
+        },
+      })
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+        console.log("data", data);
+        setRestroDetails(data.vendorList);
+      })
+      .catch((error) => {
+        console.error("Error fetching vendor details:", error);
+      });
+
+    axios
+      .get(import.meta.env.VITE_API_URL + "/vendorRoutes/getOffers", {
+        headers: {
+          Authorization: localStorage.getItem("JWTtoken"),
+        },
+      })
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+        console.table("offersss", data.restroOffers);
+
+        setProducts(data.restroOffers);
+      });
+  }, []);
 
   const handleInputChange = (e, field) => {
     setFormData((prev) => ({
@@ -67,11 +97,78 @@ export default function AddProductSideBar() {
     }));
   };
 
-  const handleDropdownChange = (e, fieldName) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [fieldName]: e.value.refVendorId,
+  const handleDropdownChange = (e) => {
+    const selectedRestro = e.value;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      refVendorId: selectedRestro.refVendorId,
+      restaurantName: selectedRestro.refVendorName,
     }));
+  };
+
+  const handleUploadSuccess = (response) => {
+    console.log("Upload Successful:", response);
+    setFormData((prevFormData) => ({
+      ...prevFormData, // Spread the previous state
+      productImage: response.filePath, // Update the productImage
+    }));
+  };
+
+  const handleUploadFailure = (error) => {
+    console.error("Upload Failed:", error);
+    // Add your failure handling logic here
+  };
+
+  const customUploader = async (event) => {
+    console.table("event", event);
+    const file = event.files[0]; // Assuming single file upload
+    const formData = new FormData();
+    formData.append("logo", file);
+    console.log("formData", formData);
+
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ":", pair[1]); // Log each field in the FormData
+    }
+
+    try {
+      const response = await axios.post(
+        import.meta.env.VITE_API_URL + "/vendorRoutes/LogoUpload",
+        formData,
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+          },
+        }
+      );
+
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
+
+      localStorage.setItem("JWTtoken", "Bearer " + data.token);
+
+      if (data.success) {
+        handleUploadSuccess(data);
+      } else {
+        handleUploadFailure(data);
+      }
+    } catch (error) {
+      handleUploadFailure(error);
+    }
+  };
+
+  const handleOfferSelect = (e) => {
+    setSelectedOffer(e.value);
+    console.log("Offer Details:");
+    console.log("refCoupon:", e.value.refCoupon);
+    console.log("refDiscountPrice:", e.value.refDiscountPrice);
+    console.log("refEndDate:", e.value.refEndDate);
+    console.log("refOfferId:", e.value.refOfferId);
+    console.log("refOfferMinValue:", e.value.refOfferMinValue);
+    console.log("refStartDate:", e.value.refStartDate);
   };
 
   const handleSubmit = () => {
@@ -80,15 +177,58 @@ export default function AddProductSideBar() {
       restaurantName: formData.restaurantName,
       productName: formData.productName,
       productPrice: formData.productPrice,
+      productImage: formData.productImage,
       category: selectedCategory ? selectedCategory.name : null,
       description: formData.description,
       rating: selectedRating ? selectedRating.name : null,
-      offerAppliedStatus: uploadLogoEnabled,
       offer: selectedOffer ? selectedOffer.name : null,
-      range: dates,
+      dateSelect: dateSelect ? dateSelect : null,
+      rangeSelect: rangeSelect ? rangeSelect : null,
     };
 
-    // ADD PRODUCT PAYLOAD - /api/v1/vendorRoutes/addProduct
+    axios
+      .post(
+        import.meta.env.VITE_API_URL + "/vendorRoutes/addProduct",
+        {
+          refVendorId: formData.refVendorId,
+          restaurantName: formData.restaurantName,
+          productName: formData.productName,
+          productPrice: formData.productPrice,
+          productImage: formData.productImage,
+          category: selectedCategory ? selectedCategory.name : null,
+          description: formData.description,
+          rating: selectedRating ? selectedRating.name : null,
+          offer: selectedOffer ? selectedOffer.name : null,
+          dateSelect: dateSelect ? dateSelect : null,
+          rangeSelect: rangeSelect ? rangeSelect : null,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+          },
+        }
+      )
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+        console.log("data", data);
+        localStorage.setItem("JWTtoken", "Bearer " + data.token);
+        if (data.success) {
+          formData.refVendorId = 0;
+          formData.restaurantName = "";
+          formData.productName = "";
+          formData.productPrice = "";
+          setSelectedCategory(null);
+          formData.description = "";
+          setSelectedRating(null);
+          setSelectedOffer(null);
+          setDateSelect(null);
+          setRangeSelect(null);
+        }
+      });
 
     console.log("Payload:", payload);
 
@@ -115,10 +255,10 @@ export default function AddProductSideBar() {
               <Dropdown
                 value={restroDetails.find(
                   (restro) => restro.refVendorId === formData.refVendorId
-                )} // Find the selected option by comparing the ID
+                )}
                 options={restroDetails}
-                onChange={(e) => handleDropdownChange(e, "refVendorId")}
-                placeholder="Select a Restaurant Type"
+                onChange={handleDropdownChange}
+                placeholder="Select a Restaurant"
                 optionLabel="refVendorName"
                 className="w-full"
               />
@@ -185,14 +325,19 @@ export default function AddProductSideBar() {
             </div>
             <div className="mt-3">
               <div className="fileUpload mt-3 flex-col">
-                <div className="flex align-items-center gap-3">
-                  <InputSwitch
-                    checked={uploadLogoEnabled}
-                    onChange={(e) => setUploadLogoEnabled(e.value)}
-                  />
-                  <span className="">Upload Image</span>
-                </div>
-                <FileUploadTemplate enabled={uploadLogoEnabled} />
+                <FileUpload
+                  name="logo"
+                  customUpload
+                  className="mt-3"
+                  uploadHandler={customUploader}
+                  accept="image/*"
+                  maxFileSize={10000000}
+                  emptyTemplate={
+                    <p className="m-0">
+                      Drag and drop your logo here to upload.
+                    </p>
+                  }
+                />{" "}
               </div>
             </div>
             <div className="mt-3">
@@ -215,9 +360,9 @@ export default function AddProductSideBar() {
                     <Dropdown
                       value={selectedOffer}
                       disabled={!updateOffersEnabled}
-                      onChange={(e) => setSelectedOffer(e.value)}
-                      options={offers}
-                      optionLabel="name"
+                      onChange={handleOfferSelect}
+                      options={products}
+                      optionLabel="refCoupon"
                       placeholder="Select Offer"
                       className="w-full md:w-14rem"
                     />
@@ -231,18 +376,23 @@ export default function AddProductSideBar() {
                     <InputSwitch
                       disabled={!updateOffersEnabled}
                       checked={customOffersEnabled}
-                      onChange={(e) => setCustomOffersEnabled(e.value)}
+                      onChange={(e) => {
+                        setCustomOffersEnabled(e.value);
+                        if (e.value) {
+                          setCustomOfferRangeEnabled(false);
+                        }
+                      }}
                     />
-                    <span className="">Custom Date Select</span>
+                    <span>Custom Date Select</span>
                   </div>
                   <div className="p-inputgroup">
                     <span className="p-inputgroup-addon">
                       <CalendarRange size={20} />
                     </span>
                     <Calendar
-                      value={dates}
+                      value={dateSelect}
                       disabled={!(customOffersEnabled && updateOffersEnabled)}
-                      onChange={(e) => setDates(e.value)}
+                      onChange={(e) => setDateSelect(e.value)}
                       selectionMode="multiple"
                       readOnlyInput
                       placeholder="Select Offer Dates"
@@ -250,6 +400,7 @@ export default function AddProductSideBar() {
                     />
                   </div>
                 </div>
+
                 <div
                   className="flex gap-3 mt-3 flex-1"
                   style={{ flexDirection: "column" }}
@@ -258,20 +409,25 @@ export default function AddProductSideBar() {
                     <InputSwitch
                       disabled={!updateOffersEnabled}
                       checked={customOfferRangeEnabled}
-                      onChange={(e) => setCustomOfferRangeEnabled(e.value)}
+                      onChange={(e) => {
+                        setCustomOfferRangeEnabled(e.value);
+                        if (e.value) {
+                          setCustomOffersEnabled(false);
+                        }
+                      }}
                     />
-                    <span className="">Custom Range Selected</span>
+                    <span>Custom Range Selected</span>
                   </div>
                   <div className="p-inputgroup">
                     <span className="p-inputgroup-addon">
                       <CalendarRange size={20} />
                     </span>
                     <Calendar
-                      value={dates}
+                      value={rangeSelect}
                       disabled={
                         !(customOfferRangeEnabled && updateOffersEnabled)
                       }
-                      onChange={(e) => setDates(e.value)}
+                      onChange={(e) => setRangeSelect(e.value)}
                       selectionMode="range"
                       readOnlyInput
                       placeholder="Offer Range"
