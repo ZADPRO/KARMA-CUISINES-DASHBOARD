@@ -139,6 +139,7 @@ export default function OffersSidebar() {
           import.meta.env.VITE_ENCRYPTION_KEY
         );
         console.log("data", data);
+        localStorage.setItem("JWTtoken", "Bearer " + data.token);
       });
 
       // Show success toast after successful submission

@@ -39,6 +39,7 @@ export default function Login() {
         import.meta.env.VITE_ENCRYPTION_KEY
       );
 
+      console.log("data", data);
       if (data.success) {
         const userDetails = data.userDetails[0];
         console.log("userDetails", userDetails);

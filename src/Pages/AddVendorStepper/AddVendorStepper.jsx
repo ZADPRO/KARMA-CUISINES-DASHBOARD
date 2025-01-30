@@ -6,7 +6,7 @@ import { InputText } from "primereact/inputtext";
 import { InputSwitch } from "primereact/inputswitch";
 import { Toast } from "primereact/toast";
 
-import FileUploadTemplate from "../FileUpload/FileUploadTemplate";
+// import FileUploadTemplate from "../FileUpload/FileUploadTemplate";
 
 // LUCIDE ICONS
 import {
@@ -23,6 +23,7 @@ import {
   Banknote,
   CreditCard,
   BadgeSwissFranc,
+  ShieldCheck,
 } from "lucide-react";
 import axios from "axios";
 import { FileUpload } from "primereact/fileupload";
@@ -44,29 +45,30 @@ export default function AddVendorStepper() {
   const [acceptApplePay, setAcceptApplePay] = useState(false);
 
   const [formData, setFormData] = useState({
-    restaurantName: "",
-    contactPersonName: "",
-    contactPersonDesignation: "",
-    contactPersonNumber: "",
-    contactPersonEmail: "",
-    doorNumber: "",
-    city: "",
-    postalCode: "",
-    zone: "",
-    country: "",
-    logoUrl: "",
-    websiteURL: "",
-    facebook: "",
-    instagram: "",
-    twitter: "",
+    refRestroName: "",
+    refPerFName: "",
+    refPerLName: "",
+    refPerDesig: "",
+    refPerMob: "",
+    refPerEmail: "",
+    refStreet: "",
+    refCity: "",
+    refPosCode: "",
+    refZone: "",
+    refCountry: "",
+    ProfileImgPath: "",
+    refWebsiteLink: "",
+    refFaceBookLink: "",
+    refInstragramLink: "",
+    refTwitterLink: "",
   });
 
   const [bankData, setBankData] = useState({
-    bankName: "",
-    accountNumber: "",
-    ibanCode: "",
+    refBankName: "",
+    refAccNo: "",
+    refIBANCode: "",
     paymentMethods: "",
-    moneyTransferDetails: "",
+    refMonTransDetail: "",
   });
 
   const cities = [
@@ -82,13 +84,13 @@ export default function AddVendorStepper() {
   const [fileUploadSections, setFileUploadSections] = useState([]);
 
   const [inputGroups, setInputGroups] = useState([
-    { selectedCities: [], openingTime: null, closingTime: null },
+    { selectedCities: [], refStartTime: null, refEndTime: null },
   ]);
 
   const handleAddGroup = () => {
     setInputGroups([
       ...inputGroups,
-      { selectedCities: [], openingTime: null, closingTime: null },
+      { selectedCities: [], refStartTime: null, refEndTime: null },
     ]);
   };
 
@@ -98,30 +100,66 @@ export default function AddVendorStepper() {
     setInputGroups(newInputGroups);
   };
 
-  const handleToggleSwitch = (id, value) => {
-    setFileUploadSections((prevSections) =>
-      prevSections.map((section) =>
-        section.restroDocId === id ? { ...section, isEnabled: value } : section
-      )
-    );
-  };
+  // const handleToggleSwitch = (id, value) => {
+  //   setFileUploadSections((prevSections) =>
+  //     prevSections.map((section) =>
+  //       section.restroDocId === id ? { ...section, isEnabled: value } : section
+  //     )
+  //   );
+  // };
 
-  const handleNext = () => {
-    const incompleteUploads = fileUploadSections.some(
-      (section) => section.isEnabled && !section.fileUploaded
-    );
+  // const handleNext = async () => {
+  //   // Prepare payload
+  //   const payload = {
+  //     documents: fileUploadSections
+  //       .filter((section) => section.isEnabled && section.fileUploaded)
+  //       .map((section) => ({
+  //         label: section.label,
+  //         file: section.fileUploaded,
+  //       })),
+  //   };
 
-    if (incompleteUploads) {
-      toastRef.current.show({
-        severity: "warn",
-        summary: "Incomplete",
-        detail: "Please upload all enabled documents before proceeding.",
-        life: 3000,
-      });
-    } else {
-      stepperRef.current.nextCallback();
-    }
-  };
+  //   try {
+  //     const response = await axios.post(
+  //       `${import.meta.env.VITE_API_URL}/vendorRoutes/RestaurentDocUplaod`,
+  //       payload,
+  //       {
+  //         headers: {
+  //           Authorization: localStorage.getItem("JWTtoken"),
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+
+  //     // Decrypt response data
+  //     const decryptedData = decrypt(
+  //       response.data[1],
+  //       response.data[0],
+  //       import.meta.env.VITE_ENCRYPTION_KEY
+  //     );
+
+  // localStorage.setItem("JWTtoken", "Bearer " + decryptedData.token);
+
+  //     console.log("Decrypted Response Data:", decryptedData);
+
+  //     toastRef.current.show({
+  //       severity: "success",
+  //       summary: "Success",
+  //       detail: "Documents uploaded successfully!",
+  //       life: 3000,
+  //     });
+
+  //     // stepperRef.current.nextCallback();
+  //   } catch (error) {
+  //     toastRef.current.show({
+  //       severity: "error",
+  //       summary: "Error",
+  //       detail: error.response?.data?.message || "Failed to upload documents.",
+  //       life: 3000,
+  //     });
+  //   }
+  // };
+
   useEffect(() => {
     axios
       .get(import.meta.env.VITE_API_URL + "/vendorRoutes/getDocuments", {
@@ -146,6 +184,7 @@ export default function AddVendorStepper() {
             isEnabled: section.visibility === "true", // Convert visibility to boolean
           }));
 
+        console.log("filteredSections", filteredSections);
         setFileUploadSections(filteredSections);
       });
   }, []);
@@ -203,7 +242,7 @@ export default function AddVendorStepper() {
     console.log("Upload Successful:", response);
     setFormData((prevFormData) => ({
       ...prevFormData, // Spread the previous state
-      logoUrl: response.filePath, // Update the logoUrl
+      ProfileImgPath: response.filePath, // Update the ProfileImgPath
     }));
   };
 
@@ -240,6 +279,8 @@ export default function AddVendorStepper() {
         import.meta.env.VITE_ENCRYPTION_KEY
       );
 
+      localStorage.setItem("JWTtoken", "Bearer " + data.token);
+
       if (data.success) {
         handleUploadSuccess(data);
       } else {
@@ -272,35 +313,35 @@ export default function AddVendorStepper() {
   const handleToRestroDoc = () => {
     console.log("Form Data:", formData);
     console.log("Input Groups:", inputGroups);
-    axios
-      .post(
-        import.meta.env.VITE_API_URL + "/vendorRoutes",
-        {
-          formData: formData,
-          inputGroups: inputGroups,
-        },
-        {
-          headers: {
-            Authorization: localStorage.getItem("JWTtoken"),
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((res) => {
-        const data = decrypt(
-          res.data[1],
-          res.data[0],
-          import.meta.env.VITE_ENCRYPTION_KEY
-        );
-        console.log("data", data);
-      });
-    // if (validateForm()) {
-    //   axios.post(
-    //     import.meta.env.VITE_API_URL + "/vendorRoutes/BasicDetails",
-    //     {}
-    //   );
-    //   stepperRef.current.nextCallback();
-    // }
+    // axios
+    //   .post(
+    //     import.meta.env.VITE_API_URL + "/vendorRoutes",
+    //     {
+    //       formData: formData,
+    //       inputGroups: inputGroups,
+    //     },
+    //     {
+    //       headers: {
+    //         Authorization: localStorage.getItem("JWTtoken"),
+    //         "Content-Type": "application/json",
+    //       },
+    //     }
+    //   )
+    //   .then((res) => {
+    //     const data = decrypt(
+    //       res.data[1],
+    //       res.data[0],
+    //       import.meta.env.VITE_ENCRYPTION_KEY
+    //     );
+    //     console.log("data", data);
+    //   });
+    if (validateForm()) {
+      // axios.post(
+      //   import.meta.env.VITE_API_URL + "/vendorRoutes/BasicDetails",
+      //   {}
+      // );
+      stepperRef.current.nextCallback();
+    }
   };
 
   const handleInputChange = (e, field) => {
@@ -310,6 +351,107 @@ export default function AddVendorStepper() {
     }));
   };
 
+  const handleBankInputChange = (e, field) => {
+    setBankData((prev) => ({
+      ...prev,
+      [field]: e.target.value,
+    }));
+  };
+
+  const handleSubmitRestroDetails = () => {
+    const userDetails = localStorage.getItem("userDetails");
+    const userDetailsObj = userDetails ? JSON.parse(userDetails) : {};
+
+    // Access the refRoleId
+    const refRoleId = userDetailsObj.refRoleId;
+    const BasicInfo = {
+      Users: {
+        refPerFName: formData.refPerFName || "",
+        refPerLName: formData.refPerLName || "",
+        refRollId: refRoleId || "",
+      },
+      Communtication: {
+        refPerMob: formData.refPerMob || "",
+        refPerEmail: formData.refPerEmail || "",
+      },
+      Address: {
+        refStreet: formData.refStreet || "",
+        refCity: formData.refCity || "",
+        refPosCode: formData.refPosCode || "",
+        refZone: formData.refZone || "",
+        refCountry: formData.refCountry || "",
+      },
+      RestroWork: [
+        {
+          refDayId: 1,
+          refStartTime: formData.refStartTime1 || "",
+          refEndTime: formData.refEndTime1 || "",
+        },
+        {
+          refDayId: 2,
+          refStartTime: formData.refStartTime2,
+          refEndTime: formData.refEndTime2,
+        },
+      ],
+      Vendor: {
+        refRestroName: formData.refRestroName || "",
+        refPerDesig: formData.refPerDesig || "",
+      },
+      SocialLink: {
+        refWebsiteLink: formData.refWebsiteLink || "",
+        refFaceBookLink: formData.refFaceBookLink || "",
+        refInstragramLink: formData.refInstragramLink || "",
+        refTwitterLink: formData.refTwitterLink || "",
+      },
+      ProfileImgPath: formData.ProfileImgPath || "",
+    };
+    const RestroDetails = fileUploadSections.map((section) => {
+      const refRestroDocPath = document.getElementById(
+        `input-${section.id}`
+      ).value;
+      return {
+        refRestroDocId: section.id || "",
+        refRestroDocPath: refRestroDocPath || "",
+      };
+    });
+
+    const FinancialInfo = {
+      refBankName: bankData.refBankName || "",
+      refAccNo: bankData.refAccNo || "",
+      refIBANCode: bankData.refIBANCode || "",
+      refMonTransDetail: bankData.refMonTransDetail || "",
+    };
+
+    axios
+      .post("https://dummyapi.com/submit", {
+        BasicInfo,
+        RestroDetails,
+        FinancialInfo,
+      })
+      .then((res) => {
+        console.log("res", res);
+        console.log("Payload as RestroDetails:", {
+          BasicInfo,
+          RestroDetails,
+          FinancialInfo,
+        });
+        toastRef.current.show({
+          severity: "success",
+          summary: "Success",
+          detail: "Form submitted successfully!",
+          life: 3000,
+        });
+      })
+      .catch((error) => {
+        console.error("Error in API request:", error);
+        toastRef.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: error.message,
+          life: 3000,
+        });
+      });
+  };
   return (
     <div>
       <Toast ref={toastRef} />
@@ -318,37 +460,48 @@ export default function AddVendorStepper() {
         <StepperPanel header="Basic Info">
           <div className="border-2 px-5 py-5 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
             <div className="inputForms">
-              <div className="p-inputgroup flex-1">
-                <span className="p-inputgroup-addon">
-                  <Utensils size={20} />
-                </span>
-                <InputText
-                  placeholder="Restaurant Name"
-                  value={formData.restaurantName}
-                  onChange={(e) => handleInputChange(e, "restaurantName")}
-                />
-              </div>{" "}
+              <span>Restro Basic Details</span>
               <div className="flex gap-3 mt-3">
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
-                    <User size={20} />{" "}
+                    <Utensils size={20} />
                   </span>
                   <InputText
-                    placeholder="Contact Person Name"
-                    value={formData.contactPersonName}
-                    onChange={(e) => handleInputChange(e, "contactPersonName")}
-                  />{" "}
-                </div>
+                    placeholder="Restaurant Name"
+                    value={formData.refRestroName}
+                    onChange={(e) => handleInputChange(e, "refRestroName")}
+                  />
+                </div>{" "}
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
                     <BriefcaseBusiness size={20} />
                   </span>
                   <InputText
                     placeholder="Contact Person Designation"
-                    value={formData.contactPersonDesignation}
-                    onChange={(e) =>
-                      handleInputChange(e, "contactPersonDesignation")
-                    }
+                    value={formData.refPerDesig}
+                    onChange={(e) => handleInputChange(e, "refPerDesig")}
+                  />{" "}
+                </div>
+              </div>
+              <div className="flex gap-3 mt-3">
+                <div className="p-inputgroup flex-1">
+                  <span className="p-inputgroup-addon">
+                    <User size={20} />{" "}
+                  </span>
+                  <InputText
+                    placeholder="First Name"
+                    value={formData.refPerFName}
+                    onChange={(e) => handleInputChange(e, "refPerFName")}
+                  />{" "}
+                </div>
+                <div className="p-inputgroup flex-1">
+                  <span className="p-inputgroup-addon">
+                    <User size={20} />{" "}
+                  </span>
+                  <InputText
+                    placeholder="Last Name"
+                    value={formData.refPerLName}
+                    onChange={(e) => handleInputChange(e, "refPerLName")}
                   />{" "}
                 </div>
               </div>
@@ -359,10 +512,8 @@ export default function AddVendorStepper() {
                   </span>
                   <InputText
                     placeholder="Contact Person Number"
-                    value={formData.contactPersonNumber}
-                    onChange={(e) =>
-                      handleInputChange(e, "contactPersonNumber")
-                    }
+                    value={formData.refPerMob}
+                    onChange={(e) => handleInputChange(e, "refPerMob")}
                   />{" "}
                 </div>
                 <div className="p-inputgroup flex-1">
@@ -371,12 +522,13 @@ export default function AddVendorStepper() {
                   </span>
                   <InputText
                     placeholder="Contact Person Email"
-                    value={formData.contactPersonEmail}
-                    onChange={(e) => handleInputChange(e, "contactPersonEmail")}
+                    value={formData.refPerEmail}
+                    onChange={(e) => handleInputChange(e, "refPerEmail")}
                   />{" "}
                 </div>
               </div>
               <Divider />
+              <span>Working Days</span>
               <div className="flex justify-content-end">
                 <Button
                   icon="pi pi-plus"
@@ -415,10 +567,10 @@ export default function AddVendorStepper() {
                       </span>
                       <Calendar
                         placeholder="Restro Opening Time"
-                        value={group.openingTime}
+                        value={group.refStartTime}
                         style={{ minWidth: "4rem" }}
                         onChange={(e) =>
-                          handleInputGroupChange(index, "openingTime", e.value)
+                          handleInputGroupChange(index, "refStartTime", e.value)
                         }
                         timeOnly
                       />
@@ -429,15 +581,15 @@ export default function AddVendorStepper() {
                       </span>
                       <Calendar
                         placeholder="Restro Closing Time"
-                        value={group.closingTime}
+                        value={group.refEndTime}
                         style={{ minWidth: "4rem" }}
                         onChange={(e) =>
-                          handleInputGroupChange(index, "closingTime", e.value)
+                          handleInputGroupChange(index, "refEndTime", e.value)
                         }
                         timeOnly
                         minDate={
-                          group.openingTime
-                            ? new Date(group.openingTime)
+                          group.refStartTime
+                            ? new Date(group.refStartTime)
                             : undefined
                         }
                       />
@@ -446,6 +598,7 @@ export default function AddVendorStepper() {
                 ))}
               </div>
               <Divider />
+              <span>Communication Details</span>
               <div className="flex gap-3 mt-3">
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
@@ -453,8 +606,8 @@ export default function AddVendorStepper() {
                   </span>
                   <InputText
                     placeholder="Door No, Street"
-                    value={formData.doorNumber}
-                    onChange={(e) => handleInputChange(e, "doorNumber")}
+                    value={formData.refStreet}
+                    onChange={(e) => handleInputChange(e, "refStreet")}
                   />{" "}
                 </div>
                 <div className="p-inputgroup flex-1">
@@ -463,8 +616,8 @@ export default function AddVendorStepper() {
                   </span>
                   <InputText
                     placeholder="City"
-                    value={formData.city}
-                    onChange={(e) => handleInputChange(e, "city")}
+                    value={formData.refCity}
+                    onChange={(e) => handleInputChange(e, "refCity")}
                   />{" "}
                 </div>
                 <div className="p-inputgroup flex-1">
@@ -473,20 +626,20 @@ export default function AddVendorStepper() {
                   </span>
                   <InputText
                     placeholder="Postal Code"
-                    value={formData.postalCode}
-                    onChange={(e) => handleInputChange(e, "postalCode")}
+                    value={formData.refPosCode}
+                    onChange={(e) => handleInputChange(e, "refPosCode")}
                   />{" "}
                 </div>
               </div>
-              <div className="flex gap-3 mt-3">
+              <div className="flex gap-3 mt-3 mb-3">
                 <div className="p-inputgroup flex-1">
                   <span className="p-inputgroup-addon">
                     <Phone size={20} />
                   </span>
                   <InputText
                     placeholder="Zone"
-                    value={formData.zone}
-                    onChange={(e) => handleInputChange(e, "zone")}
+                    value={formData.refZone}
+                    onChange={(e) => handleInputChange(e, "refZone")}
                   />{" "}
                 </div>
                 <div className="p-inputgroup flex-1">
@@ -495,8 +648,8 @@ export default function AddVendorStepper() {
                   </span>
                   <InputText
                     placeholder="Country"
-                    value={formData.country}
-                    onChange={(e) => handleInputChange(e, "country")}
+                    value={formData.refCountry}
+                    onChange={(e) => handleInputChange(e, "refCountry")}
                   />{" "}
                 </div>
               </div>
@@ -506,8 +659,8 @@ export default function AddVendorStepper() {
                 </span>
                 <InputText
                   placeholder="Website URL"
-                  value={formData.websiteURL}
-                  onChange={(e) => handleInputChange(e, "websiteURL")}
+                  value={formData.refWebsiteLink}
+                  onChange={(e) => handleInputChange(e, "refWebsiteLink")}
                 />{" "}
               </div>{" "}
               <div className="fileUpload mt-3 flex-col">
@@ -540,8 +693,8 @@ export default function AddVendorStepper() {
                     </span>
                     <InputText
                       placeholder="Facebook"
-                      value={formData.facebook}
-                      onChange={(e) => handleInputChange(e, "facebook")}
+                      value={formData.refFaceBookLink}
+                      onChange={(e) => handleInputChange(e, "refFaceBookLink")}
                       disabled={!socialLinksEnabled}
                     />{" "}
                   </div>
@@ -551,8 +704,10 @@ export default function AddVendorStepper() {
                     </span>
                     <InputText
                       placeholder="Instagram"
-                      value={formData.instagram}
-                      onChange={(e) => handleInputChange(e, "instagram")}
+                      value={formData.refInstragramLink}
+                      onChange={(e) =>
+                        handleInputChange(e, "refInstragramLink")
+                      }
                       disabled={!socialLinksEnabled}
                     />{" "}
                   </div>
@@ -562,8 +717,8 @@ export default function AddVendorStepper() {
                     </span>
                     <InputText
                       placeholder="Twitter"
-                      value={formData.twitter}
-                      onChange={(e) => handleInputChange(e, "twitter")}
+                      value={formData.refTwitterLink}
+                      onChange={(e) => handleInputChange(e, "refTwitterLink")}
                       disabled={!socialLinksEnabled}
                     />{" "}
                   </div>
@@ -582,7 +737,7 @@ export default function AddVendorStepper() {
           </div>
         </StepperPanel>
 
-        <StepperPanel header="Restro Details">
+        {/* <StepperPanel header="Restro Details">
           <div className="border-2 px-5 py-5 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
             <div className="uploadFiles w-full">
               {fileUploadSections.map((section) => (
@@ -627,10 +782,40 @@ export default function AddVendorStepper() {
               onClick={handleNext}
             />
           </div>
-        </StepperPanel>
+        </StepperPanel> */}
 
         <StepperPanel header="Financial Info">
-          <div className="border-2 px-5 py-5 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+          <div className="border-2 px-5 py-5 border-dashed surface-border border-round surface-ground flex flex-col justify-content-center font-medium">
+            <div
+              className="flex flex-col w-full"
+              style={{ flexDirection: "column" }}
+            >
+              <span className="mb-3">Restro Details</span>
+              <div>
+                {fileUploadSections.length > 0 ? (
+                  fileUploadSections.map((section) => (
+                    <>
+                      <span key={section.id} className="">
+                        {section.label}
+                      </span>
+                      <div className="p-inputgroup flex-1 mt-3 mb-3">
+                        <span className="p-inputgroup-addon">
+                          <ShieldCheck size={20} />
+                        </span>
+                        <InputText
+                          id={`input-${section.id}`}
+                          placeholder="Certificate Name"
+                        />
+                      </div>
+                    </>
+                  ))
+                ) : (
+                  <span>No Labels Available</span>
+                )}
+              </div>
+            </div>
+            <Divider layout="vertical" />
+
             <div className="inputForms w-full">
               <span>Bank Account Details</span>
               <div className="p-inputgroup flex-1 mt-3">
@@ -639,8 +824,8 @@ export default function AddVendorStepper() {
                 </span>
                 <InputText
                   placeholder="Bank Name"
-                  value={bankData.bankName}
-                  onChange={(e) => handleInputChange(e, "bankName")}
+                  value={bankData.refBankName}
+                  onChange={(e) => handleBankInputChange(e, "refBankName")}
                 />
               </div>
               <div className="flex gap-3 mt-3 mb-3">
@@ -650,8 +835,8 @@ export default function AddVendorStepper() {
                   </span>
                   <InputText
                     placeholder="Account Number"
-                    value={bankData.accountNumber}
-                    onChange={(e) => handleInputChange(e, "accountNumber")}
+                    value={bankData.refAccNo}
+                    onChange={(e) => handleBankInputChange(e, "refAccNo")}
                   />
                 </div>
                 <div className="p-inputgroup flex-1">
@@ -660,8 +845,8 @@ export default function AddVendorStepper() {
                   </span>
                   <InputText
                     placeholder="IBAN Code"
-                    value={bankData.ibanCode}
-                    onChange={(e) => handleInputChange(e, "ibanCode")}
+                    value={bankData.refIBANCode}
+                    onChange={(e) => handleBankInputChange(e, "refIBANCode")}
                   />
                 </div>
               </div>
@@ -699,7 +884,12 @@ export default function AddVendorStepper() {
                 <span className="p-inputgroup-addon">
                   <BadgeSwissFranc size={20} />
                 </span>
-                <InputText placeholder="Payout Frequency (Weekly or Monthly)" />
+                <InputText
+                  placeholder="Payout Frequency (Weekly or Monthly)"
+                  onChange={(e) =>
+                    handleBankInputChange(e, "refMonTransDetail")
+                  }
+                />
               </div>
             </div>
           </div>
@@ -715,14 +905,7 @@ export default function AddVendorStepper() {
               icon="pi pi-arrow-right"
               iconPos="right"
               severity="success"
-              onClick={() => {
-                toastRef.current.show({
-                  severity: "success",
-                  summary: "Success",
-                  detail: "Form submitted successfully!",
-                  life: 3000,
-                });
-              }}
+              onClick={() => handleSubmitRestroDetails()}
             />
           </div>
         </StepperPanel>
