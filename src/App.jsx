@@ -28,17 +28,17 @@ function App() {
     <Router>
       <ConditionalHeader>
         <Routes>
-          <Route path="/admin" element={<Dashboard />} />
-          <Route path="/admin/products" element={<Products />} />
-          <Route path="/admin/orders" element={<Orders />} />
-          <Route path="/admin/vendors" element={<Vendors />} />
-          <Route path="/admin/users" element={<Users />} />
-          <Route path="/admin/transactions" element={<Transactions />} />
-          <Route path="/admin/reports" element={<Reports />} />
-          <Route path="/admin/messages" element={<Messages />} />
-          <Route path="/admin/profile" element={<Profile />} />
-          <Route path="/admin/settings" element={<Settings />} />
-          <Route path="/admin/login" element={<Login />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/vendors" element={<Vendors />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </ConditionalHeader>
     </Router>
