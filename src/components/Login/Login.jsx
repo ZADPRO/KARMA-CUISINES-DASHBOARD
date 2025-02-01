@@ -33,6 +33,7 @@ export default function Login() {
         credentials
       );
 
+      console.log("import.meta.env.VITE_ENCRYPTION_KEY", import.meta.env);
       const data = decrypt(
         response.data[1],
         response.data[0],
