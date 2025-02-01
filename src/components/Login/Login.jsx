@@ -32,6 +32,7 @@ export default function Login() {
         import.meta.env.VITE_API_URL + "/admin/login",
         credentials
       );
+      console.log("response", response);
 
       console.log("import.meta.env.VITE_ENCRYPTION_KEY", import.meta.env);
       const data = decrypt(
