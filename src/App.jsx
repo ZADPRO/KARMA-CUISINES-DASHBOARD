@@ -2,6 +2,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
+  Navigate,
   useLocation,
 } from "react-router-dom";
 
@@ -28,20 +29,35 @@ function App() {
     <Router>
       <ConditionalHeader>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/vendors" element={<Vendors />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/transactions" element={<Transactions />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/*" element={<ProtectedRoutes />} />
         </Routes>
       </ConditionalHeader>
     </Router>
+  );
+}
+
+// Function to check if user is logged in
+const isAuthenticated = () => {
+  return localStorage.getItem("loginStatus") === "true"; // Assuming "isLoggedIn" key is used
+};
+
+function ProtectedRoutes() {
+  return isAuthenticated() ? (
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/products" element={<Products />} />
+      <Route path="/orders" element={<Orders />} />
+      <Route path="/vendors" element={<Vendors />} />
+      <Route path="/users" element={<Users />} />
+      <Route path="/transactions" element={<Transactions />} />
+      <Route path="/reports" element={<Reports />} />
+      <Route path="/messages" element={<Messages />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/settings" element={<Settings />} />
+    </Routes>
+  ) : (
+    <Navigate to="/login" replace />
   );
 }
 
