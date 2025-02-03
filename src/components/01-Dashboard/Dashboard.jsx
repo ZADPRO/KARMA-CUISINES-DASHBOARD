@@ -15,28 +15,28 @@ export default function Dashboard() {
     {
       id: 1,
       title: "Orders",
-      count: "24 new",
+      count: "2 new",
       description: "Orders count",
       icon: <BaggageClaim size={40} />,
     },
     {
       id: 2,
       title: "Revenue",
-      count: "15 new",
+      count: "0",
       description: "Sales count",
       icon: <Coins size={40} />,
     },
     {
       id: 3,
       title: "Return Orders",
-      count: "5 new",
+      count: "0",
       description: "Returns count",
       icon: <Undo2 size={40} />,
     },
     {
       id: 4,
       title: "Pending Orders",
-      count: "3 new",
+      count: "0",
       description: "Pending count",
       icon: <TriangleAlert size={40} />,
     },
@@ -156,7 +156,7 @@ export default function Dashboard() {
         >
           {/* RECENT SALES & BEST SELLING PRODUCTS */}
           <div className="col-12 xl:col-6 dashboardAnalytics">
-            <DashboardProducts />
+            {/* <DashboardProducts /> */}
             <div className="card mt-4">
               <div className="flex justify-content-between align-items-center mb-5">
                 <h5>Best Selling Products</h5>
@@ -183,7 +183,7 @@ export default function Dashboard() {
                 <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                   <div>
                     <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                      Chicken Briyani
+                      Dish 1
                     </span>
                     <div className="mt-1 text-600">Food</div>
                   </div>
@@ -205,7 +205,7 @@ export default function Dashboard() {
                 <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                   <div>
                     <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                      Dhal & Grains
+                      Product 2
                     </span>
                     <div className="mt-1 text-600">Food</div>
                   </div>
@@ -222,7 +222,7 @@ export default function Dashboard() {
                     <span className="text-cyan-500 ml-3 font-medium">%16</span>
                   </div>
                 </li>
-                <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+                {/* <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                   <div>
                     <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
                       Parotta Combo
@@ -261,7 +261,7 @@ export default function Dashboard() {
                     </div>
                     <span className="text-green-500 ml-3 font-medium">%35</span>
                   </div>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
@@ -273,7 +273,7 @@ export default function Dashboard() {
               <Chart type="line" data={chartData} options={chartOptions} />{" "}
             </div>
 
-            <div className="card mt-4">
+            {/* <div className="card mt-4">
               <div className="flex align-items-center justify-content-between mb-4">
                 <h5>Notifications</h5>
                 <div>
@@ -357,7 +357,7 @@ export default function Dashboard() {
                   </span>
                 </li>
               </ul>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

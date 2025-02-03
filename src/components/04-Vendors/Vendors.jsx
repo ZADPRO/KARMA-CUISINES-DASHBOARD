@@ -306,13 +306,13 @@ export default function Vendors() {
               sortable
               style={{ minWidth: "10rem" }}
             ></Column>
-            <Column
+            {/* <Column
               field="status"
               header="Status"
               body={statusBodyTemplate}
               sortable
               style={{ minWidth: "12rem" }}
-            ></Column>
+            ></Column> */}
           </DataTable>
         </div>
 

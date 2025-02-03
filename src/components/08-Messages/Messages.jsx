@@ -7,6 +7,9 @@ export default function Messages() {
         <p>Messages</p>
         <p className="">Logged in as: Admin</p>
       </div>
+      <div className="m-3">
+        <p>No messages received yet</p>
+      </div>
     </div>
   );
 }

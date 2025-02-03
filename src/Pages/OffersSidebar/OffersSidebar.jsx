@@ -221,7 +221,7 @@ export default function OffersSidebar() {
                   <label htmlFor="ms-restaurants">Offer Type</label>
                 </FloatLabel>
 
-                <FloatLabel className="w-full md:w-20rem">
+                {/* <FloatLabel className="w-full md:w-20rem">
                   <Calendar
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.value)}
@@ -230,7 +230,7 @@ export default function OffersSidebar() {
                     className="w-full"
                   />
                   <label htmlFor="calendar-date">Offer Created At</label>
-                </FloatLabel>
+                </FloatLabel> */}
               </div>
             </div>
             <DataTable

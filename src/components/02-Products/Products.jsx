@@ -6,65 +6,10 @@ import AddProductSideBar from "../../Pages/AddProductSideBar/AddProductSideBar";
 import ModifySequenceSideBar from "../../Pages/ModifySequenceSideBar/ModifySequenceSideBar";
 import { useState } from "react";
 
-const productsData = [
-  {
-    id: 1,
-    category: "Category",
-    name: "Product Name",
-    image: templateImg,
-    rating: 5.0,
-    description: "Enim nec dui nunc mattis enim ut tellus. Tincidunt arcu.",
-    price: "$140.00",
-  },
-  {
-    id: 2,
-    category: "Category",
-    name: "Product Name",
-    image: templateImg,
-    rating: 5.0,
-    description: "Enim nec dui nunc mattis enim ut tellus. Tincidunt arcu.",
-    price: "$82.00",
-  },
-  {
-    id: 3,
-    category: "Category",
-    name: "Product Name",
-    image: templateImg,
-    rating: 5.0,
-    description: "Enim nec dui nunc mattis enim ut tellus. Tincidunt arcu.",
-    price: "$54.00",
-  },
-  {
-    id: 4,
-    category: "Category",
-    name: "Product Name",
-    image: templateImg,
-    rating: 5.0,
-    description: "Enim nec dui nunc mattis enim ut tellus. Tincidunt arcu.",
-    price: "$72.00",
-  },
-  {
-    id: 5,
-    category: "Category",
-    name: "Product Name",
-    image: templateImg,
-    rating: 5.0,
-    description: "Enim nec dui nunc mattis enim ut tellus. Tincidunt arcu.",
-    price: "$99.00",
-  },
-  {
-    id: 6,
-    category: "Category",
-    name: "Product Name",
-    image: templateImg,
-    rating: 5.0,
-    description: "Enim nec dui nunc mattis enim ut tellus. Tincidunt arcu.",
-    price: "$89.00",
-  },
-];
+const productsData = [];
 
 export default function Products() {
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(false);
   const [addNew, setAddNew] = useState(false);
   const [sequence, setSequence] = useState(false);
   const [products, setProducts] = useState(
@@ -94,12 +39,12 @@ export default function Products() {
           <p>Show Products</p>
         </div>
         <div className="flex gap-5">
-          <Button
+          {/* <Button
             label="View Sequence"
             raised
             severity="success"
             onClick={() => setSequence(true)}
-          />
+          /> */}
           <Button
             icon="pi pi-plus"
             rounded

@@ -59,8 +59,8 @@ export default function Orders() {
         name: "User 1",
         vendor: "Kings Kurry",
         product: "Dish 1",
-        date: "19/12/2024",
-        time: "08:37 AM",
+        date: "9/12/2025",
+        time: "11:59 AM",
         contactNo: "9876543210",
         status: "DELIVERED",
       },
@@ -70,8 +70,8 @@ export default function Orders() {
         name: "User 2",
         vendor: "Fajita Friends",
         product: "Dish 2",
-        date: "19/12/2024",
-        time: "08:37 AM",
+        date: "19/1/2025",
+        time: "07:24 AM",
         contactNo: "9876543210",
         status: "CANCELLED",
       },
@@ -81,8 +81,8 @@ export default function Orders() {
         name: "User 3",
         vendor: "Kings Kurry",
         product: "Dish 3",
-        date: "19/12/2024",
-        time: "08:37 AM",
+        date: "30/1/2025",
+        time: "02:54 PM",
         contactNo: "9876543210",
         status: "CANCELLED",
       },
@@ -92,8 +92,8 @@ export default function Orders() {
         name: "User 4",
         vendor: "Fajita Friends",
         product: "Dish 4",
-        date: "04/12/2024",
-        time: "08:37 AM",
+        date: "30/1/2025",
+        time: "11:40 PM",
         contactNo: "9876543210",
         status: "YET TO DELIVER",
       },
@@ -103,7 +103,7 @@ export default function Orders() {
         name: "User 5",
         vendor: "Ban Thai",
         product: "Dish 5",
-        date: "19/12/2024",
+        date: "30/1/2025",
         time: "08:37 AM",
         contactNo: "9876543210",
         status: "DELIVERED",
@@ -114,8 +114,8 @@ export default function Orders() {
         name: "User 6",
         vendor: "Ban Thai",
         product: "Dish 6",
-        date: "19/12/2024",
-        time: "08:37 AM",
+        date: "30/1/2025",
+        time: "08:45 AM",
         contactNo: "9876543210",
         status: "DELIVERED",
       },
@@ -318,12 +318,12 @@ export default function Orders() {
               )}
               style={{ minWidth: "8rem", background: "white" }}
             ></Column>
-            <Column
+            {/* <Column
               field="code"
               header="User ID"
               sortable
               style={{ minWidth: "8rem" }}
-            ></Column>
+            ></Column> */}
             <Column
               field="name"
               header="Name"

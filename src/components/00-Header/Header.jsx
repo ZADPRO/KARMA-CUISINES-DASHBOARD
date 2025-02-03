@@ -42,11 +42,11 @@ const routes = [
     name: "Vendors",
     icon: <UtensilsCrossed />,
   },
-  {
-    path: "/users",
-    name: "Users",
-    icon: <Users />,
-  },
+  // {
+  //   path: "/users",
+  //   name: "Users",
+  //   icon: <Users />,
+  // },
   {
     path: "/transactions",
     name: "Transactions",
@@ -62,11 +62,11 @@ const routes = [
     name: "Messages",
     icon: <MessagesSquare />,
   },
-  {
-    path: "/profile",
-    name: "Profile",
-    icon: <UserRoundPen />,
-  },
+  // {
+  //   path: "/profile",
+  //   name: "Profile",
+  //   icon: <UserRoundPen />,
+  // },
   {
     path: "/settings",
     name: "Settings",
