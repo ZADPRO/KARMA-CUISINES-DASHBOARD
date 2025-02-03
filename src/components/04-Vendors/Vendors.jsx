@@ -270,16 +270,16 @@ export default function Vendors() {
               header="Vendor ID"
               sortable
               frozen
-              body={(rowData) => (
-                <span
-                  style={{
-                    color: "blue",
-                  }}
-                  onClick={() => handleVendorClick(rowData)}
-                >
-                  {rowData.id}
-                </span>
-              )}
+              // body={(rowData) => (
+              //   <span
+              //     style={{
+              //       color: "blue",
+              //     }}
+              //     onClick={() => handleVendorClick(rowData)}
+              //   >
+              //     {rowData.id}
+              //   </span>
+              // )}
               style={{ minWidth: "10rem", background: "white" }}
             ></Column>
             <Column
