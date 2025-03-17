@@ -233,14 +233,69 @@ export default function Orders() {
     console.log(vendor);
   };
 
-  const handlePrintClick = (rowData) => {
-    console.log("Printing data:", rowData);
-  };
-
   const printBodyTemplate = (rowData) => {
     return (
       <Button icon="pi pi-print" onClick={() => handlePrintClick(rowData)} />
     );
+  };
+
+  const connectUSBPrinter = async () => {
+    try {
+      const device = await navigator.usb.requestDevice({
+        filters: [{ vendorId: 0x04b8 }],
+      });
+
+      await device.open();
+      await device.selectConfiguration(1);
+      await device.claimInterface(0);
+
+      console.log("✅ Thermal printer connected!");
+      return device;
+    } catch (error) {
+      console.error("❌ Error connecting to USB printer:", error);
+    }
+  };
+
+  const handlePrintClick = async (rowData) => {
+    console.log("rowData", rowData);
+
+    const device = await connectUSBPrinter();
+    if (!device) return;
+
+    const encoder = new TextEncoder();
+
+    const header = `
+    ============================
+            YOUR LOGO HERE   
+    ============================\n\n`;
+
+    let orderDetails = `ORDER RECEIPT\n`;
+    orderDetails += `Order Number: ${rowData.orderNumber}\n`;
+    orderDetails += `Date: ${rowData.date}\n\n`;
+
+    orderDetails += `Items:\n`;
+    rowData.items.forEach((item, index) => {
+      orderDetails += `${index + 1}. ${item.name} - ${item.price}\n`;
+      item.details?.forEach((detail) => {
+        orderDetails += `   - ${detail}\n`;
+      });
+    });
+
+    const footer = `
+    ----------------------------
+    THANK YOU FOR YOUR PURCHASE!
+    ----------------------------
+    For any queries, contact support.
+    `;
+
+    const receiptData = header + orderDetails + footer + "\n\n\n\n\n";
+
+    try {
+      await device.transferOut(1, encoder.encode(receiptData));
+      console.log("✅ Printing successful!");
+    } catch (error) {
+      console.error("❌ Error sending data to printer:", error);
+    }
   };
 
   return (
