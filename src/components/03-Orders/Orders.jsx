@@ -233,6 +233,16 @@ export default function Orders() {
     console.log(vendor);
   };
 
+  const handlePrintClick = (rowData) => {
+    console.log("Printing data:", rowData);
+  };
+
+  const printBodyTemplate = (rowData) => {
+    return (
+      <Button icon="pi pi-print" onClick={() => handlePrintClick(rowData)} />
+    );
+  };
+
   return (
     <div>
       <div className="primaryNav">
@@ -302,10 +312,15 @@ export default function Orders() {
               style={{ background: "white" }}
             ></Column>
             <Column
+              header="Print"
+              frozen
+              body={printBodyTemplate}
+              style={{ minWidth: "3rem" }}
+            ></Column>
+            <Column
               field="id"
               header="Order ID"
               sortable
-              frozen
               body={(rowData) => (
                 <span
                   style={{
@@ -316,7 +331,7 @@ export default function Orders() {
                   {rowData.id}
                 </span>
               )}
-              style={{ minWidth: "8rem", background: "white" }}
+              style={{ minWidth: "8rem" }}
             ></Column>
             {/* <Column
               field="code"
@@ -336,12 +351,12 @@ export default function Orders() {
               sortable
               style={{ minWidth: "12rem" }}
             ></Column>
-            <Column
+            {/* <Column
               field="product"
               header="Product"
               sortable
               style={{ minWidth: "9rem" }}
-            ></Column>
+            ></Column> */}
             <Column
               field="date"
               header="Date"

@@ -52,11 +52,11 @@ const routes = [
     name: "Transactions",
     icon: <BadgeSwissFranc />,
   },
-  {
-    path: "/reports",
-    name: "Reports",
-    icon: <Files />,
-  },
+  // {
+  //   path: "/reports",
+  //   name: "Reports",
+  //   icon: <Files />,
+  // },
   {
     path: "/messages",
     name: "Messages",

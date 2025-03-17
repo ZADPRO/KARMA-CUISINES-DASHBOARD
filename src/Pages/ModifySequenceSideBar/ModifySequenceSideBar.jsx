@@ -22,7 +22,7 @@ export default function ModifySequenceSideBar() {
         image: templateImg,
         rating: 5.0,
         description: "Enim nec dui nunc mattis enim ut tellus. Tincidunt arcu.",
-        price: "$140.00",
+        price: "CHF 140.00",
       },
       {
         id: 2,
@@ -31,7 +31,7 @@ export default function ModifySequenceSideBar() {
         image: templateImg,
         rating: 5.0,
         description: "Enim nec dui nunc mattis enim ut tellus. Tincidunt arcu.",
-        price: "$82.00",
+        price: "CHF 82.00",
       },
       {
         id: 3,
@@ -40,7 +40,7 @@ export default function ModifySequenceSideBar() {
         image: templateImg,
         rating: 5.0,
         description: "Enim nec dui nunc mattis enim ut tellus. Tincidunt arcu.",
-        price: "$54.00",
+        price: "CHF 54.00",
       },
       {
         id: 4,
@@ -49,7 +49,7 @@ export default function ModifySequenceSideBar() {
         image: templateImg,
         rating: 5.0,
         description: "Enim nec dui nunc mattis enim ut tellus. Tincidunt arcu.",
-        price: "$72.00",
+        price: "CHF 72.00",
       },
       {
         id: 5,
@@ -58,7 +58,7 @@ export default function ModifySequenceSideBar() {
         image: templateImg,
         rating: 5.0,
         description: "Enim nec dui nunc mattis enim ut tellus. Tincidunt arcu.",
-        price: "$99.00",
+        price: "CHF 99.00",
       },
       {
         id: 6,
@@ -67,7 +67,7 @@ export default function ModifySequenceSideBar() {
         image: templateImg,
         rating: 5.0,
         description: "Enim nec dui nunc mattis enim ut tellus. Tincidunt arcu.",
-        price: "$89.00",
+        price: "CHF 89.00",
       },
     ];
     setProducts(data);
