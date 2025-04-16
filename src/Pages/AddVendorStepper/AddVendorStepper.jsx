@@ -27,8 +27,6 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { FileUpload } from "primereact/fileupload";
-import { MultiSelect } from "primereact/multiselect";
-import { Calendar } from "primereact/calendar";
 import { Divider } from "primereact/divider";
 
 import decrypt from "../../helper";
@@ -541,7 +539,7 @@ export default function AddVendorStepper() {
                   />{" "}
                 </div>
               </div>
-              <Divider />
+              {/* <Divider />
               <span>Working Days</span>
               <div className="flex justify-content-end">
                 <Button
@@ -607,7 +605,6 @@ export default function AddVendorStepper() {
                       />
                     </div>
 
-                    {/* Delete Button */}
                     <button
                       type="button"
                       onClick={() => handleDeleteGroup(index)}
@@ -618,6 +615,7 @@ export default function AddVendorStepper() {
                   </div>
                 ))}
               </div>
+              <Divider /> */}
               <Divider />
               <span>Communication Details</span>
               <div className="flex gap-3 mt-3">
@@ -684,6 +682,8 @@ export default function AddVendorStepper() {
                   onChange={(e) => handleInputChange(e, "refWebsiteLink")}
                 />{" "}
               </div>{" "}
+              <Divider />
+              <span>Upload Logo</span>
               <div className="fileUpload mt-3 flex-col">
                 <FileUpload
                   name="logo"

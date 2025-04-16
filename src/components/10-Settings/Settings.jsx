@@ -69,19 +69,19 @@ export default function Settings() {
         <p>Settings</p>
         <p className="">Logged in as: Admin</p>
       </div>
-      <div className="flex w-full items-center justify-content-center mt-4">
+      <div className="flex w-full items-center mt-4">
         <DataView
           value={cardsData}
           layout="grid"
           itemTemplate={renderCard}
-          className="p-grid"
+          className="p-grid w-full"
         />
       </div>
 
       <Sidebar
         visible={visibleSidebar}
         position="right"
-        style={{ width: "70vw" }}
+        style={{ width: "60vw" }}
         onHide={() => setVisibleSidebar(false)}
       >
         {renderSidebarContent()}

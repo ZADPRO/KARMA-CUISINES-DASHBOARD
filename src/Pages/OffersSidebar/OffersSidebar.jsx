@@ -29,6 +29,17 @@ export default function OffersSidebar() {
   const dt = useRef(null);
   const toast = useRef(null);
 
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleTabChange = (e) => {
+    setActiveIndex(e.index);
+
+    // Check if "Offers" tab is clicked (assuming it's at index 0)
+    if (e.index === 0) {
+      getAllOffers();
+    }
+  };
+
   const [filteredProducts, setFilteredProducts] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState(null);
   const [uploadLogoEnabled, setUploadLogoEnabled] = useState(false);
@@ -53,7 +64,8 @@ export default function OffersSidebar() {
     startDate: null,
     endDate: null,
   });
-  useEffect(() => {
+
+  const getAllOffers = () => {
     Axios.get(import.meta.env.VITE_API_URL + "/vendorRoutes/getOffers", {
       headers: {
         Authorization: localStorage.getItem("JWTtoken"),
@@ -68,6 +80,10 @@ export default function OffersSidebar() {
 
       setProducts(data.restroOffers);
     });
+  };
+
+  useEffect(() => {
+    getAllOffers();
   }, []);
 
   useEffect(() => {
@@ -120,7 +136,7 @@ export default function OffersSidebar() {
           refOfferName: formData.offerName,
           refOfferMinValue: formData.minValue,
           refDiscountPrice: formData.discountPrice,
-          refOfferType: formData.isOffer,
+          refOfferType: uploadLogoEnabled,
           refOfferDescription: formData.description,
           refStartDate: formData.startDate,
           refEndDate: formData.endDate,
@@ -205,8 +221,8 @@ export default function OffersSidebar() {
       <Toast ref={toast} />
 
       <div className="card">
-        <TabView>
-          <TabPanel header="Offers">
+        <TabView activeIndex={activeIndex} onTabChange={handleTabChange}>
+          <TabPanel header="Offers" onClick={() => getAllOffers()}>
             <div className="filterTabs flex flex-wrap align-items-center justify-content-between gap-4 mb-2">
               <div className="dataFilterContainer flex flex-wrap gap-5 mt-2">
                 <FloatLabel className="w-full md:w-20rem">
@@ -220,17 +236,6 @@ export default function OffersSidebar() {
                   />
                   <label htmlFor="ms-restaurants">Offer Type</label>
                 </FloatLabel>
-
-                {/* <FloatLabel className="w-full md:w-20rem">
-                  <Calendar
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.value)}
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className="w-full"
-                  />
-                  <label htmlFor="calendar-date">Offer Created At</label>
-                </FloatLabel> */}
               </div>
             </div>
             <DataTable
@@ -346,8 +351,11 @@ export default function OffersSidebar() {
               ></Column>
 
               <Column
-                field="time"
+                field="createdAt"
                 header="Created At"
+                body={(rowData) =>
+                  new Date(rowData.createdAt).toLocaleDateString("en-GB")
+                }
                 style={{ minWidth: "9rem" }}
               ></Column>
               <Column

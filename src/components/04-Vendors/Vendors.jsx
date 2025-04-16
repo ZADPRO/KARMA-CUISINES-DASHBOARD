@@ -9,12 +9,13 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import { Tag } from "primereact/tag";
 import { Sidebar } from "primereact/sidebar";
 import { Paginator } from "primereact/paginator";
 
 import AddVendorStepper from "../../Pages/AddVendorStepper/AddVendorStepper";
 import PreviewVendorStepper from "../../Pages/PreviewVendorStepper/PreviewVendorStepper";
+import Axios from "axios";
+import decrypt from "../../helper";
 
 export default function Vendors() {
   let emptyProduct = {
@@ -55,42 +56,20 @@ export default function Vendors() {
   ];
 
   useEffect(() => {
-    const restaurantData = [
-      {
-        id: "1000",
-        name: "Kings Kurry",
-        cuisine: "Indian, Mughlai",
-        contactNo: "9876543210",
-        email: "info@kingskurry.com",
-        status: "OPEN",
+    Axios.get(import.meta.env.VITE_API_URL + "/vendorRoutes/getVendorList", {
+      headers: {
+        Authorization: localStorage.getItem("JWTtoken"),
       },
-      {
-        id: "1001",
-        name: "Ban Thai",
-        cuisine: "Thai, Asian",
-        contactNo: "9876543211",
-        email: "info@banthai.com",
-        status: "OPEN",
-      },
-      {
-        id: "1002",
-        name: "Sushi Haven",
-        cuisine: "Japanese, Sushi",
-        contactNo: "9876543212",
-        email: "info@sushihaven.com",
-        status: "CLOSED",
-      },
-      {
-        id: "1003",
-        name: "Fajita Friends",
-        cuisine: "Mexican, Tex-Mex",
-        contactNo: "9876543213",
-        email: "info@fajitafriends.com",
-        status: "OPEN",
-      },
-    ];
+    }).then((res) => {
+      const data = decrypt(
+        res.data[1],
+        res.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
+      console.log("get products data --- line 40", data);
+    });
 
-    setProducts(restaurantData);
+    // setProducts(restaurantData);
   }, []);
 
   const hideDeleteProductDialog = () => {
@@ -127,26 +106,6 @@ export default function Vendors() {
       detail: "Product Deleted",
       life: 3000,
     });
-  };
-
-  const statusBodyTemplate = (rowData) => {
-    return <Tag value={rowData.status} severity={getSeverity(rowData)}></Tag>;
-  };
-
-  const getSeverity = (product) => {
-    switch (product.status) {
-      case "OPEN":
-        return "success";
-
-      case "CLOSED":
-        return "warning";
-
-      case "OUTOFSTOCK":
-        return "danger";
-
-      default:
-        return null;
-    }
   };
 
   const header = (
@@ -270,16 +229,16 @@ export default function Vendors() {
               header="Vendor ID"
               sortable
               frozen
-              // body={(rowData) => (
-              //   <span
-              //     style={{
-              //       color: "blue",
-              //     }}
-              //     onClick={() => handleVendorClick(rowData)}
-              //   >
-              //     {rowData.id}
-              //   </span>
-              // )}
+              body={(rowData) => (
+                <span
+                  style={{
+                    color: "blue",
+                  }}
+                  onClick={() => handleVendorClick(rowData)}
+                >
+                  {rowData.id}
+                </span>
+              )}
               style={{ minWidth: "10rem", background: "white" }}
             ></Column>
             <Column
