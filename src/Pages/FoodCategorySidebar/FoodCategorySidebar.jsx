@@ -119,10 +119,36 @@ export default function FoodCategorySidebar() {
             </div>
           </div>
           <DataTable value={products} className="mt-3" showGridlines>
-            <Column field="sno" header="S.No"></Column>
-            <Column field="categoryName" header="Category name"></Column>
-            <Column header="Edit"></Column>
-            <Column header="Delete"></Column>
+            <Column
+              header="S.No"
+              body={(_, { rowIndex }) => rowIndex + 1}
+              style={{ width: "80px" }}
+            />
+            <Column field="categoryName" header="Category name" />
+            <Column
+              header="Edit"
+              body={(rowData) => (
+                <Button
+                  icon="pi pi-pencil"
+                  severity="info"
+                  rounded
+                  onClick={() => console.log("Edit clicked", rowData)}
+                />
+              )}
+              style={{ width: "100px", textAlign: "center" }}
+            />
+            <Column
+              header="Delete"
+              body={(rowData) => (
+                <Button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  rounded
+                  onClick={() => console.log("Delete clicked", rowData)}
+                />
+              )}
+              style={{ width: "100px", textAlign: "center" }}
+            />
           </DataTable>
         </TabPanel>
 
