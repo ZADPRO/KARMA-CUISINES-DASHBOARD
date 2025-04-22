@@ -16,14 +16,17 @@ interface Categories {
 
 const AddCategoriesProduct: React.FC = () => {
   const [categoriesData, setCategoriesData] = useState<Categories[]>([]);
-  const [refresh, setRefresh] = useState(false);
+
   const [editDialogVisible, setEditDialogVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<Categories | null>(
     null
   );
   const [updatedName, setUpdatedName] = useState("");
 
-  useEffect(() => {
+  const [addDialogVisible, setAddDialogVisible] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+
+  const getCategory = () => {
     axios
       .get(import.meta.env.VITE_API_URL + "/productCombo/getCategory", {
         headers: {
@@ -38,7 +41,11 @@ const AddCategoriesProduct: React.FC = () => {
         );
         setCategoriesData(data.data);
       });
-  }, [refresh]);
+  };
+
+  useEffect(() => {
+    getCategory();
+  }, []);
 
   const openEditDialog = (rowData: Categories) => {
     setSelectedCategory(rowData);
@@ -63,7 +70,7 @@ const AddCategoriesProduct: React.FC = () => {
       )
       .then(() => {
         setEditDialogVisible(false);
-        setRefresh((prev) => !prev);
+        getCategory();
       })
       .catch((err) => {
         console.error("Update failed:", err);
@@ -89,13 +96,38 @@ const AddCategoriesProduct: React.FC = () => {
             }
           )
           .then(() => {
-            setRefresh((prev) => !prev);
+            getCategory();
           })
           .catch((err) => {
             console.error("Delete failed:", err);
           });
       },
     });
+  };
+
+  const addCategory = () => {
+    if (!newCategoryName.trim()) return;
+
+    axios
+      .post(
+        `${import.meta.env.VITE_API_URL}/productCombo/addCategory`,
+        {
+          categoryName: newCategoryName,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+          },
+        }
+      )
+      .then(() => {
+        setAddDialogVisible(false);
+        setNewCategoryName("");
+        getCategory();
+      })
+      .catch((err) => {
+        console.error("Add category failed:", err);
+      });
   };
 
   const serialNumberTemplate = (_rowData: Categories, options: any) => {
@@ -125,6 +157,17 @@ const AddCategoriesProduct: React.FC = () => {
   return (
     <div className="p-4">
       <ConfirmDialog />
+
+      {/* Add Category Button */}
+      <div className="flex justify-end mb-3">
+        <Button
+          label="Add Category"
+          icon="pi pi-plus"
+          className="p-button-success"
+          onClick={() => setAddDialogVisible(true)}
+        />
+      </div>
+
       <DataTable
         value={categoriesData}
         showGridlines
@@ -133,26 +176,12 @@ const AddCategoriesProduct: React.FC = () => {
         rows={10}
         responsiveLayout="scroll"
       >
-        <Column
-          header="S.No"
-          body={serialNumberTemplate}
-          style={{ width: "5%" }}
-        />
-        <Column
-          field="refFoodCategoryName"
-          header="Category Name"
-          style={{ width: "60%" }}
-        />
-        <Column
-          header="Edit"
-          body={editTemplate}
-          style={{ width: "15%", textAlign: "center" }}
-        />
-        <Column
-          header="Delete"
-          body={deleteTemplate}
-          style={{ width: "15%", textAlign: "center" }}
-        />
+        <Column header="S.No" body={serialNumberTemplate} />
+        <Column field="refFoodCategoryId" header="Category Name" />
+
+        <Column field="refFoodCategoryName" header="Category Name" />
+        <Column header="Edit" body={editTemplate} />
+        <Column header="Delete" body={deleteTemplate} />
       </DataTable>
 
       {/* Edit Dialog */}
@@ -183,6 +212,39 @@ const AddCategoriesProduct: React.FC = () => {
             id="categoryName"
             value={updatedName}
             onChange={(e) => setUpdatedName(e.target.value)}
+            className="w-full"
+          />
+        </div>
+      </Dialog>
+
+      {/* Add Dialog */}
+      <Dialog
+        header="Add Category"
+        visible={addDialogVisible}
+        onHide={() => setAddDialogVisible(false)}
+        footer={
+          <div>
+            <Button
+              label="Cancel"
+              icon="pi pi-times"
+              className="p-button-text"
+              onClick={() => setAddDialogVisible(false)}
+            />
+            <Button
+              label="Add"
+              icon="pi pi-check"
+              className="p-button-text"
+              onClick={addCategory}
+            />
+          </div>
+        }
+      >
+        <div className="p-field">
+          <label htmlFor="newCategoryName">Category Name</label>
+          <InputText
+            id="newCategoryName"
+            value={newCategoryName}
+            onChange={(e) => setNewCategoryName(e.target.value)}
             className="w-full"
           />
         </div>
