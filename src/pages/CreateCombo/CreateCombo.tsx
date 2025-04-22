@@ -10,12 +10,23 @@ import {
 import { MultiSelect } from "primereact/multiselect";
 import axios from "axios";
 import decrypt from "../../helper";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
+
+interface FixedProductsProps {
+  refFoodId: number;
+  refFoodName: string;
+  refFoodCategoryName: string;
+  refPrice: string;
+}
 
 const CreateCombo: React.FC = () => {
   const toastRef = useRef<Toast>(null);
   const [productAddons, setProductAddons] = useState([]);
   const [dropdownItems, setDropdownItems] = useState([]);
+
+  const [products, setProducts] = useState<FixedProductsProps[]>([]);
 
   const getProductAddOns = (value: string) => {
     console.log("value", value);
@@ -62,7 +73,10 @@ const CreateCombo: React.FC = () => {
     const selectedItems = e.value;
     console.log("Selected Addons Array:", selectedItems);
     setProductAddons(selectedItems);
+
+    setProducts(selectedItems);
   };
+
   return (
     <div>
       <div className="card flex flex-column md:flex-row gap-3 mt-3">
@@ -110,12 +124,21 @@ const CreateCombo: React.FC = () => {
             placeholder="Search Food Name"
             filter
             showClear
-            optionValue="refFoodId"
             display="chip"
             className="w-full md:w-14rem"
           />{" "}
         </div>
       </div>
+
+      <DataTable value={products} className="mt-3" showGridlines stripedRows>
+        <Column
+          header="S.No"
+          body={(_, { rowIndex }) => rowIndex + 1}
+          style={{ width: "4rem" }}
+        />
+        <Column field="refFoodName" header="Product Name" />
+        <Column field="quantity" header="Count" />
+      </DataTable>
     </div>
   );
 };
