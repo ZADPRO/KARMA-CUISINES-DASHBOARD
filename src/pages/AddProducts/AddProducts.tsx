@@ -31,7 +31,9 @@ const AddProducts: React.FC = () => {
   const [productQuantity, setProductQuantity] = useState("");
   const [productCategory, setProductCategory] = useState("");
   const [productAddons, setProductAddons] = useState("");
+  const [dropdownItems, setDropdownItems] = useState([]);
   const [categoriesData, setCategoriesData] = useState<Categories[]>([]);
+  const fileUploadRef = useRef<FileUpload>(null);
 
   const toastRef = useRef<Toast>(null);
 
@@ -162,7 +164,9 @@ const AddProducts: React.FC = () => {
           setProductPrice("");
           setProductQuantity("");
           setProductCategory("");
+          setProductImageFile("");
           setProductAddons("");
+          fileUploadRef.current?.clear();
         }
       })
       .catch((error) => {
@@ -177,6 +181,51 @@ const AddProducts: React.FC = () => {
       });
   };
 
+  const getProductAddOns = (value: string) => {
+    console.log("value", value);
+
+    axios
+      .post(
+        `${import.meta.env.VITE_API_URL}/productCombo/searchFood`,
+        { searchKey: value },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("JWTtoken")}`,
+          },
+        }
+      )
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+
+        console.log("data.data line 203", data.data);
+
+        const filtered = data.data.filter((item: any) =>
+          (item.refFoodName + " " + item.refFoodCategoryName)
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        );
+
+        setDropdownItems(filtered);
+      })
+      .catch((error) => {
+        toastRef.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: "Error Fetching Product Add-ons",
+          life: 3000,
+        });
+        console.error("Fetch error", error);
+      });
+  };
+
+  const handleDropdownChange = (e: any) => {
+    getProductAddOns(e.value);
+    setDropdownItems([]);
+  };
   const customUploadHandler = (event: any) => {
     const files = event.files;
     console.log("files", files);
@@ -257,6 +306,7 @@ const AddProducts: React.FC = () => {
             multiple
             accept="image/*"
             className="w-full"
+            ref={fileUploadRef}
             maxFileSize={1000000}
             emptyTemplate={
               <p className="m-0">Drag and drop files here to upload.</p>
@@ -329,10 +379,17 @@ const AddProducts: React.FC = () => {
           <span className="p-inputgroup-addon">
             <Grid2x2Plus />
           </span>
-          <InputText
-            placeholder="Add ons"
+          <Dropdown
             value={productAddons}
-            onChange={(e) => setProductAddons(e.target.value)}
+            options={dropdownItems}
+            onChange={handleDropdownChange}
+            onFilter={(e) => getProductAddOns(e.filter)}
+            optionLabel="refFoodName"
+            placeholder="Search Food Name"
+            filter
+            showClear
+            multiple
+            className="w-full"
           />
         </div>
       </div>
