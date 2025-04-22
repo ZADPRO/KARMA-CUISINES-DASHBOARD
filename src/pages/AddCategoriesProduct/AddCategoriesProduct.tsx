@@ -16,6 +16,7 @@ interface Categories {
 
 const AddCategoriesProduct: React.FC = () => {
   const [categoriesData, setCategoriesData] = useState<Categories[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const [editDialogVisible, setEditDialogVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<Categories | null>(
@@ -27,6 +28,7 @@ const AddCategoriesProduct: React.FC = () => {
   const [newCategoryName, setNewCategoryName] = useState("");
 
   const getCategory = () => {
+    setLoading(true);
     axios
       .get(import.meta.env.VITE_API_URL + "/productCombo/getCategory", {
         headers: {
@@ -40,6 +42,12 @@ const AddCategoriesProduct: React.FC = () => {
           import.meta.env.VITE_ENCRYPTION_KEY
         );
         setCategoriesData(data.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching categories:", err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -171,6 +179,7 @@ const AddCategoriesProduct: React.FC = () => {
       <DataTable
         value={categoriesData}
         showGridlines
+        loading={loading}
         stripedRows
         paginator
         rows={10}
