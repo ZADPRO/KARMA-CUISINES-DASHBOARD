@@ -13,12 +13,14 @@ import decrypt from "../../helper";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
+import { Button } from "primereact/button";
 
 interface FixedProductsProps {
   refFoodId: number;
   refFoodName: string;
   refFoodCategoryName: string;
   refPrice: string;
+  quantity: number;
 }
 
 const CreateCombo: React.FC = () => {
@@ -70,11 +72,37 @@ const CreateCombo: React.FC = () => {
   };
 
   const handleMultiSelectChange = (e: any) => {
-    const selectedItems = e.value;
-    console.log("Selected Addons Array:", selectedItems);
+    const selectedItems = e.value.map((item: any) => ({
+      ...item,
+      quantity: 1,
+    }));
     setProductAddons(selectedItems);
-
     setProducts(selectedItems);
+  };
+
+  const quantityTemplate = (rowData: FixedProductsProps, options: any) => {
+    console.log("options", options);
+    const updateQuantity = (delta: number) => {
+      const updatedProducts = products.map((product) =>
+        product.refFoodId === rowData.refFoodId
+          ? { ...product, quantity: Math.max(1, product.quantity + delta) }
+          : product
+      );
+      console.log("updatedProducts", updatedProducts);
+      setProducts(updatedProducts);
+    };
+
+    return (
+      <div className="flex items-center gap-2">
+        <Button severity="secondary" rounded onClick={() => updateQuantity(-1)}>
+          -
+        </Button>
+        <span>{rowData.quantity}</span>
+        <Button severity="success" rounded onClick={() => updateQuantity(1)}>
+          +
+        </Button>
+      </div>
+    );
   };
 
   return (
@@ -137,7 +165,7 @@ const CreateCombo: React.FC = () => {
           style={{ width: "4rem" }}
         />
         <Column field="refFoodName" header="Product Name" />
-        <Column field="quantity" header="Count" />
+        <Column header="Count" body={quantityTemplate} />
       </DataTable>
     </div>
   );
