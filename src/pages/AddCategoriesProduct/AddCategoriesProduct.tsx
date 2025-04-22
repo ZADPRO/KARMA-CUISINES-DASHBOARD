@@ -4,6 +4,8 @@ import { DataTable } from "primereact/datatable";
 import { Button } from "primereact/button";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { confirmDialog } from "primereact/confirmdialog";
+import { Dialog } from "primereact/dialog";
+import { InputText } from "primereact/inputtext";
 import React, { useEffect, useState } from "react";
 import decrypt from "../../helper";
 
@@ -15,6 +17,11 @@ interface Categories {
 const AddCategoriesProduct: React.FC = () => {
   const [categoriesData, setCategoriesData] = useState<Categories[]>([]);
   const [refresh, setRefresh] = useState(false);
+  const [editDialogVisible, setEditDialogVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Categories | null>(
+    null
+  );
+  const [updatedName, setUpdatedName] = useState("");
 
   useEffect(() => {
     axios
@@ -29,13 +36,38 @@ const AddCategoriesProduct: React.FC = () => {
           res.data[0],
           import.meta.env.VITE_ENCRYPTION_KEY
         );
-        console.log("get sub categories data --- 28", data);
         setCategoriesData(data.data);
       });
   }, [refresh]);
 
-  const handleEdit = (rowData: Categories) => {
-    console.log("Edit clicked:", rowData);
+  const openEditDialog = (rowData: Categories) => {
+    setSelectedCategory(rowData);
+    setUpdatedName(rowData.refFoodCategoryName);
+    setEditDialogVisible(true);
+  };
+
+  const saveCategoryUpdate = () => {
+    if (!selectedCategory) return;
+    axios
+      .post(
+        `${import.meta.env.VITE_API_URL}/productCombo/updateCategory`,
+        {
+          categoryId: selectedCategory.refFoodCategoryId,
+          categoryName: updatedName,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+          },
+        }
+      )
+      .then(() => {
+        setEditDialogVisible(false);
+        setRefresh((prev) => !prev);
+      })
+      .catch((err) => {
+        console.error("Update failed:", err);
+      });
   };
 
   const handleDelete = (rowData: Categories) => {
@@ -75,7 +107,7 @@ const AddCategoriesProduct: React.FC = () => {
       <Button
         icon="pi pi-pencil"
         className="p-button-rounded p-button-text"
-        onClick={() => handleEdit(rowData)}
+        onClick={() => openEditDialog(rowData)}
       />
     );
   };
@@ -122,6 +154,39 @@ const AddCategoriesProduct: React.FC = () => {
           style={{ width: "15%", textAlign: "center" }}
         />
       </DataTable>
+
+      {/* Edit Dialog */}
+      <Dialog
+        header="Edit Category"
+        visible={editDialogVisible}
+        onHide={() => setEditDialogVisible(false)}
+        footer={
+          <div>
+            <Button
+              label="Cancel"
+              icon="pi pi-times"
+              className="p-button-text"
+              onClick={() => setEditDialogVisible(false)}
+            />
+            <Button
+              label="Save"
+              icon="pi pi-check"
+              className="p-button-text"
+              onClick={saveCategoryUpdate}
+            />
+          </div>
+        }
+      >
+        <div className="p-field">
+          <label htmlFor="categoryName">Category Name</label>
+          <InputText
+            id="categoryName"
+            value={updatedName}
+            onChange={(e) => setUpdatedName(e.target.value)}
+            className="w-full"
+          />
+        </div>
+      </Dialog>
     </div>
   );
 };
