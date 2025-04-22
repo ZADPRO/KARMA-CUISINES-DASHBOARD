@@ -10,6 +10,7 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import decrypt from "../../helper";
+import "./login.css"
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -88,10 +89,6 @@ const Login: React.FC = () => {
           <div
             className="flex flex-column align-items-center p-5 surface-overlay border-round"
             style={{ width: "400px", maxWidth: "100%" }}
-            ref={(el) => {
-              if (el)
-                el.style.setProperty("background-color", "white", "important");
-            }}
           >
             <div className="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8">
               <i className="pi pi-check text-5xl"></i>
@@ -129,16 +126,16 @@ const Login: React.FC = () => {
       <div className={containerClassName}>
         <div className="flex flex-column h-screen align-items-center justify-content-center">
           <div
+          className="shadow-xl shadow-black"
             style={{
               borderRadius: "56px",
               padding: "0.3rem",
-              background:
-                "linear-gradient(180deg, #00052e 10%, rgba(0, 5, 46, 0) 30%)",
+              // background:
+              //   "linear-gradient(180deg, #00052e 10%, rgba(0, 5, 46, 0) 30%)",
             }}
           >
             <div
               className="w-full surface-card py-8 px-5 sm:px-8 backgroundLogin"
-              style={{ borderRadius: "53px" }}
             >
               <div className="text-center mb-5">
                 <div className="text-900 text-3xl font-medium mb-3">
