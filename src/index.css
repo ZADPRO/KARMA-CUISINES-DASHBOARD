@@ -20,6 +20,10 @@ p {
   background-color: white !important;
 }
 
+.p-fileupload-file-badge.p-badge.p-component {
+  display: none;
+}
+
 .p-datatable .p-datatable-tbody > tr > td {
   padding: 10px 1rem;
 }

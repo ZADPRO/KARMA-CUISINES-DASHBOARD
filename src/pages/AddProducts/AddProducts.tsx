@@ -26,6 +26,7 @@ const AddProducts: React.FC = () => {
   const [productId, setProductId] = useState("");
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
+  const [productImageFile, setProductImageFile] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productQuantity, setProductQuantity] = useState("");
   const [productCategory, setProductCategory] = useState("");
@@ -125,29 +126,20 @@ const AddProducts: React.FC = () => {
     console.log("Submitted Data: ", formData);
     showToast("Product submitted successfully!", "success");
 
-    // Reset fields
-    setProductId("");
-    setProductName("");
-    setProductDescription("");
-    setProductPrice("");
-    setProductQuantity("");
-    setProductCategory("");
-    setProductAddons("");
-  };
-
-  const customUploadHandler = (event: any) => {
-    const files = event.files;
-    const formData = new FormData();
-
-    files.forEach((file: File) => {
-      formData.append("foodImg", file, file.name);
-    });
-
     axios
       .post(
-        `${import.meta.env.VITE_API_URL}/productCombo/FoodImg`,
+        `${import.meta.env.VITE_API_URL}/productCombo/addFood`,
         {
-          foodImg: formData,
+          foodName: formData.productName.toString(),
+          foodDescription: formData.productDescription,
+          foodImgPath: productImageFile,
+          foodPrice: formData.productPrice,
+          foodQuantity: formData.productQuantity,
+          foodCategory: formData.productCategory,
+          foodAddOns:
+            formData.productAddons && formData.productAddons.length > 0
+              ? formData.productAddons
+              : [],
         },
         {
           headers: {
@@ -161,9 +153,70 @@ const AddProducts: React.FC = () => {
           res.data[0],
           import.meta.env.VITE_ENCRYPTION_KEY
         );
-        console.log("Upload success", data);
+
+        console.log("data", data);
+        if (data.success) {
+          setProductId("");
+          setProductName("");
+          setProductDescription("");
+          setProductPrice("");
+          setProductQuantity("");
+          setProductCategory("");
+          setProductAddons("");
+        }
       })
       .catch((error) => {
+        toastRef.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: "Error In Product Image Upload ",
+          life: 3000,
+        });
+
+        console.error("Upload error", error);
+      });
+  };
+
+  const customUploadHandler = (event: any) => {
+    const files = event.files;
+    console.log("files", files);
+    const formData = new FormData();
+
+    files.forEach((file: File) => {
+      formData.append("foodImg", file, file.name);
+    });
+
+    axios
+      .post(`${import.meta.env.VITE_API_URL}/productCombo/FoodImg`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("JWTtoken")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+        console.log("Upload success", data);
+        console.log("data.filePaths.files[0]", data.filePaths.files[0]);
+        setProductImageFile(data.filePaths.files[0]);
+        toastRef.current?.show({
+          severity: "success",
+          summary: "Success",
+          detail: "Product Image Uploaded !",
+          life: 3000,
+        });
+      })
+      .catch((error) => {
+        toastRef.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: "Error In Product Image Upload ",
+          life: 3000,
+        });
+
         console.error("Upload error", error);
       });
   };
@@ -198,17 +251,6 @@ const AddProducts: React.FC = () => {
 
       <div className="card flex flex-column md:flex-row gap-3 mt-3">
         <div className="p-inputgroup flex-1">
-          {/* <FileUpload
-            name="foodImg"
-            url={`${import.meta.env.VITE_API_URL}/productCombo/FoodImg`}
-            multiple
-            accept="image/*"
-            className="w-full"
-            maxFileSize={1000000}
-            emptyTemplate={
-              <p className="m-0">Drag and drop files here to upload.</p>
-            }
-          /> */}
           <FileUpload
             name="demo[]"
             url={`${import.meta.env.VITE_API_URL}/productCombo/FoodImg`}
@@ -220,7 +262,7 @@ const AddProducts: React.FC = () => {
               <p className="m-0">Drag and drop files here to upload.</p>
             }
             customUpload
-            uploadHandler={customUploadHandler} // Use custom upload handler
+            uploadHandler={customUploadHandler}
           />
         </div>
       </div>
