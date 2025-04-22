@@ -135,6 +135,39 @@ const AddProducts: React.FC = () => {
     setProductAddons("");
   };
 
+  const customUploadHandler = (event: any) => {
+    const files = event.files;
+    const formData = new FormData();
+
+    files.forEach((file: File) => {
+      formData.append("foodImg", file, file.name);
+    });
+
+    axios
+      .post(
+        `${import.meta.env.VITE_API_URL}/productCombo/FoodImg`,
+        {
+          foodImg: formData,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("JWTtoken")}`,
+          },
+        }
+      )
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+        console.log("Upload success", data);
+      })
+      .catch((error) => {
+        console.error("Upload error", error);
+      });
+  };
+
   return (
     <div>
       <Toast ref={toastRef} />
@@ -165,9 +198,9 @@ const AddProducts: React.FC = () => {
 
       <div className="card flex flex-column md:flex-row gap-3 mt-3">
         <div className="p-inputgroup flex-1">
-          <FileUpload
-            name="demo[]"
-            url={"/api/upload"}
+          {/* <FileUpload
+            name="foodImg"
+            url={`${import.meta.env.VITE_API_URL}/productCombo/FoodImg`}
             multiple
             accept="image/*"
             className="w-full"
@@ -175,6 +208,19 @@ const AddProducts: React.FC = () => {
             emptyTemplate={
               <p className="m-0">Drag and drop files here to upload.</p>
             }
+          /> */}
+          <FileUpload
+            name="demo[]"
+            url={`${import.meta.env.VITE_API_URL}/productCombo/FoodImg`}
+            multiple
+            accept="image/*"
+            className="w-full"
+            maxFileSize={1000000}
+            emptyTemplate={
+              <p className="m-0">Drag and drop files here to upload.</p>
+            }
+            customUpload
+            uploadHandler={customUploadHandler} // Use custom upload handler
           />
         </div>
       </div>
