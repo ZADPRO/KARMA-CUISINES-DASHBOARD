@@ -16,6 +16,7 @@ import {
 import decrypt from "../../helper";
 import axios from "axios";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
+import { MultiSelect } from "primereact/multiselect";
 
 interface Categories {
   refFoodCategoryId: number;
@@ -30,7 +31,7 @@ const AddProducts: React.FC = () => {
   const [productPrice, setProductPrice] = useState("");
   const [productQuantity, setProductQuantity] = useState("");
   const [productCategory, setProductCategory] = useState("");
-  const [productAddons, setProductAddons] = useState("");
+  const [productAddons, setProductAddons] = useState([]);
   const [dropdownItems, setDropdownItems] = useState([]);
   const [categoriesData, setCategoriesData] = useState<Categories[]>([]);
   const fileUploadRef = useRef<FileUpload>(null);
@@ -142,6 +143,7 @@ const AddProducts: React.FC = () => {
             formData.productAddons && formData.productAddons.length > 0
               ? formData.productAddons
               : [],
+          menuId: formData.productId,
         },
         {
           headers: {
@@ -165,7 +167,7 @@ const AddProducts: React.FC = () => {
           setProductQuantity("");
           setProductCategory("");
           setProductImageFile("");
-          setProductAddons("");
+          setProductAddons([]);
           fileUploadRef.current?.clear();
         }
       })
@@ -222,10 +224,12 @@ const AddProducts: React.FC = () => {
       });
   };
 
-  const handleDropdownChange = (e: any) => {
-    getProductAddOns(e.value);
-    setDropdownItems([]);
+  const handleMultiSelectChange = (e: any) => {
+    const selectedItems = e.value;
+    console.log("Selected Addons Array:", selectedItems);
+    setProductAddons(selectedItems);
   };
+
   const customUploadHandler = (event: any) => {
     const files = event.files;
     console.log("files", files);
@@ -349,7 +353,7 @@ const AddProducts: React.FC = () => {
             <Minimize2 />
           </span>
           <InputText
-            placeholder="Product Quantity"
+            placeholder="Product Quantity (in gms)"
             value={productQuantity}
             onChange={(e) => setProductQuantity(e.target.value)}
           />
@@ -379,17 +383,18 @@ const AddProducts: React.FC = () => {
           <span className="p-inputgroup-addon">
             <Grid2x2Plus />
           </span>
-          <Dropdown
+          <MultiSelect
             value={productAddons}
             options={dropdownItems}
-            onChange={handleDropdownChange}
+            onChange={handleMultiSelectChange}
             onFilter={(e) => getProductAddOns(e.filter)}
             optionLabel="refFoodName"
             placeholder="Search Food Name"
             filter
             showClear
-            multiple
-            className="w-full"
+            optionValue="refFoodId"
+            display="chip"
+            className="w-full md:w-14rem"
           />
         </div>
       </div>
