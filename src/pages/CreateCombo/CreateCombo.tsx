@@ -14,6 +14,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
+import { Divider } from "primereact/divider";
 
 interface FixedProductsProps {
   refFoodId: number;
@@ -25,12 +26,21 @@ interface FixedProductsProps {
 
 const CreateCombo: React.FC = () => {
   const toastRef = useRef<Toast>(null);
-  const [productAddons, setProductAddons] = useState([]);
-  const [dropdownItems, setDropdownItems] = useState([]);
+  const [dropdownItems, setDropdownItems] = useState<FixedProductsProps[]>([]);
+  const [mainProductDropdown, setMainProductDropdown] = useState<
+    FixedProductsProps[]
+  >([]);
+  const [drinkDropdown, setDrinkDropdown] = useState<FixedProductsProps[]>([]);
+
+  const [productAddons, setProductAddons] = useState<number[]>([]);
+  const [mainProductAds, setMainProductAdds] = useState<number[]>([]);
+  const [drinkAds, setDrinksAdds] = useState<number[]>([]);
 
   const [products, setProducts] = useState<FixedProductsProps[]>([]);
+  const [mainProducts, setMainProducts] = useState<FixedProductsProps[]>([]);
+  const [drinks, setDrinks] = useState<FixedProductsProps[]>([]);
 
-  const getProductAddOns = (value: string) => {
+  const getFixedProducts = (value: string) => {
     console.log("value", value);
 
     axios
@@ -71,13 +81,132 @@ const CreateCombo: React.FC = () => {
       });
   };
 
-  const handleMultiSelectChange = (e: any) => {
-    const selectedItems = e.value.map((item: any) => ({
-      ...item,
-      quantity: 1,
-    }));
-    setProductAddons(selectedItems);
+  const getMainProducts = (value: string) => {
+    console.log("value", value);
+
+    axios
+      .post(
+        `${import.meta.env.VITE_API_URL}/productCombo/searchFood`,
+        { searchKey: value },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("JWTtoken")}`,
+          },
+        }
+      )
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+
+        console.log("data.data line 203", data.data);
+
+        const filtered = data.data.filter((item: any) =>
+          (item.refFoodName + " " + item.refFoodCategoryName)
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        );
+
+        setMainProductDropdown(filtered);
+      })
+      .catch((error) => {
+        toastRef.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: "Error Fetching Product Add-ons",
+          life: 3000,
+        });
+        console.error("Fetch error", error);
+      });
+  };
+
+  const getDrinks = (value: string) => {
+    console.log("value", value);
+
+    axios
+      .post(
+        `${import.meta.env.VITE_API_URL}/productCombo/searchFood`,
+        { searchKey: value },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("JWTtoken")}`,
+          },
+        }
+      )
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+
+        console.log("data.data line 203", data.data);
+
+        const filtered = data.data.filter((item: any) =>
+          (item.refFoodName + " " + item.refFoodCategoryName)
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        );
+
+        setDrinkDropdown(filtered);
+      })
+      .catch((error) => {
+        toastRef.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: "Error Fetching Product Add-ons",
+          life: 3000,
+        });
+        console.error("Fetch error", error);
+      });
+  };
+
+  const handleMultiselectFixedProducts = (e: any) => {
+    const selectedIds = e.value;
+
+    const selectedItems = selectedIds.map((id: number) => {
+      const existingProduct = products.find((item) => item.refFoodId === id);
+      const newProduct = dropdownItems.find((item) => item.refFoodId === id);
+
+      return existingProduct || { ...newProduct, quantity: 1 };
+    });
+
+    setProductAddons(selectedIds);
     setProducts(selectedItems);
+  };
+
+  const handleMultiselectMainproducts = (e: any) => {
+    const selectedIds = e.value;
+
+    const selectedItems = selectedIds.map((id: number) => {
+      const existingProduct = mainProducts.find(
+        (item) => item.refFoodId === id
+      );
+      const newProduct = mainProductDropdown.find(
+        (item) => item.refFoodId === id
+      );
+
+      return existingProduct || { ...newProduct, quantity: 1 };
+    });
+
+    setMainProductAdds(selectedIds);
+    setMainProducts(selectedItems);
+  };
+
+  const handleMultiselectDrinks = (e: any) => {
+    const selectedIds = e.value;
+
+    const selectedItems = selectedIds.map((id: number) => {
+      const existingProduct = drinks.find((item) => item.refFoodId === id);
+      const newProduct = drinkDropdown.find((item) => item.refFoodId === id);
+
+      return existingProduct || { ...newProduct, quantity: 1 };
+    });
+
+    setDrinksAdds(selectedIds);
+    setDrinks(selectedItems);
   };
 
   const quantityTemplate = (rowData: FixedProductsProps, options: any) => {
@@ -94,11 +223,21 @@ const CreateCombo: React.FC = () => {
 
     return (
       <div className="flex items-center gap-2">
-        <Button severity="secondary" rounded onClick={() => updateQuantity(-1)}>
+        <Button
+          severity="secondary"
+          rounded
+          onClick={() => updateQuantity(-1)}
+          size="small"
+        >
           -
         </Button>
         <span>{rowData.quantity}</span>
-        <Button severity="success" rounded onClick={() => updateQuantity(1)}>
+        <Button
+          severity="success"
+          rounded
+          onClick={() => updateQuantity(1)}
+          size="small"
+        >
           +
         </Button>
       </div>
@@ -146,15 +285,16 @@ const CreateCombo: React.FC = () => {
           <MultiSelect
             value={productAddons}
             options={dropdownItems}
-            onChange={handleMultiSelectChange}
-            onFilter={(e) => getProductAddOns(e.filter)}
+            onChange={handleMultiselectFixedProducts}
+            onFilter={(e) => getFixedProducts(e.filter)}
             optionLabel="refFoodName"
+            optionValue="refFoodId"
             placeholder="Search Food Name"
             filter
             showClear
             display="chip"
             className="w-full md:w-14rem"
-          />{" "}
+          />
         </div>
       </div>
 
@@ -167,6 +307,95 @@ const CreateCombo: React.FC = () => {
         <Column field="refFoodName" header="Product Name" />
         <Column header="Count" body={quantityTemplate} />
       </DataTable>
+
+      <div className="card mt-3">
+        <div className="flex flex-column md:flex-row">
+          <div className="w-full flex flex-column  gap-3 py-5">
+            <p className="mt-3">Main Dishes</p>
+            <div className="card flex flex-column md:flex-row gap-3 mt-3">
+              <div className="p-inputgroup flex-1">
+                <span className="p-inputgroup-addon">
+                  <UtensilsCrossed />{" "}
+                </span>
+                <MultiSelect
+                  value={mainProductAds}
+                  options={mainProductDropdown}
+                  onChange={handleMultiselectMainproducts}
+                  onFilter={(e) => getMainProducts(e.filter)}
+                  optionLabel="refFoodName"
+                  optionValue="refFoodId"
+                  placeholder="Search Food Name"
+                  filter
+                  showClear
+                  display="chip"
+                  className="w-full md:w-14rem"
+                />
+              </div>
+            </div>
+
+            <DataTable
+              value={mainProducts}
+              className="mt-3"
+              showGridlines
+              stripedRows
+            >
+              <Column
+                header="S.No"
+                body={(_, { rowIndex }) => rowIndex + 1}
+                style={{ width: "4rem" }}
+              />
+              <Column field="refFoodName" header="Product Name" />
+            </DataTable>
+          </div>
+          <div className="w-full md:w-2">
+            <Divider layout="vertical" className="hidden md:flex"></Divider>
+            <Divider
+              layout="horizontal"
+              className="flex md:hidden"
+              align="center"
+            >
+              <b>OR</b>
+            </Divider>
+          </div>
+          <div className="w-full flex flex-column gap-3 py-5">
+            <p className="mt-3">Drinks or Beverages</p>
+            <div className="card flex flex-column md:flex-row gap-3 mt-3">
+              <div className="p-inputgroup flex-1">
+                <span className="p-inputgroup-addon">
+                  <UtensilsCrossed />{" "}
+                </span>
+                <MultiSelect
+                  value={drinkAds}
+                  options={drinkDropdown}
+                  onChange={handleMultiselectDrinks}
+                  onFilter={(e) => getDrinks(e.filter)}
+                  optionLabel="refFoodName"
+                  optionValue="refFoodId"
+                  placeholder="Search Food Name"
+                  filter
+                  showClear
+                  display="chip"
+                  className="w-full md:w-14rem"
+                />
+              </div>
+            </div>
+
+            <DataTable
+              value={drinks}
+              className="mt-3"
+              showGridlines
+              stripedRows
+            >
+              <Column
+                header="S.No"
+                body={(_, { rowIndex }) => rowIndex + 1}
+                style={{ width: "4rem" }}
+              />
+              <Column field="refFoodName" header="Product Name" />
+            </DataTable>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
