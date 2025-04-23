@@ -78,7 +78,7 @@ const AddProducts: React.FC = () => {
     const idValid = /^\d+$/.test(productId);
     const nameValid = !!productName;
 
-    const descValid = !!productDescription;
+    // const descValid = !!productDescription;
 
     const priceValid = /^(\d+)(\.\d{1,2})?$/.test(productPrice);
     const quantityValid = /^\d+$/.test(productQuantity);
@@ -93,10 +93,10 @@ const AddProducts: React.FC = () => {
       return false;
     }
 
-    if (!descValid) {
-      showToast("Product Description contains invalid characters.");
-      return false;
-    }
+    // if (!descValid) {
+    //   showToast("Product Description contains invalid characters.");
+    //   return false;
+    // }
 
     if (!priceValid) {
       showToast("Product Price must be entered (e.g., 12.00, 12.90).");
