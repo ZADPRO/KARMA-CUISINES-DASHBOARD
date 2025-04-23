@@ -76,10 +76,10 @@ const AddProducts: React.FC = () => {
 
   const validateForm = (): boolean => {
     const idValid = /^\d+$/.test(productId);
-    const nameValid = /^[a-zA-Z0-9\s]+$/.test(productName);
-    const descValid = /^[a-zA-Z0-9\s.,!?'-]*$/.test(
-      productDescription.replace(/<[^>]+>/g, "")
-    );
+    const nameValid = !!productName;
+
+    const descValid = !!productDescription;
+
     const priceValid = /^(\d+)(\.\d{1,2})?$/.test(productPrice);
     const quantityValid = /^\d+$/.test(productQuantity);
 
@@ -89,12 +89,12 @@ const AddProducts: React.FC = () => {
     }
 
     if (!nameValid) {
-      showToast("Product Name must be entered.");
+      showToast("Product Name contains invalid characters.");
       return false;
     }
 
     if (!descValid) {
-      showToast("Product Description must be entered.");
+      showToast("Product Description contains invalid characters.");
       return false;
     }
 

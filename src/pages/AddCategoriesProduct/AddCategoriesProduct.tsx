@@ -187,8 +187,6 @@ const AddCategoriesProduct: React.FC = () => {
         responsiveLayout="scroll"
       >
         <Column header="S.No" body={serialNumberTemplate} />
-        <Column field="refFoodCategoryId" header="Category Name" />
-
         <Column field="refFoodCategoryName" header="Category Name" />
         <Column header="Edit" body={editTemplate} />
         <Column header="Delete" body={deleteTemplate} />

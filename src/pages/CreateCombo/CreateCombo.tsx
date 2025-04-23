@@ -380,6 +380,7 @@ const CreateCombo: React.FC = () => {
           fixedFood: fixedFoodList,
           fixedQuantity: fixedFoodLimit,
           mainDish: mainDishList,
+          comboDescription: comboDescription,
           mainDishLimit: parseInt(mainDishLimit, 10),
           sideDish: sideDishList,
           sideDishLimit: parseInt(sideDishLimit, 10),

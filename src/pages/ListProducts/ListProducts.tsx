@@ -1,9 +1,9 @@
 import axios from "axios";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { Divider } from "primereact/divider";
 import React, { useEffect, useState } from "react";
 import decrypt from "../../helper";
+import { Button } from "primereact/button";
 
 interface Product {
   profileFile: any;
@@ -82,17 +82,100 @@ const ListProducts: React.FC = () => {
       <img
         src={`data:${product.profileFile.contentType};base64,${product.profileFile.content}`}
         alt={product.profileFile}
-        className="w-6rem shadow-2 border-round"
+        className="w-3rem shadow-2 border-round"
       />
     );
   };
+
+  const handleDelete = (rowIndex: any) => {
+    axios
+      .post(
+        import.meta.env.VITE_API_URL + "/productCombo/deleteFood",
+        {
+          foodId: rowIndex.refFoodId,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+          },
+        }
+      )
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+        console.log("data", data);
+        if (data.success) {
+          if (data.success && data.status) {
+            getCategory();
+          }
+          console.log("data", data);
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
+  const handleComboDelete = (rowIndex: any) => {
+    axios
+      .post(
+        import.meta.env.VITE_API_URL + "/productCombo/deleteCombo",
+        {
+          comboId: rowIndex.refComboId,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+          },
+        }
+      )
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+        console.log("data", data);
+        if (data.success) {
+          getCategory();
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
+  const deleteBodyTemplate = (rowIndex: any) => (
+    <Button
+      icon="pi pi-trash"
+      className="p-button-danger"
+      onClick={() => handleDelete(rowIndex)}
+    />
+  );
+
+  const deleteComboTemplate = (rowIndex: any) => (
+    <Button
+      icon="pi pi-trash"
+      className="p-button-danger"
+      onClick={() => handleComboDelete(rowIndex)}
+    />
+  );
 
   return (
     <div>
       <div className="card">
         <div className="flex flex-column md:flex-row">
-          <div className="w-full flex flex-column align-items-center gap-3 py-5">
-            <DataTable value={products} showGridlines scrollable stripedRows>
+          <div className="w-full flex flex-column gap-3 py-5">
+            <DataTable
+              value={products}
+              showGridlines
+              scrollable
+              stripedRows
+              scrollHeight="600px"
+            >
               <Column
                 field="sno"
                 header="S.No"
@@ -119,47 +202,47 @@ const ListProducts: React.FC = () => {
                 header="Category"
                 style={{ minWidth: "150px" }}
               ></Column>
+              <Column
+                header="Actions"
+                body={deleteBodyTemplate}
+                style={{ width: "100px" }}
+              />
             </DataTable>
           </div>
-          <div className="w-full md:w-2">
-            <Divider layout="vertical" className="hidden md:flex"></Divider>
-            <Divider
-              layout="horizontal"
-              className="flex md:hidden"
-              align="center"
-            >
-              <b>OR</b>
-            </Divider>
-          </div>
-          <div className="w-full flex flex-column align-items-center gap-3 py-5">
-            <DataTable value={comboProducts} showGridlines stripedRows>
-              <Column
-                field="sno"
-                header="S.No"
-                body={(_, { rowIndex }) => rowIndex + 1}
-              ></Column>
-              <Column
-                field="refComboId"
-                header="Menu ID"
-                style={{ minWidth: "100px" }}
-              ></Column>
-              <Column
-                field="refComboName"
-                header="Name"
-                style={{ minWidth: "100px" }}
-              ></Column>
-              <Column
-                header="Image"
-                body={imageBodyTemplate}
-                style={{ minWidth: "100px" }}
-              ></Column>
-              <Column
-                field="refComboPrice"
-                header="Price"
-                style={{ minWidth: "100px" }}
-              ></Column>
-            </DataTable>
-          </div>
+        </div>
+        <div className="w-full flex flex-column  gap-3 py-5">
+          <DataTable value={comboProducts} showGridlines stripedRows>
+            <Column
+              field="sno"
+              header="S.No"
+              body={(_, { rowIndex }) => rowIndex + 1}
+            ></Column>
+            <Column
+              field="refComboId"
+              header="Menu ID"
+              style={{ minWidth: "100px" }}
+            ></Column>
+            <Column
+              field="refComboName"
+              header="Name"
+              style={{ minWidth: "100px" }}
+            ></Column>
+            <Column
+              header="Image"
+              body={imageBodyTemplate}
+              style={{ minWidth: "100px" }}
+            ></Column>
+            <Column
+              field="refComboPrice"
+              header="Price"
+              style={{ minWidth: "100px" }}
+            ></Column>
+            <Column
+              header="Actions"
+              body={deleteComboTemplate}
+              style={{ width: "100px" }}
+            />
+          </DataTable>
         </div>
       </div>
     </div>
