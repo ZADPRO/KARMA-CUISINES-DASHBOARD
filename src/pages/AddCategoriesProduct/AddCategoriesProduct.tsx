@@ -180,6 +180,7 @@ const AddCategoriesProduct: React.FC = () => {
         value={categoriesData}
         showGridlines
         loading={loading}
+        scrollable
         stripedRows
         paginator
         rows={10}
