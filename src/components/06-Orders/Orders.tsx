@@ -29,7 +29,9 @@ const Orders: React.FC = () => {
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const dt = useRef<DataTable<OrderDetailsProps[]>>(null);
 
-  const [selectedRestaurants, setSelectedRestaurants] = useState(null);
+  const [selectedRestaurants, setSelectedRestaurants] = useState<
+    number[] | null
+  >(null);
   const [fromDate, setFromDate] = useState<Nullable<Date>>(null);
   const [toDate, setToDate] = useState<Nullable<Date>>(null);
 
@@ -100,8 +102,16 @@ const Orders: React.FC = () => {
     const from = fromDate ? fromDate.toISOString().split("T")[0] : null;
     const to = toDate ? toDate.toISOString().split("T")[0] : null;
 
-    return orderDetails.filter((order) => {
-      const orderDate = order.refCreateAt.split(" ")[0]; // Extract the date part (yyyy-mm-dd)
+    const filteredByRestaurant = selectedRestaurants?.length
+      ? orderDetails.filter((order) =>
+          selectedRestaurants.includes(order.refStoreId)
+        )
+      : orderDetails;
+    console.log("selectedRestaurants", selectedRestaurants);
+    console.log("filteredByRestaurant", filteredByRestaurant);
+
+    return filteredByRestaurant.filter((order) => {
+      const orderDate = order.refCreateAt.split(" ")[0];
       let valid = true;
       if (from && orderDate < from) valid = false;
       if (to && orderDate > to) valid = false;
@@ -127,6 +137,7 @@ const Orders: React.FC = () => {
             }
             options={restaurants}
             optionLabel="name"
+            optionValue="code"
             placeholder="Select Restaurant"
             className="w-full md:w-14rem"
           />
