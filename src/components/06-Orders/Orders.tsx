@@ -7,6 +7,7 @@ import { Button } from "primereact/button";
 import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import { Nullable } from "primereact/ts-helpers";
 import { Calendar } from "primereact/calendar";
+import { InputText } from "primereact/inputtext";
 
 interface OrderDetailsProps {
   refCreateAt: string;
@@ -22,6 +23,8 @@ const Orders: React.FC = () => {
   const [orderDetails, setOrderDetails] = useState<OrderDetailsProps[] | []>(
     []
   );
+  const [globalFilter, setGlobalFilter] = useState<string>("");
+
   const dt = useRef<DataTable<OrderDetailsProps[]>>(null);
 
   const [selectedRestaurants, setSelectedRestaurants] = useState(null);
@@ -69,18 +72,27 @@ const Orders: React.FC = () => {
 
   const renderHeader = () => {
     return (
-      <div className="flex justify-content-between align-items-center py-3">
-        <span className="font-bold text-lg">
-          Total Orders: {orderDetails.length}
-        </span>
-        <Button
-          type="button"
-          icon="pi pi-file"
-          rounded
-          severity="success"
-          onClick={() => exportCSV(false)}
-          data-pr-tooltip="CSV"
-        />
+      <div className="flex justify-between flex-wrap gap-2 align-items-center py-3">
+        <div className="flex align-items-center gap-2">
+          <span className="font-bold text-lg">
+            Total Orders: {orderDetails.length}
+          </span>
+        </div>
+        <div className="flex gap-3">
+          <InputText
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            placeholder="Search Here"
+          />
+          <Button
+            type="button"
+            icon="pi pi-file"
+            rounded
+            severity="success"
+            onClick={() => exportCSV(false)}
+            data-pr-tooltip="CSV"
+          />
+        </div>
       </div>
     );
   };
@@ -128,6 +140,8 @@ const Orders: React.FC = () => {
           ref={dt}
           className="mt-3"
           rows={5}
+          globalFilter={globalFilter}
+          filters={{ global: { value: globalFilter, matchMode: "contains" } }}
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
           rowsPerPageOptions={[5, 10, 25, 50]}
         >
