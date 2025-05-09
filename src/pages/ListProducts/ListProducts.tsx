@@ -57,6 +57,7 @@ const ListProducts: React.FC = () => {
         },
       })
       .then((res) => {
+        console.log("res", res);
         const data = decrypt(
           res.data[1],
           res.data[0],
@@ -80,7 +81,7 @@ const ListProducts: React.FC = () => {
   const imageBodyTemplate = (product: Product) => {
     return (
       <img
-        src={`data:${product.profileFile.contentType};base64,${product.profileFile.content}`}
+        src={`https://karmacuisine.ch/src/assets/FoodImage/${product.profileFile.filename}`}
         alt={product.profileFile}
         className="w-3rem shadow-2 border-round"
       />
