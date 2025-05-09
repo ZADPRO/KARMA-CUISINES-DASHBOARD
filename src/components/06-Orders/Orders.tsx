@@ -17,6 +17,9 @@ interface OrderDetailsProps {
   refUserFName: string;
   refUserLName: string;
   refUserMobile: string;
+  refStoreId: number;
+  refUserPostCode?: string;
+  refUserZone?: string;
 }
 
 const Orders: React.FC = () => {
@@ -24,7 +27,6 @@ const Orders: React.FC = () => {
     []
   );
   const [globalFilter, setGlobalFilter] = useState<string>("");
-
   const dt = useRef<DataTable<OrderDetailsProps[]>>(null);
 
   const [selectedRestaurants, setSelectedRestaurants] = useState(null);
@@ -47,13 +49,11 @@ const Orders: React.FC = () => {
         },
       })
       .then((res) => {
-        console.log("res", res);
         const data = decrypt(
           res.data[1],
           res.data[0],
           import.meta.env.VITE_ENCRYPTION_KEY
         );
-        console.log("data", data);
         setOrderDetails(data.data);
       })
       .catch((err) => {
@@ -66,7 +66,6 @@ const Orders: React.FC = () => {
   }, []);
 
   const exportCSV = (selectionOnly: any) => {
-    console.log("selectionOnly", selectionOnly);
     dt.current?.exportCSV({ selectionOnly });
   };
 
@@ -97,7 +96,21 @@ const Orders: React.FC = () => {
     );
   };
 
+  const handleDateFilter = () => {
+    const from = fromDate ? fromDate.toISOString().split("T")[0] : null;
+    const to = toDate ? toDate.toISOString().split("T")[0] : null;
+
+    return orderDetails.filter((order) => {
+      const orderDate = order.refCreateAt.split(" ")[0]; // Extract the date part (yyyy-mm-dd)
+      let valid = true;
+      if (from && orderDate < from) valid = false;
+      if (to && orderDate > to) valid = false;
+      return valid;
+    });
+  };
+
   const header = renderHeader();
+
   return (
     <div>
       <div className="primaryNav">
@@ -122,16 +135,22 @@ const Orders: React.FC = () => {
             placeholder="Select From Date"
             onChange={(e) => setFromDate(e.value)}
             className="w-full md:w-14rem"
+            dateFormat="yy-mm-dd"
+            showIcon
           />
           <Calendar
             value={toDate}
             placeholder="Select To Date"
             onChange={(e) => setToDate(e.value)}
             className="w-full md:w-14rem"
+            dateFormat="yy-mm-dd"
+            maxDate={new Date()}
+            showIcon
           />
         </div>
+
         <DataTable
-          value={orderDetails}
+          value={handleDateFilter()}
           showGridlines
           stripedRows
           paginator

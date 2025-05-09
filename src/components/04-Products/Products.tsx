@@ -7,24 +7,30 @@ import ListProducts from "../../pages/ListProducts/ListProducts";
 
 const Products: React.FC = () => {
   return (
-    <div className="m-3">
-      <TabView>
-        <TabPanel header="Product & Combo">
-          <ListProducts />
-        </TabPanel>
+    <div className="">
+      <div className="primaryNav">
+        <p>Order</p>
+        <p className="">Logged in as:</p>
+      </div>
+      <div className="m-3">
+        <TabView>
+          <TabPanel header="Product & Combo">
+            <ListProducts />
+          </TabPanel>
 
-        <TabPanel header="New Products">
-          <AddProducts />
-        </TabPanel>
+          <TabPanel header="New Products">
+            <AddProducts />
+          </TabPanel>
 
-        <TabPanel header="Create Combo">
-          <CreateCombo />
-        </TabPanel>
+          <TabPanel header="Create Combo">
+            <CreateCombo />
+          </TabPanel>
 
-        <TabPanel header="Create Categories">
-          <AddCategoriesProduct />
-        </TabPanel>
-      </TabView>
+          <TabPanel header="Create Categories">
+            <AddCategoriesProduct />
+          </TabPanel>
+        </TabView>
+      </div>
     </div>
   );
 };
