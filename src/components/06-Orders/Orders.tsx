@@ -8,6 +8,8 @@ import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import { Nullable } from "primereact/ts-helpers";
 import { Calendar } from "primereact/calendar";
 import { InputText } from "primereact/inputtext";
+import { Sidebar } from "primereact/sidebar";
+import OrderSidebar from "../../pages/OrderSidebar/OrderSidebar";
 
 interface OrderDetailsProps {
   refCreateAt: string;
@@ -26,6 +28,8 @@ const Orders: React.FC = () => {
   const [orderDetails, setOrderDetails] = useState<OrderDetailsProps[] | []>(
     []
   );
+  const [visibleSidebar, setVisibleSidebar] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const dt = useRef<DataTable<OrderDetailsProps[]>>(null);
 
@@ -88,7 +92,6 @@ const Orders: React.FC = () => {
           <Button
             type="button"
             icon="pi pi-file"
-            rounded
             severity="success"
             onClick={() => exportCSV(false)}
             data-pr-tooltip="CSV"
@@ -120,6 +123,24 @@ const Orders: React.FC = () => {
   };
 
   const header = renderHeader();
+
+  const orderIdBodyTemplate = (rowData: any) => {
+    return (
+      <span
+        style={{
+          cursor: "pointer",
+          color: "blue",
+          textDecoration: "underline",
+        }}
+        onClick={() => {
+          setSelectedOrderId(rowData.refCustOrId);
+          setVisibleSidebar(true);
+        }}
+      >
+        {rowData.refCustOrId}
+      </span>
+    );
+  };
 
   return (
     <div>
@@ -191,6 +212,7 @@ const Orders: React.FC = () => {
             field="refCustOrId"
             header="Order ID"
             frozen
+            body={orderIdBodyTemplate}
             style={{ minWidth: "10rem" }}
           ></Column>
           <Column
@@ -240,6 +262,15 @@ const Orders: React.FC = () => {
           ></Column>
         </DataTable>
       </div>
+
+      <Sidebar
+        visible={visibleSidebar}
+        onHide={() => setVisibleSidebar(false)}
+        position="right"
+        style={{ width: "60vw" }}
+      >
+        <OrderSidebar orderId={selectedOrderId} />
+      </Sidebar>
     </div>
   );
 };

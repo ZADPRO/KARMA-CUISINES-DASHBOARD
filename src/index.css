@@ -71,7 +71,11 @@ p {
 }
 
 .p-fieldset .p-fieldset-content {
-  padding: 0.25rem !important;
+  /* padding: 0.25rem !important; */
+}
+
+.p-fieldset-legend.p-unselectable-text {
+  margin-left: 20px;
 }
 
 .restroDocTable
