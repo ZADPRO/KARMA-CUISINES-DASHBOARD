@@ -24,7 +24,41 @@ interface OrderDetailsProps {
   refUserZone?: string;
 }
 
+interface SubProductProps {
+  refFoodName: string;
+  refFoodQuantity: string;
+  refFoodType: string;
+}
+
+interface OrderDetails {
+  refComments: null;
+  refFoodCategory: string;
+  refFoodName: string;
+  refFoodPrice: string;
+  refFoodQuantity: string;
+  refIfCombo: boolean;
+  subProduct: SubProductProps[];
+}
+
+interface UserOrderDetailsProps {
+  TotalOrderPrice: string;
+  refCreateAt: string;
+  refCreateBy: string;
+  order: OrderDetails[];
+  refUserCountry: string;
+  refUserEmail: string;
+  refUserFName: string;
+  refUserId: number;
+  refUserLName: string;
+  refUserMobile: string;
+  refUserPostCode: string;
+  refUserStreet: string;
+  refUserZone: string;
+}
+
 const Orders: React.FC = () => {
+  const [userOrderDetails, setUserOrderDetails] =
+    useState<UserOrderDetailsProps | null>(null);
   const [orderDetails, setOrderDetails] = useState<OrderDetailsProps[] | []>(
     []
   );
@@ -80,7 +114,7 @@ const Orders: React.FC = () => {
       <div className="flex justify-between flex-wrap gap-2 align-items-center py-3">
         <div className="flex align-items-center gap-2">
           <span className="font-bold text-lg">
-            Total Orders: {orderDetails.length}
+            Total Orders: {orderDetails?.length}
           </span>
         </div>
         <div className="flex gap-3">
@@ -141,6 +175,114 @@ const Orders: React.FC = () => {
       </span>
     );
   };
+
+  const handlePrint = (rowData: any) => {
+    // Fetch order data via axios
+    console.log("selectedOrderId", rowData);
+    axios
+      .post(
+        `${import.meta.env.VITE_API_URL}/productCombo/viewOrderData`,
+        { orderId: rowData.refCustOrId },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("JWTtoken")}`,
+          },
+        }
+      )
+      .then((res) => {
+        // Decrypt the data
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+
+        // Set the user order details in state
+        console.log("data", data);
+        setUserOrderDetails(data.data[0]);
+        setSelectedOrderId(rowData.refCustOrId);
+      })
+      .catch((error) => {
+        console.error("Fetch error", error);
+      });
+  };
+
+  // useEffect to call print function once data is set
+  useEffect(() => {
+    if (userOrderDetails && userOrderDetails.refUserFName) {
+      const printContents = `
+      <div style="padding: 20px; font-family: Arial, sans-serif;">
+        <div class="flex justify-content-between">
+          <p><b>Order ID:</b> ${selectedOrderId}</p>
+          <p><b>User Name:</b> ${userOrderDetails.refUserFName} ${
+        userOrderDetails.refUserLName
+      }</p>
+        </div>
+        <div class="flex justify-content-between">
+          <p><b>User Email:</b> ${userOrderDetails.refUserEmail}</p>
+          <p><b>User Mobile:</b> ${userOrderDetails.refUserMobile}</p>
+        </div>
+        <p><b>User Address:</b> ${userOrderDetails.refUserStreet}, ${
+        userOrderDetails.refUserPostCode
+      }, ${userOrderDetails.refUserZone}, ${userOrderDetails.refUserCountry}</p>
+        <p><b>Total Price:</b> CHF ${userOrderDetails.TotalOrderPrice}</p>
+        ${userOrderDetails.order
+          .map(
+            (item, index) => `
+              <div class="mb-3 border-bottom pb-2">
+                <p><b>${index + 1}.</b> <b>Food Name:</b> ${
+              item.refFoodName
+            }</p>
+                <p><b>Category:</b> ${item.refFoodCategory}</p>
+                <p><b>Price:</b> CHF ${item.refFoodPrice}</p>
+                ${
+                  item.refFoodQuantity
+                    ? `<p><b>Quantity:</b> ${item.refFoodQuantity}</p>`
+                    : ""
+                }
+                ${
+                  item.refComments
+                    ? `<p><b>Comments:</b> ${item.refComments}</p>`
+                    : ""
+                }
+                ${
+                  item.refIfCombo && item.subProduct?.length > 0
+                    ? `
+                  <p><b>Combo Items:</b></p>
+                  <ul>
+                    ${item.subProduct
+                      .map(
+                        (sub) =>
+                          `<li>${sub.refFoodName} - ${sub.refFoodQuantity}</li>`
+                      )
+                      .join("")}
+                  </ul>
+                `
+                    : ""
+                }
+              </div>`
+          )
+          .join("")}
+      </div>
+    `;
+
+      const printWindow = window.open("", "_blank", "width=800,height=600");
+      if (printWindow) {
+        printWindow.document.write(`
+      <html>
+        <head><title>Print Order Details</title></head>
+        <body>${printContents}</body>
+      </html>
+    `);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+      } else {
+        console.error("Failed to open the print window.");
+      }
+    }
+  }, [userOrderDetails]); // This ensures the print function is called after data is set
 
   return (
     <div>
@@ -206,7 +348,9 @@ const Orders: React.FC = () => {
             header="Print"
             frozen
             style={{ minWidth: "5rem" }}
-            body={() => <Button icon="pi pi-print" />}
+            body={(rowData) => (
+              <Button icon="pi pi-print" onClick={() => handlePrint(rowData)} />
+            )}
           />
           <Column
             field="refCustOrId"

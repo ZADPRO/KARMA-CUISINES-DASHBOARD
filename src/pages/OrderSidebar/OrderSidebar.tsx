@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import decrypt from "../../helper";
 import { Toast } from "primereact/toast";
 import { Fieldset } from "primereact/fieldset";
+import { Divider } from "primereact/divider";
 
 interface OrderSidebarProps {
   orderId: string | null;
@@ -16,28 +17,28 @@ interface SubProductProps {
 
 interface OrderDetails {
   refComments: null;
-  refFoodCategory: "Combo";
-  refFoodName: "Family Pack (2 Personen)";
-  refFoodPrice: "69.00";
-  refFoodQuantity: null;
-  refIfCombo: true;
+  refFoodCategory: string;
+  refFoodName: string;
+  refFoodPrice: string;
+  refFoodQuantity: string;
+  refIfCombo: boolean;
   subProduct: SubProductProps[];
 }
 
 interface UserOrderDetailsProps {
-  TotalOrderPrice: "111.80";
-  refCreateAt: "2025-05-06 14:59:59";
-  refCreateBy: "User";
+  TotalOrderPrice: string;
+  refCreateAt: string;
+  refCreateBy: string;
   order: OrderDetails[];
-  refUserCountry: "Switzerland";
-  refUserEmail: "faisal.khan@karmacuisine.ch";
-  refUserFName: "FAISAL KHAN2";
-  refUserId: 21;
-  refUserLName: "M";
-  refUserMobile: "41424242242";
-  refUserPostCode: "8305";
-  refUserStreet: "Industriestrasse 24";
-  refUserZone: "Zurich";
+  refUserCountry: string;
+  refUserEmail: string;
+  refUserFName: string;
+  refUserId: number;
+  refUserLName: string;
+  refUserMobile: string;
+  refUserPostCode: string;
+  refUserStreet: string;
+  refUserZone: string;
 }
 
 const OrderSidebar: React.FC<OrderSidebarProps> = ({ orderId }) => {
@@ -81,8 +82,76 @@ const OrderSidebar: React.FC<OrderSidebarProps> = ({ orderId }) => {
     <div>
       <div>
         <Fieldset legend="Order Details">
-          <p>Order ID: {orderId}</p>
-          <p>User Name: {userOrderDetails?.refUserFName}</p>
+          <div className="flex justify-content-between">
+            <p>
+              <b>Order ID: </b>
+              {orderId}
+            </p>
+            <p>
+              <b>User Name:</b> {userOrderDetails?.refUserFName}
+            </p>
+          </div>
+          <div className="flex justify-content-between">
+            <p>
+              <b>User Email:</b> {userOrderDetails?.refUserEmail}
+            </p>
+            <p>
+              <b>User Mobile: </b>
+              {userOrderDetails?.refUserMobile}
+            </p>
+          </div>
+          <p>
+            <b> User Address: </b>
+            {userOrderDetails?.refUserStreet},{" "}
+            {userOrderDetails?.refUserPostCode}, {userOrderDetails?.refUserZone}
+            , {userOrderDetails?.refUserCountry}
+          </p>
+          <p>
+            <b>Total Price:</b> CHF {userOrderDetails?.TotalOrderPrice}
+          </p>
+        </Fieldset>
+
+        <Divider />
+
+        <Fieldset legend="Ordered Items">
+          {userOrderDetails?.order?.map((item, index) => (
+            <div key={index} className="mb-3 border-bottom pb-2">
+              <p>
+                <b>{index + 1}.</b> <b>Food Name:</b> {item.refFoodName}
+              </p>
+              <p>
+                <b>Category:</b> {item.refFoodCategory}
+              </p>
+              <p>
+                <b>Price:</b> CHF {item.refFoodPrice}
+              </p>
+              {item.refFoodQuantity && (
+                <p>
+                  <b>Quantity:</b> {item.refFoodQuantity}
+                </p>
+              )}
+              {item.refComments && (
+                <p>
+                  <b>Comments:</b> {item.refComments}
+                </p>
+              )}
+              {item.refIfCombo && item.subProduct?.length > 0 && (
+                <div className="">
+                  <p>
+                    <b>Combo Items:</b>
+                  </p>
+                  <ul className="pl-4 list-disc">
+                    {item.subProduct.map((subItem, subIndex) => (
+                      <li key={subIndex}>
+                        {subItem.refFoodName} (Qty: {subItem.refFoodQuantity},
+                        Type: {subItem.refFoodType})
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          ))}
         </Fieldset>
       </div>
     </div>
