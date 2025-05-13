@@ -215,7 +215,7 @@ const Orders: React.FC = () => {
       <div style="padding: 20px; font-family: Arial, sans-serif; font-size: 14px; text-align: center;">
 
         <!-- Insert Image Instead of Text -->
-        <img src="../../assets/logoKC.png" alt="Karma Cuisines" style="max-width: 100%; height: auto; margin-bottom: 10px;" />
+      <img src="/logoKC.png" alt="Karma Cuisines" style="max-width: 60%; height: auto; margin-bottom: 10px;" />
 
         <!-- Order Number -->
         <p style="text-align: center; font-weight: bold;">Order Number: ${selectedOrderId}</p>
