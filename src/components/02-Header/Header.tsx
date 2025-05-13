@@ -9,13 +9,13 @@ import "./Header.css";
 import {
   // BadgeSwissFranc,
   Beef,
-  LayoutGrid,
+  // LayoutGrid,
   LogOut,
   Menu,
   // MessagesSquare,
   // Settings,
   ShoppingCart,
-  UtensilsCrossed,
+  // UtensilsCrossed,
 } from "lucide-react";
 
 type HeaderProps = {
@@ -23,26 +23,26 @@ type HeaderProps = {
 };
 
 const routes = [
-  {
-    path: "/",
-    name: "Dashboard",
-    icon: <LayoutGrid />,
-  },
-  {
-    path: "/products",
-    name: "Products",
-    icon: <Beef />,
-  },
+  // {
+  //   path: "/",
+  //   name: "Dashboard",
+  //   icon: <LayoutGrid />,
+  // },
   {
     path: "/orders",
     name: "Orders",
     icon: <ShoppingCart />,
   },
   {
-    path: "/vendors",
-    name: "Vendors",
-    icon: <UtensilsCrossed />,
+    path: "/products",
+    name: "Products",
+    icon: <Beef />,
   },
+  // {
+  //   path: "/vendors",
+  //   name: "Vendors",
+  //   icon: <UtensilsCrossed />,
+  // },
   // {
   //   path: "/users",
   //   name: "Users",

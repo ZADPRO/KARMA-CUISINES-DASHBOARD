@@ -7,7 +7,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import Login from "../01-Login/Login";
-import Dashboard from "../03-Dashboard/Dashboard";
+// import Dashboard from "../03-Dashboard/Dashboard";
 import Products from "../04-Products/Products";
 import Orders from "../06-Orders/Orders";
 import Vendors from "../06-Vendors/Vendors";
@@ -44,7 +44,7 @@ const isAuthenticated = () => {
 function ProtectedRoutes() {
   return isAuthenticated() ? (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
+      <Route path="/" element={<Orders />} />
       <Route path="/products" element={<Products />} />
       <Route path="/orders" element={<Orders />} />
       <Route path="/vendors" element={<Vendors />} />

@@ -35,6 +35,7 @@ interface OrderDetails {
   refFoodCategory: string;
   refFoodName: string;
   refFoodPrice: string;
+  refPaymentType: string;
   refFoodQuantity: string;
   refIfCombo: boolean;
   subProduct: SubProductProps[];
@@ -52,6 +53,7 @@ interface UserOrderDetailsProps {
   refUserLName: string;
   refUserMobile: string;
   refUserPostCode: string;
+  floor: string;
   refUserStreet: string;
   refUserZone: string;
 }
@@ -207,73 +209,113 @@ const Orders: React.FC = () => {
       });
   };
 
-  // useEffect to call print function once data is set
   useEffect(() => {
     if (userOrderDetails && userOrderDetails.refUserFName) {
       const printContents = `
-      <div style="padding: 20px; font-family: Arial, sans-serif;">
-        <div class="flex justify-content-between">
-          <p><b>Order ID:</b> ${selectedOrderId}</p>
-          <p><b>User Name:</b> ${userOrderDetails.refUserFName} ${
-        userOrderDetails.refUserLName
-      }</p>
-        </div>
-        <div class="flex justify-content-between">
-          <p><b>User Email:</b> ${userOrderDetails.refUserEmail}</p>
-          <p><b>User Mobile:</b> ${userOrderDetails.refUserMobile}</p>
-        </div>
-        <p><b>User Address:</b> ${userOrderDetails.refUserStreet}, ${
-        userOrderDetails.refUserPostCode
-      }, ${userOrderDetails.refUserZone}, ${userOrderDetails.refUserCountry}</p>
-        <p><b>Total Price:</b> CHF ${userOrderDetails.TotalOrderPrice}</p>
-        ${userOrderDetails.order
-          .map(
-            (item, index) => `
-              <div class="mb-3 border-bottom pb-2">
-                <p><b>${index + 1}.</b> <b>Food Name:</b> ${
-              item.refFoodName
-            }</p>
-                <p><b>Category:</b> ${item.refFoodCategory}</p>
-                <p><b>Price:</b> CHF ${item.refFoodPrice}</p>
-                ${
-                  item.refFoodQuantity
-                    ? `<p><b>Quantity:</b> ${item.refFoodQuantity}</p>`
-                    : ""
-                }
+      <div style="padding: 20px; font-family: Arial, sans-serif; font-size: 14px; text-align: center;">
+
+        <!-- Insert Image Instead of Text -->
+        <img src="../../assets/logoKC.png" alt="Karma Cuisines" style="max-width: 100%; height: auto; margin-bottom: 10px;" />
+
+        <!-- Order Number -->
+        <p style="text-align: center; font-weight: bold;">Order Number: ${selectedOrderId}</p>
+        
+        <!-- Dishes Section -->
+        <div>
+          <hr />
+          ${userOrderDetails.order
+            .map(
+              (item, index) => `
+              <div style="margin-bottom: 10px; display:flex; flex-direction:column; justify-content:start;">
+                <!-- Food Name and Price (side by side) -->
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <p style="flex: 1; text-align: left;"><b>${
+                    item.refFoodName
+                  }</b></p>
+                  <p style="flex: 0 0 auto; text-align: right;">CHF ${
+                    item.refFoodPrice
+                  }</p>
+                </div>
+                
+                <!-- Comments Section (below the food item) -->
                 ${
                   item.refComments
-                    ? `<p><b>Comments:</b> ${item.refComments}</p>`
+                    ? `<p style="margin-top: 5px; font-style: italic;">Comments: ${item.refComments}</p>`
                     : ""
                 }
-                ${
-                  item.refIfCombo && item.subProduct?.length > 0
-                    ? `
-                  <p><b>Combo Items:</b></p>
-                  <ul>
-                    ${item.subProduct
-                      .map(
-                        (sub) =>
-                          `<li>${sub.refFoodName} - ${sub.refFoodQuantity}</li>`
-                      )
-                      .join("")}
-                  </ul>
-                `
-                    : ""
-                }
-              </div>`
-          )
-          .join("")}
+              </div>
+            `
+            )
+            .join("")}
+          <hr />
+        </div>
+
+        <!-- Total Section Styled with Flexbox -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <p style="flex: 1; text-align: left; font-weight: bold;">Total</p>
+          <p style="flex: 0 0 auto; text-align: right;">CHF ${
+            userOrderDetails.TotalOrderPrice
+          }</p>
+        </div>
+
+        <hr />
+
+        <!-- IMPORTANT NOTE -->
+        <div style="font-size: 12px;">
+          <p><b>IMPORTANT:</b> FOR INFORMATION ON FOOD ALLERGENS</p>
+          <p>Contact the restaurant or check their menu</p>
+        </div>
+
+        <hr />
+
+        <!-- Order Status -->
+        <div>
+        <p><b>${
+          userOrderDetails?.order?.[0]?.refPaymentType === "offline"
+            ? "ORDER UNPAID"
+            : "ORDER PAID"
+        }</b></p>
+        </div>
+
+        <hr />
+
+        <!-- Customer Details -->
+        <div>
+          <p><b>Customer Details:</b></p>
+          <p><b>Name:</b> ${userOrderDetails.refUserFName} ${
+        userOrderDetails.refUserLName
+      }</p>
+          <p><b>Email:</b> ${userOrderDetails.refUserEmail}</p>
+          <p><b>Mobile:</b> ${userOrderDetails.refUserMobile}</p>
+          <p><b>Address:</b> ${userOrderDetails.refUserStreet}, ${
+        userOrderDetails.refUserPostCode
+      }, 
+            ${
+              userOrderDetails?.floor
+                ? `Floor: ${userOrderDetails.floor}, `
+                : ""
+            }${userOrderDetails.refUserZone}, ${
+        userOrderDetails.refUserCountry
+      }</p>
+
+        </div>
+
+        <hr />
+
+        <!-- Closing Thanks -->
+        <p>Thanks</p>
+
       </div>
     `;
 
       const printWindow = window.open("", "_blank", "width=800,height=600");
       if (printWindow) {
         printWindow.document.write(`
-      <html>
-        <head><title>Print Order Details</title></head>
-        <body>${printContents}</body>
-      </html>
-    `);
+        <html>
+          <head><title>Print Order Details</title></head>
+          <body>${printContents}</body>
+        </html>
+      `);
         printWindow.document.close();
         printWindow.focus();
         printWindow.print();
@@ -282,7 +324,7 @@ const Orders: React.FC = () => {
         console.error("Failed to open the print window.");
       }
     }
-  }, [userOrderDetails]); // This ensures the print function is called after data is set
+  }, [userOrderDetails]);
 
   return (
     <div>
@@ -356,6 +398,7 @@ const Orders: React.FC = () => {
             field="refCustOrId"
             header="Order ID"
             frozen
+            sortable
             body={orderIdBodyTemplate}
             style={{ minWidth: "10rem" }}
           ></Column>
