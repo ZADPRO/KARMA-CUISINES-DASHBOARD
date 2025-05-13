@@ -18,9 +18,7 @@ const Vendors: React.FC = () => {
   const renderHeader = () => {
     return (
       <div className="flex justify-between flex-wrap gap-2 align-items-center py-3">
-        <div className="flex align-items-center gap-2">
-          <span className="font-bold text-lg">Total Orders:</span>
-        </div>
+        <div className="flex align-items-center gap-2"></div>
         <div className="flex gap-3">
           <InputText
             value={globalFilter}

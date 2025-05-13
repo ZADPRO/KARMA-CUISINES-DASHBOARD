@@ -7,13 +7,13 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import "./Header.css";
 import {
-  BadgeSwissFranc,
+  // BadgeSwissFranc,
   Beef,
   LayoutGrid,
   LogOut,
   Menu,
-  MessagesSquare,
-  Settings,
+  // MessagesSquare,
+  // Settings,
   ShoppingCart,
   UtensilsCrossed,
 } from "lucide-react";
@@ -48,31 +48,31 @@ const routes = [
   //   name: "Users",
   //   icon: <Users />,
   // },
-  {
-    path: "/transactions",
-    name: "Transactions",
-    icon: <BadgeSwissFranc />,
-  },
+  // {
+  //   path: "/transactions",
+  //   name: "Transactions",
+  //   icon: <BadgeSwissFranc />,
+  // },
   // {
   //   path: "/reports",
   //   name: "Reports",
   //   icon: <Files />,
   // },
-  {
-    path: "/messages",
-    name: "Messages",
-    icon: <MessagesSquare />,
-  },
+  // {
+  //   path: "/messages",
+  //   name: "Messages",
+  //   icon: <MessagesSquare />,
+  // },
   // {
   //   path: "/profile",
   //   name: "Profile",
   //   icon: <UserRoundPen />,
   // },
-  {
-    path: "/settings",
-    name: "Settings",
-    icon: <Settings />,
-  },
+  // {
+  //   path: "/settings",
+  //   name: "Settings",
+  //   icon: <Settings />,
+  // },
   {
     path: "/login",
     name: "Logout",
