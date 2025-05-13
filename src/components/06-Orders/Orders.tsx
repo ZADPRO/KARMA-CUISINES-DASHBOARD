@@ -225,7 +225,7 @@ const Orders: React.FC = () => {
           <hr />
           ${userOrderDetails.order
             .map(
-              (item, index) => `
+              (item, _index) => `
               <div style="margin-bottom: 10px; display:flex; flex-direction:column; justify-content:start;">
                 <!-- Food Name and Price (side by side) -->
                 <div style="display: flex; justify-content: space-between; align-items: center;">
