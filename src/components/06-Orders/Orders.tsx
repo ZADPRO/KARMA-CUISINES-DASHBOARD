@@ -213,21 +213,14 @@ const Orders: React.FC = () => {
     if (userOrderDetails && userOrderDetails.refUserFName) {
       const printContents = `
       <div style="padding: 20px; font-family: Arial, sans-serif; font-size: 14px; text-align: center;">
-
-        <!-- Insert Image Instead of Text -->
-      <img src="/logoKC.png" alt="Karma Cuisines" style="max-width: 60%; height: auto; margin-bottom: 10px;" />
-
-        <!-- Order Number -->
+        <img id="print-logo" src="/logoKC.png" alt="Karma Cuisines" style="max-width: 60%; height: auto; margin-bottom: 10px;" />
         <p style="text-align: center; font-weight: bold;">Order Number: ${selectedOrderId}</p>
         
-        <!-- Dishes Section -->
-        <div>
-          <hr />
+        <div><hr />
           ${userOrderDetails.order
             .map(
-              (item, _index) => `
+              (item) => `
               <div style="margin-bottom: 10px; display:flex; flex-direction:column; justify-content:start;">
-                <!-- Food Name and Price (side by side) -->
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                   <p style="flex: 1; text-align: left;"><b>${
                     item.refFoodName
@@ -236,21 +229,17 @@ const Orders: React.FC = () => {
                     item.refFoodPrice
                   }</p>
                 </div>
-                
-                <!-- Comments Section (below the food item) -->
                 ${
                   item.refComments
                     ? `<p style="margin-top: 5px; font-style: italic;">Comments: ${item.refComments}</p>`
                     : ""
                 }
-              </div>
-            `
+              </div>`
             )
             .join("")}
           <hr />
         </div>
 
-        <!-- Total Section Styled with Flexbox -->
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <p style="flex: 1; text-align: left; font-weight: bold;">Total</p>
           <p style="flex: 0 0 auto; text-align: right;">CHF ${
@@ -259,27 +248,21 @@ const Orders: React.FC = () => {
         </div>
 
         <hr />
-
-        <!-- IMPORTANT NOTE -->
         <div style="font-size: 12px;">
           <p><b>IMPORTANT:</b> FOR INFORMATION ON FOOD ALLERGENS</p>
           <p>Contact the restaurant or check their menu</p>
         </div>
-
         <hr />
 
-        <!-- Order Status -->
         <div>
-        <p><b>${
-          userOrderDetails?.order?.[0]?.refPaymentType === "offline"
-            ? "ORDER UNPAID"
-            : "ORDER PAID"
-        }</b></p>
+          <p><b>${
+            userOrderDetails?.order?.[0]?.refPaymentType === "offline"
+              ? "ORDER UNPAID"
+              : "ORDER PAID"
+          }</b></p>
         </div>
 
         <hr />
-
-        <!-- Customer Details -->
         <div>
           <p><b>Customer Details:</b></p>
           <p><b>Name:</b> ${userOrderDetails.refUserFName} ${
@@ -297,14 +280,9 @@ const Orders: React.FC = () => {
             }${userOrderDetails.refUserZone}, ${
         userOrderDetails.refUserCountry
       }</p>
-
         </div>
-
         <hr />
-
-        <!-- Closing Thanks -->
         <p>Thanks</p>
-
       </div>
     `;
 

@@ -45,8 +45,8 @@ function ProtectedRoutes() {
   return isAuthenticated() ? (
     <Routes>
       <Route path="/" element={<Orders />} />
-      <Route path="/products" element={<Products />} />
       <Route path="/orders" element={<Orders />} />
+      <Route path="/products" element={<Products />} />
       <Route path="/vendors" element={<Vendors />} />
       <Route path="/transactions" element={<Transactions />} />
       <Route path="/reports" element={<Reports />} />

@@ -21,6 +21,7 @@ interface OrderDetails {
   refFoodName: string;
   refFoodPrice: string;
   refFoodQuantity: string;
+  refPaymentType: string;
   refIfCombo: boolean;
   subProduct: SubProductProps[];
 }
@@ -108,6 +109,9 @@ const OrderSidebar: React.FC<OrderSidebarProps> = ({ orderId }) => {
           </p>
           <p>
             <b>Total Price:</b> CHF {userOrderDetails?.TotalOrderPrice}
+          </p>
+          <p className="capitalize">
+            <b>Payment:</b> {userOrderDetails?.order[0].refPaymentType}
           </p>
         </Fieldset>
 

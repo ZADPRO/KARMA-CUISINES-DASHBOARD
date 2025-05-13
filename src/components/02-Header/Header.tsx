@@ -15,7 +15,7 @@ import {
   // MessagesSquare,
   // Settings,
   ShoppingCart,
-  // UtensilsCrossed,
+  UtensilsCrossed,
 } from "lucide-react";
 
 type HeaderProps = {
@@ -29,7 +29,7 @@ const routes = [
   //   icon: <LayoutGrid />,
   // },
   {
-    path: "/orders",
+    path: "/",
     name: "Orders",
     icon: <ShoppingCart />,
   },
@@ -38,11 +38,11 @@ const routes = [
     name: "Products",
     icon: <Beef />,
   },
-  // {
-  //   path: "/vendors",
-  //   name: "Vendors",
-  //   icon: <UtensilsCrossed />,
-  // },
+  {
+    path: "/vendors",
+    name: "Vendors",
+    icon: <UtensilsCrossed />,
+  },
   // {
   //   path: "/users",
   //   name: "Users",
