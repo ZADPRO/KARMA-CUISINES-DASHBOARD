@@ -86,3 +86,11 @@ p {
   td {
   padding: 2px 1rem;
 }
+
+.border-circle.bg-primary.inline-flex.justify-content-center.align-items-center.h-6rem.w-6rem {
+  background-color: white !important;
+}
+
+.surface-overlay.border-round {
+  background-color: white !important;
+}
