@@ -9,8 +9,8 @@ const Products: React.FC = () => {
   return (
     <div className="">
       <div className="primaryNav">
-        <p>Order</p>
-        <p className="">Logged in as:</p>
+        <p>Products</p>
+        <p className="">Logged in as: Admin</p>
       </div>
       <div className="m-3">
         <TabView>

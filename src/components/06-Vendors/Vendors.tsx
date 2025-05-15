@@ -37,6 +37,8 @@ const Vendors: React.FC = () => {
   const [vendorDetails, setVendorDetails] = useState<VendorDetailsProps[] | []>(
     []
   );
+  const [selectedVendorToEdit, setSelectedVendorToEdit] =
+    useState<VendorDetailsProps | null>(null);
 
   const getAllVendorDetails = () => {
     axios
@@ -64,6 +66,11 @@ const Vendors: React.FC = () => {
 
   const exportCSV = (selectionOnly: any) => {
     dt.current?.exportCSV({ selectionOnly });
+  };
+
+  const handleEditVendor = (vendor: VendorDetailsProps) => {
+    setSelectedVendorToEdit(vendor);
+    setVisibleRight(true);
   };
 
   const renderHeader = () => {
@@ -102,7 +109,7 @@ const Vendors: React.FC = () => {
     <div>
       <div className="primaryNav">
         <p>Vendors</p>
-        <p className="">Logged in as:</p>
+        <p className="">Logged in as: Admin</p>
       </div>
       <div className="m-3">
         <DataTable
@@ -129,7 +136,14 @@ const Vendors: React.FC = () => {
           <Column
             field="vendorId"
             header="Vendor ID"
-            style={{ minWidth: "10rem" }}
+            body={(rowData) => (
+              <span
+                className="text-primary cursor-pointer"
+                onClick={() => handleEditVendor(rowData)}
+              >
+                {rowData.vendorId}
+              </span>
+            )}
           ></Column>
           <Column
             field="restroName"
@@ -154,7 +168,13 @@ const Vendors: React.FC = () => {
         style={{ width: "60vw" }}
         onHide={() => setVisibleRight(false)}
       >
-        <AddVendorSidebar />
+        <AddVendorSidebar
+          vendorToEdit={selectedVendorToEdit}
+          onCloseSidebar={() => {
+            setVisibleRight(false);
+            getAllVendorDetails();
+          }}
+        />{" "}
       </Sidebar>
     </div>
   );

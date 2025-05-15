@@ -212,6 +212,10 @@ const Orders: React.FC = () => {
   const logoUrl = `${window.location.origin}/logoImg.jpg`;
 
   useEffect(() => {
+    console.log(
+      "userOrderDetails?.order?.[0]?.refPaymentType",
+      userOrderDetails?.order?.[0]?.refPaymentType
+    );
     if (userOrderDetails && userOrderDetails.refUserFName) {
       const printContents = `
       <div style="padding: 20px; font-family: Arial, sans-serif; font-size: 14px; text-align: center;">
@@ -319,7 +323,7 @@ const Orders: React.FC = () => {
     <div>
       <div className="primaryNav">
         <p>Order</p>
-        <p className="">Logged in as:</p>
+        <p className="">Logged in as: Admin</p>
       </div>
 
       <div className="card m-3 p-2">

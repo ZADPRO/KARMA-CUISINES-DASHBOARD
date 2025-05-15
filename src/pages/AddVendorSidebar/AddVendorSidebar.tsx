@@ -11,14 +11,43 @@ import {
   PhoneCall,
 } from "lucide-react";
 import { InputText } from "primereact/inputtext";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import decrypt from "../../helper";
 import axios from "axios";
 import { Toast } from "primereact/toast";
 import { useRef } from "react";
 
-const AddVendorSidebar: React.FC = () => {
+interface VendorDetailsProps {
+  alcohol: string;
+  bankCode: string;
+  bankName: string;
+  code: string;
+  cre: string;
+  designation: string;
+  email: string;
+  floor: string;
+  iban: string;
+  id: number;
+  land: string;
+  mobile: string;
+  personName: string;
+  restroName: string;
+  streetNo: string;
+  vat: string;
+  vendorId: string;
+  zone: string;
+}
+
+interface AddVendorSidebarProps {
+  vendorToEdit: VendorDetailsProps | null;
+  onCloseSidebar: () => void;
+}
+
+const AddVendorSidebar: React.FC<AddVendorSidebarProps> = ({
+  vendorToEdit,
+  onCloseSidebar,
+}) => {
   const toast = useRef<Toast>(null);
 
   const [formData, setFormData] = useState({
@@ -41,6 +70,30 @@ const AddVendorSidebar: React.FC = () => {
     bankCode: "",
   });
 
+  useEffect(() => {
+    if (vendorToEdit) {
+      setFormData({
+        restroName: vendorToEdit.restroName,
+        vendorId: vendorToEdit.vendorId,
+        contactName: vendorToEdit.personName,
+        designation: vendorToEdit.designation,
+        email: vendorToEdit.email,
+        mobile: vendorToEdit.mobile,
+        street: vendorToEdit.streetNo,
+        floor: vendorToEdit.floor,
+        zone: vendorToEdit.zone,
+        code: vendorToEdit.code,
+        land: vendorToEdit.land,
+        vatNumber: vendorToEdit.vat,
+        commercialExtract: vendorToEdit.cre,
+        alcoholLicense: vendorToEdit.alcohol,
+        bankName: vendorToEdit.bankName,
+        accountNumber: vendorToEdit.iban,
+        bankCode: vendorToEdit.bankCode,
+      });
+    }
+  }, [vendorToEdit]);
+
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -62,8 +115,13 @@ const AddVendorSidebar: React.FC = () => {
       }
     }
     console.log("Form Values:", formData);
+
+    const apiUrl = vendorToEdit
+      ? `${import.meta.env.VITE_API_URL}/admin/updateVendor`
+      : `${import.meta.env.VITE_API_URL}/admin/uploadVendor`;
+
     axios
-      .post(`${import.meta.env.VITE_API_URL}/admin/uploadVendor`, formData, {
+      .post(apiUrl, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("JWTtoken")}`,
         },
@@ -102,6 +160,9 @@ const AddVendorSidebar: React.FC = () => {
             detail: "Vendor uploaded successfully!",
             life: 3000,
           });
+          setTimeout(() => {
+            onCloseSidebar(); // ✅ Close and refresh parent list
+          }, 3000);
         } else {
           toast.current?.show({
             severity: "error",
@@ -125,6 +186,8 @@ const AddVendorSidebar: React.FC = () => {
   return (
     <div>
       <Toast ref={toast} />
+
+      {/* <h3>{vendorToEdit ? "Update Vendor" : "Add Vendor"}</h3> */}
 
       <label>Restro Basic Details</label>
       <div className="card flex flex-column md:flex-row gap-3 mt-3">
@@ -337,7 +400,11 @@ const AddVendorSidebar: React.FC = () => {
       </div>
 
       <div className="flex justify-end">
-        <Button label="Submit" icon="pi pi-check" onClick={handleSubmit} />
+        <Button
+          label={vendorToEdit ? "Update Vendor" : "Add Vendor"}
+          className="mt-4"
+          onClick={handleSubmit}
+        />{" "}
       </div>
     </div>
   );

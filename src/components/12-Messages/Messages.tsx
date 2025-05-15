@@ -5,7 +5,7 @@ const Messages: React.FC = () => {
     <div>
       <div className="primaryNav">
         <p>Messages</p>
-        <p className="">Logged in as:</p>
+        <p className="">Logged in as: Admin</p>
       </div>
     </div>
   );
