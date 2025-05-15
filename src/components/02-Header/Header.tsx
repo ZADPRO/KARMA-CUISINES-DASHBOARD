@@ -12,10 +12,10 @@ import {
   // LayoutGrid,
   LogOut,
   Menu,
-  // MessagesSquare,
+  MessagesSquare,
   // Settings,
   ShoppingCart,
-  // UtensilsCrossed,
+  UtensilsCrossed,
 } from "lucide-react";
 
 type HeaderProps = {
@@ -38,11 +38,11 @@ const routes = [
     name: "Products",
     icon: <Beef />,
   },
-  // {
-  //   path: "/vendors",
-  //   name: "Vendors",
-  //   icon: <UtensilsCrossed />,
-  // },
+  {
+    path: "/vendors",
+    name: "Vendors",
+    icon: <UtensilsCrossed />,
+  },
   // {
   //   path: "/users",
   //   name: "Users",
@@ -58,11 +58,11 @@ const routes = [
   //   name: "Reports",
   //   icon: <Files />,
   // },
-  // {
-  //   path: "/messages",
-  //   name: "Messages",
-  //   icon: <MessagesSquare />,
-  // },
+  {
+    path: "/messages",
+    name: "Messages",
+    icon: <MessagesSquare />,
+  },
   // {
   //   path: "/profile",
   //   name: "Profile",

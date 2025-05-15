@@ -1,15 +1,66 @@
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
+import { DataTable as PrimeDataTable } from "primereact/datatable"; // (only if name conflict arises)
 import { InputText } from "primereact/inputtext";
 import { Sidebar } from "primereact/sidebar";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AddVendorSidebar from "../../pages/AddVendorSidebar/AddVendorSidebar";
+import axios from "axios";
+import decrypt from "../../helper";
+
+interface VendorDetailsProps {
+  alcohol: string;
+  bankCode: string;
+  bankName: string;
+  code: string;
+  cre: string;
+  designation: string;
+  email: string;
+  floor: string;
+  iban: string;
+  id: number;
+  land: string;
+  mobile: string;
+  personName: string;
+  restroName: string;
+  streetNo: string;
+  vat: string;
+  vendorId: string;
+  zone: string;
+}
 
 const Vendors: React.FC = () => {
   const [globalFilter, setGlobalFilter] = useState<string>("");
-  const dt = useRef<DataTable<[]>>(null);
+  const dt = useRef<PrimeDataTable<VendorDetailsProps[]>>(null);
   const [visibleRight, setVisibleRight] = useState<boolean>(false);
+  const [vendorDetails, setVendorDetails] = useState<VendorDetailsProps[] | []>(
+    []
+  );
+
+  const getAllVendorDetails = () => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/admin/getAllVendor`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("JWTtoken")}`,
+        },
+      })
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+        console.log("data", data);
+        if (data.success) {
+          setVendorDetails(data.result);
+        }
+      });
+  };
+
+  useEffect(() => {
+    getAllVendorDetails();
+  }, []);
 
   const exportCSV = (selectionOnly: any) => {
     dt.current?.exportCSV({ selectionOnly });
@@ -63,6 +114,7 @@ const Vendors: React.FC = () => {
           header={header}
           className="mt-3"
           rows={5}
+          value={vendorDetails}
           globalFilter={globalFilter}
           filters={{ global: { value: globalFilter, matchMode: "contains" } }}
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -75,18 +127,22 @@ const Vendors: React.FC = () => {
             body={(_, { rowIndex }) => rowIndex + 1}
           ></Column>
           <Column
-            field=""
+            field="vendorId"
             header="Vendor ID"
             style={{ minWidth: "10rem" }}
           ></Column>
-          <Column field="" header="Name" style={{ minWidth: "10rem" }}></Column>
           <Column
-            field=""
+            field="restroName"
+            header="Name"
+            style={{ minWidth: "10rem" }}
+          ></Column>
+          <Column
+            field="mobile"
             header="Contact Number"
             style={{ minWidth: "10rem" }}
           ></Column>
           <Column
-            field=""
+            field="email"
             header="Email ID"
             style={{ minWidth: "10rem" }}
           ></Column>

@@ -15,8 +15,12 @@ import React, { useState } from "react";
 import { Button } from "primereact/button";
 import decrypt from "../../helper";
 import axios from "axios";
+import { Toast } from "primereact/toast";
+import { useRef } from "react";
 
 const AddVendorSidebar: React.FC = () => {
+  const toast = useRef<Toast>(null);
+
   const [formData, setFormData] = useState({
     restroName: "",
     vendorId: "",
@@ -42,6 +46,21 @@ const AddVendorSidebar: React.FC = () => {
   };
 
   const handleSubmit = () => {
+    for (const key in formData) {
+      if (!formData[key as keyof typeof formData]) {
+        const formattedKey = key
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (str) => str.toUpperCase());
+
+        toast.current?.show({
+          severity: "warn",
+          summary: "Missing Field",
+          detail: `${formattedKey} is required`,
+          life: 3000,
+        });
+        return;
+      }
+    }
     console.log("Form Values:", formData);
     axios
       .post(`${import.meta.env.VITE_API_URL}/admin/uploadVendor`, formData, {
@@ -56,14 +75,57 @@ const AddVendorSidebar: React.FC = () => {
           import.meta.env.VITE_ENCRYPTION_KEY
         );
         console.log("Upload success", data);
+        if (data.success) {
+          setFormData({
+            restroName: "",
+            vendorId: "",
+            contactName: "",
+            designation: "",
+            email: "",
+            mobile: "",
+            street: "",
+            floor: "",
+            zone: "",
+            code: "",
+            land: "",
+            vatNumber: "",
+            commercialExtract: "",
+            alcoholLicense: "",
+            bankName: "",
+            accountNumber: "",
+            bankCode: "",
+          });
+
+          toast.current?.show({
+            severity: "success",
+            summary: "Success",
+            detail: "Vendor uploaded successfully!",
+            life: 3000,
+          });
+        } else {
+          toast.current?.show({
+            severity: "error",
+            summary: "Failed",
+            detail: "Upload failed. Please try again.",
+            life: 3000,
+          });
+        }
       })
       .catch((error) => {
         console.error("Upload error", error);
+        toast.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: "An error occurred during upload.",
+          life: 3000,
+        });
       });
   };
 
   return (
     <div>
+      <Toast ref={toast} />
+
       <label>Restro Basic Details</label>
       <div className="card flex flex-column md:flex-row gap-3 mt-3">
         <div className="p-inputgroup flex-1">

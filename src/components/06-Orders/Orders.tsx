@@ -209,11 +209,13 @@ const Orders: React.FC = () => {
       });
   };
 
+  const logoUrl = `${window.location.origin}/logoImg.jpg`;
+
   useEffect(() => {
     if (userOrderDetails && userOrderDetails.refUserFName) {
       const printContents = `
       <div style="padding: 20px; font-family: Arial, sans-serif; font-size: 14px; text-align: center;">
-        <img id="print-logo" src="/logoKC.png" alt="Karma Cuisines" style="max-width: 60%; height: auto; margin-bottom: 10px;" />
+        <img id="print-logo" src="${logoUrl}" alt="Karma Cuisines" style="max-width: 60%; height: auto; margin-bottom: 10px;" />
         <p style="text-align: center; font-weight: bold;">Order Number: ${selectedOrderId}</p>
         
         <div><hr />
@@ -295,9 +297,18 @@ const Orders: React.FC = () => {
         </html>
       `);
         printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
+
+        const interval = setInterval(() => {
+          const img = printWindow.document.getElementById(
+            "print-logo"
+          ) as HTMLImageElement | null;
+          if (img && img.complete) {
+            clearInterval(interval);
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+          }
+        }, 100);
       } else {
         console.error("Failed to open the print window.");
       }
