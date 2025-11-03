@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import {
   BadgeSwissFranc,
@@ -17,6 +17,7 @@ import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { FileUpload } from "primereact/fileupload";
+import { Dropdown } from "primereact/dropdown";
 
 interface FixedProductsProps {
   refFoodId: number;
@@ -24,6 +25,27 @@ interface FixedProductsProps {
   refFoodCategoryName: string;
   refPrice: string;
   quantity: number;
+}
+
+interface VendorDetailsProps {
+  alcohol: string;
+  bankCode: string;
+  bankName: string;
+  code: string;
+  cre: string;
+  designation: string;
+  email: string;
+  floor: string;
+  iban: string;
+  id: number;
+  land: string;
+  mobile: string;
+  personName: string;
+  restroName: string;
+  streetNo: string;
+  vat: string;
+  vendorId: string;
+  zone: string;
 }
 
 const CreateCombo: React.FC = () => {
@@ -50,6 +72,28 @@ const CreateCombo: React.FC = () => {
   const [mainDishLimit, setMainDishLimit] = useState("");
   const [sideDishLimit, setSideDishLimit] = useState("");
   const [comboPrice, setComboPrice] = useState("");
+  const [vendorDetails, setVendorDetails] = useState<VendorDetailsProps[]>([]);
+  const [selectedVendor, setSelectedVendor] =
+    useState<VendorDetailsProps | null>(null);
+
+  const getAllVendorDetails = () => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/admin/getAllVendor`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("JWTtoken")}`,
+        },
+      })
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+        if (data.success) {
+          setVendorDetails(data.result);
+        }
+      });
+  };
 
   const getFixedProducts = (value: string) => {
     console.log("value", value);
@@ -312,6 +356,11 @@ const CreateCombo: React.FC = () => {
   };
 
   const validateForm = (): boolean => {
+    if (!selectedVendor) {
+      showToast("Please select a Restaurant.");
+      return false;
+    }
+
     if (!menuId || isNaN(parseInt(menuId))) {
       showToast("Menu ID must be a valid number.");
       return false;
@@ -374,6 +423,7 @@ const CreateCombo: React.FC = () => {
       .post(
         `${import.meta.env.VITE_API_URL}/productCombo/CreateCombo`,
         {
+          restroId: selectedVendor?.id,
           menuId: parseInt(menuId, 10),
           comboName: comboName,
           comboImg: productImageFile,
@@ -435,8 +485,23 @@ const CreateCombo: React.FC = () => {
       });
   };
 
+  useEffect(() => {
+    getAllVendorDetails();
+  }, []);
+
   return (
     <div>
+      <div className="flex justify-content-end">
+        <Dropdown
+          options={vendorDetails}
+          optionLabel="restroName"
+          value={selectedVendor}
+          onChange={(e) => setSelectedVendor(e.value)}
+          className="w-14rem"
+          placeholder="Restaurant"
+          showClear
+        />
+      </div>
       <div className="card flex flex-column md:flex-row gap-3 mt-3">
         <div className="p-inputgroup flex-1">
           <span className="p-inputgroup-addon">

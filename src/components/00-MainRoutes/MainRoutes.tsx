@@ -18,6 +18,7 @@ import Careers from "../11-Careers/Careers";
 import Messages from "../12-Messages/Messages";
 import Settings from "../13-Settings/Settings";
 import Header from "../02-Header/Header";
+import PrinterConfig from "../14-PrinterConfig/PrinterConfig";
 
 type ConditionalHeaderProps = {
   children: ReactNode;
@@ -54,6 +55,7 @@ function ProtectedRoutes() {
       <Route path="/careers" element={<Careers />} />
       <Route path="/messages" element={<Messages />} />
       <Route path="/settings" element={<Settings />} />
+      <Route path="/printerConfig" element={<PrinterConfig />} />
     </Routes>
   ) : (
     <Navigate to="/login" replace />

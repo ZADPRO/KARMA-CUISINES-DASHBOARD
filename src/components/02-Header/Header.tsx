@@ -12,6 +12,7 @@ import {
   // LayoutGrid,
   LogOut,
   Menu,
+  // PrinterCheck,
   // MessagesSquare,
   // Settings,
   ShoppingCart,
@@ -43,6 +44,11 @@ const routes = [
     name: "Vendors",
     icon: <UtensilsCrossed />,
   },
+  // {
+  //   path: "/printerConfig",
+  //   name: "Printer Config",
+  //   icon: <PrinterCheck />,
+  // },
   // {
   //   path: "/users",
   //   name: "Users",

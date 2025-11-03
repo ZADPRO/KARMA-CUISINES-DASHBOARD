@@ -23,6 +23,27 @@ interface Categories {
   refFoodCategoryName: string;
 }
 
+interface VendorDetailsProps {
+  alcohol: string;
+  bankCode: string;
+  bankName: string;
+  code: string;
+  cre: string;
+  designation: string;
+  email: string;
+  floor: string;
+  iban: string;
+  id: number;
+  land: string;
+  mobile: string;
+  personName: string;
+  restroName: string;
+  streetNo: string;
+  vat: string;
+  vendorId: string;
+  zone: string;
+}
+
 const AddProducts: React.FC = () => {
   const [productId, setProductId] = useState("");
   const [productName, setProductName] = useState("");
@@ -35,8 +56,30 @@ const AddProducts: React.FC = () => {
   const [dropdownItems, setDropdownItems] = useState([]);
   const [categoriesData, setCategoriesData] = useState<Categories[]>([]);
   const fileUploadRef = useRef<FileUpload>(null);
+  const [vendorDetails, setVendorDetails] = useState<VendorDetailsProps[]>([]);
+  const [selectedVendor, setSelectedVendor] =
+    useState<VendorDetailsProps | null>(null);
 
   const toastRef = useRef<Toast>(null);
+
+  const getAllVendorDetails = () => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/admin/getAllVendor`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("JWTtoken")}`,
+        },
+      })
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+        if (data.success) {
+          setVendorDetails(data.result);
+        }
+      });
+  };
 
   const getCategory = () => {
     axios
@@ -60,6 +103,7 @@ const AddProducts: React.FC = () => {
 
   useEffect(() => {
     getCategory();
+    getAllVendorDetails();
   }, []);
 
   const showToast = (
@@ -75,6 +119,11 @@ const AddProducts: React.FC = () => {
   };
 
   const validateForm = (): boolean => {
+    if (!selectedVendor) {
+      showToast("Please select a restaurant before submitting.");
+      return false;
+    }
+
     const idValid = /^\d+$/.test(productId);
     const nameValid = !!productName;
 
@@ -117,6 +166,7 @@ const AddProducts: React.FC = () => {
     const formattedPrice = parseFloat(productPrice).toFixed(2);
 
     const formData = {
+      restroId: selectedVendor?.id,
       productId: parseInt(productId),
       productName,
       productDescription,
@@ -133,6 +183,7 @@ const AddProducts: React.FC = () => {
       .post(
         `${import.meta.env.VITE_API_URL}/productCombo/addFood`,
         {
+          restroId: formData.restroId,
           foodName: formData.productName.toString(),
           foodDescription: formData.productDescription,
           foodImgPath: productImageFile,
@@ -167,6 +218,7 @@ const AddProducts: React.FC = () => {
           setProductQuantity("");
           setProductCategory("");
           setProductImageFile("");
+          setSelectedVendor(null);
           setProductAddons([]);
           fileUploadRef.current?.clear();
         }
@@ -277,6 +329,18 @@ const AddProducts: React.FC = () => {
   return (
     <div>
       <Toast ref={toastRef} />
+
+      <div className="flex justify-content-end">
+        <Dropdown
+          options={vendorDetails}
+          optionLabel="restroName"
+          value={selectedVendor}
+          onChange={(e) => setSelectedVendor(e.value)}
+          className="w-14rem"
+          placeholder="Restaurant"
+          showClear
+        />
+      </div>
 
       <div className="card flex flex-column md:flex-row gap-3 mt-3">
         <div className="p-inputgroup flex-1">
